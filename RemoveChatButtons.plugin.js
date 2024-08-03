@@ -192,8 +192,7 @@ module.exports = (() => {
                         name: 'Remove Discord\'s Shop Tab',
                         note: 'Removes the Discord Shop tab button from the DM list.',
                         value: false,
-
-                    }
+                    },
                 ],
             },
             {
