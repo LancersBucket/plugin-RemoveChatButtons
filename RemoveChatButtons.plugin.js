@@ -334,8 +334,8 @@ module.exports = (() => {
             const stickerButtonSelector = toSelector(buttonClasses.stickerButton);
             const attachButtonSelector = toSelector(buttonClasses.attachButton);
 
-            const appLauncher = getModule(Filters.byProps('channelAppLauncher'));
-            const appLauncherButton = toSelector(appLauncher.channelAppLauncher);
+            const appLauncherClass = getModule(Filters.byProps('channelAppLauncher'));
+            const appLauncherButton = toSelector(appLauncherClass.channelAppLauncher);
 
             const messageActionButtonsClass = getModule(Filters.byProps('buttons', 'cozyMessage'))?.buttons;
             const messageActionButtonsSelector = toSelector(messageActionButtonsClass);
