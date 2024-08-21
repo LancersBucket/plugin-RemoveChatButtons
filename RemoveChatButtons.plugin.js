@@ -267,6 +267,27 @@ module.exports = (() => {
             },
             {
                 type: 'category',
+                name: 'Toolbar',
+                id: 'toolbar',
+                settings: [
+                    {
+                        type: 'switch',
+                        id: 'inboxButton',
+                        name: 'Remove Inbox Button',
+                        note: "Removes the Inbox button.",
+                        value: false,
+                    },
+                    {
+                        type: 'switch',
+                        id: 'helpButton',
+                        name: 'Remove Help Button',
+                        note: "Removes the help button in the top right.",
+                        value: false,
+                    },
+                ],
+            },
+            {
+                type: 'category',
                 name: 'Compatibility',
                 id: 'compatibility',
                 settings: [
@@ -356,6 +377,9 @@ module.exports = (() => {
 
             const voiceActionButtonsClass = getModule(Filters.byProps('actionButtons', 'voiceUsers'))?.actionButtons;
             const voiceActionButtonsSelector = toSelector(voiceActionButtonsClass);
+
+            const inboxButtonClass = getModule(Filters.byProps('recentsIcon'))?.recentsIcon;
+            const inboxButtonSelector = toSelector(inboxButtonClass);
 
             const getCssRule = (selector) => `${selector} { display: none !important; }`;
             const getTextAreaCssRule = (child) => getCssRule(`${channelTextAreaSelector} ${child}`);
@@ -469,6 +493,10 @@ module.exports = (() => {
                             this.styler.add(getAriaLabelRule(actionButtons, EMBEDDED_ACTIVITIES_ROCKET_BUTTON_A11Y_LABEL, EMBEDDED_ACTIVITIES_INVALID_PERMISSIONS));
                         if (this.settings.voice.krispButton) this.styler.add(getCssRule(`button${getAriaLabelSelector('Noise Suppression powered by Krisp')}`))
                     }
+
+                    // Toolbar
+                    if (this.settings.toolbar.helpButton) this.styler.add(getCssRule(`a[href="https://support.discord.com"]`));
+                    if (this.settings.toolbar.inboxButton) this.styler.add(getCssRule(inboxButtonSelector))
 
                     // Compatibility
                     if (this.settings.compatibility.invisibleTypingButton) this.styler.add(getTextAreaCssRule('.invisible-typing-button'));
