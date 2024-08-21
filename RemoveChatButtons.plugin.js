@@ -256,6 +256,13 @@ module.exports = (() => {
                         note: 'Removes the activity button from the voice chat panel in the bottom left.',
                         value: false,
                     },
+                    {
+                        type: 'switch',
+                        id: 'krispButton',
+                        name: 'Remove Noise Suppression Button',
+                        note: 'Removes the noise supression button from the user voice chat panel.',
+                        value: false,
+                    },
                 ],
             },
             {
@@ -460,6 +467,7 @@ module.exports = (() => {
                         if (this.settings.voice.screensharePanelButton) this.styler.add(getAriaLabelRule(actionButtons, SHARE_YOUR_SCREEN));
                         if (this.settings.voice.activityPanelButton)
                             this.styler.add(getAriaLabelRule(actionButtons, EMBEDDED_ACTIVITIES_ROCKET_BUTTON_A11Y_LABEL, EMBEDDED_ACTIVITIES_INVALID_PERMISSIONS));
+                        if (this.settings.voice.krispButton) this.styler.add(getCssRule(`button${getAriaLabelSelector('Noise Suppression powered by Krisp')}`))
                     }
 
                     // Compatibility
