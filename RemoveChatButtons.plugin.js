@@ -119,6 +119,13 @@ module.exports = (() => {
                 value: false,
             },
             {
+                type: 'switch',
+                id: 'appLauncherButton',
+                name: 'Remove App Launcher Button',
+                note: 'Removes the App Launcher button from the chat.',
+                value: false,
+            },
+            {
                 type: 'category',
                 name: 'Message Actions',
                 id: 'messageActions',
@@ -327,6 +334,9 @@ module.exports = (() => {
             const stickerButtonSelector = toSelector(buttonClasses.stickerButton);
             const attachButtonSelector = toSelector(buttonClasses.attachButton);
 
+            const appLauncher = getModule(Filters.byProps('channelAppLauncher'));
+            const appLauncherButton = toSelector(appLauncher.channelAppLauncher);
+
             const messageActionButtonsClass = getModule(Filters.byProps('buttons', 'cozyMessage'))?.buttons;
             const messageActionButtonsSelector = toSelector(messageActionButtonsClass);
 
@@ -391,6 +401,7 @@ module.exports = (() => {
                     if (this.settings.emojiButton) this.styler.add(getTextAreaCssRule(emojiButtonSelector));
                     if (this.settings.stickerButton) this.styler.add(getTextAreaCssRule(stickerButtonSelector));
                     if (this.settings.attachButton) this.styler.add(getTextAreaCssRule(attachButtonSelector));
+                    if (this.settings.appLauncherButton) this.styler.add(getCssRule(appLauncherButton));
 
                     // Message Actions
                     if (Messages) {
