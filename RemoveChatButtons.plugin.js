@@ -390,12 +390,9 @@ module.exports = (() => {
 
                     // Chat Buttons
                     if (Messages) {
-                        const { PREMIUM_GIFT_BUTTON_LABEL, GIF_BUTTON_LABEL, PREMIUM_GUILD_BOOST_THIS_SERVER } = Messages;
+                        const { GIF_BUTTON_LABEL } = Messages;
 
-                        if (this.settings.giftButton)
-                            this.styler.add(
-                                getAriaLabelRule(channelTextAreaSelector + ' ', PREMIUM_GIFT_BUTTON_LABEL, PREMIUM_GUILD_BOOST_THIS_SERVER),
-                            );
+                        if (this.settings.giftButton) this.styler.add(getCssRule(`button${getAriaLabelSelector('Send a gift')}`));
                         if (this.settings.gifButton) this.styler.add(getAriaLabelRule(channelTextAreaSelector + ' ', GIF_BUTTON_LABEL));
                     }
                     if (this.settings.emojiButton) this.styler.add(getTextAreaCssRule(emojiButtonSelector));
