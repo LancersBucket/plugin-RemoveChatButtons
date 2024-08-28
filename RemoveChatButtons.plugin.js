@@ -388,24 +388,7 @@ module.exports = (() => {
                 getCssRule(labels.map((label) => `${pre || ''}${getAriaLabelSelector(label)}`).join(', '));
 
             const createMessagesProxy = () => {
-                if (!LocaleManager) {
-                    Logger.warn('LocaleManager not found!');
-                    return {};
-                }
-                if (!LocaleManager.Messages) {
-                    Logger.warn('Messages not found!');
-                    return {};
-                }
-
-                return new Proxy(LocaleManager.Messages, {
-                    get: (target, prop) => {
-                        const message = target[prop];
-                        if (typeof message === 'string') return message;
-                        if (message?.message) return message.message;
-                        Logger.error(`Translation not found: ${prop}`);
-                        return prop;
-                    },
-                });
+                return BdApi.findModuleByProps("CREATE_INSTANT_INVITE");
             }
 
             return class RemoveChatButtons extends Plugin {
