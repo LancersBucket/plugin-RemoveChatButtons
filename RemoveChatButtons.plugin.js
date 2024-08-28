@@ -300,6 +300,20 @@ module.exports = (() => {
                     },
                 ],
             },
+            {
+                type: 'category',
+                name: 'Other',
+                id: 'other',
+                settings: [
+                    {
+                        type: 'switch',
+                        id: 'appTag',
+                        name: 'Remove App/Bot Tag',
+                        note: 'Removes the App/Bot Tag next to Discord Apps and Bots.',
+                        value: true,
+                    },
+                ],
+            },
         ],
         changelog: [
             {
@@ -483,6 +497,9 @@ module.exports = (() => {
 
                     // Compatibility
                     if (this.settings.compatibility.invisibleTypingButton) this.styler.add(getTextAreaCssRule('.invisible-typing-button'));
+
+                    // Other
+                    if (this.settings.appTag) this.styler.add(getCssRule("* [class^='botTag']"));
                 }
 
                 refreshStyles() {
