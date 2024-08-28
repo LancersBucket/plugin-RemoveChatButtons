@@ -76,6 +76,11 @@ module.exports = (() => {
                     discord_id: '133659541198864384',
                     github_username: 'QbDesu',
                 },
+                {
+                    name: 'Bucket',
+                    discord_id: '355477882082033664',
+                    github_username: 'LancersBucket'
+                },
             ],
             version: '1.6.0',
             description: 'Hide annoying stuff from your Discord client.',
