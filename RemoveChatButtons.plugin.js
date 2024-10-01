@@ -315,7 +315,7 @@ module.exports = (() => {
                         id: 'appTag',
                         name: 'Remove App/Bot Tag',
                         note: 'Removes the App/Bot Tag next to Discord Apps and Bots.',
-                        value: true,
+                        value: false,
                     },
                 ],
             },
