@@ -501,7 +501,7 @@ module.exports = (() => {
                     if (this.settings.toolbar.inboxButton) this.styler.add(getCssRule(inboxButtonSelector))
 
                     // Compatibility
-                    if (this.settings.compatibility.invisibleTypingButton) this.styler.add(getTextAreaCssRule('.invisible-typing-button'));
+                    if (this.settings.compatibility.invisibleTypingButton) this.styler.add(getTextAreaCssRule('.invisibleTypingButton'));
 
                     // Other
                     if (this.settings.appTag) this.styler.add(getCssRule("* [class^='botTag']"));
