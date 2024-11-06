@@ -2,12 +2,11 @@
  * @name RemoveChatButtons
  * @displayName RemoveChatButtons
  * @description Remove annoying stuff from your Discord clients.
- * @author Qb
- * @authorId 133659541198864384
- * @version 1.6.0
- * @invite gj7JFa6mF8
- * @source https://github.com/BleedingBD/plugin-RemoveChatButtons
- * @updateUrl https://raw.githubusercontent.com/BleedingBD/plugin-RemoveChatButtons/main/RemoveChatButtons.plugin.js
+ * @author LancersBucket
+ * @authorId 355477882082033664
+ * @version 1.7.0
+ * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
+ * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/RemoveChatButtons.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -82,10 +81,10 @@ module.exports = (() => {
                     github_username: 'LancersBucket'
                 },
             ],
-            version: '1.6.0',
+            version: '1.7.0',
             description: 'Hide annoying stuff from your Discord client.',
-            github: 'https://github.com/BleedingBD/plugin-RemoveChatButtons',
-            github_raw: 'https://raw.githubusercontent.com/BleedingBD/plugin-RemoveChatButtons/main/RemoveChatButtons.plugin.js',
+            github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
+            github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/RemoveChatButtons.plugin.js',
         },
         defaultConfig: [
             {
@@ -336,9 +335,9 @@ module.exports = (() => {
         ],
         changelog: [
             {
-                title: 'Added',
-                type: 'added',
-                items: ['Added support for message action buttons like the super reaction button. Also added support for the seasonal Discord\'s Birthday tab. Unfortunately you will have to modify the settings manually in the JSON file because settings are currently broken in ZLibrary.'],
+                title: 'Fixed',
+                type: 'fixed',
+                items: ['Fixed several issues.'],
             },
         ],
     };
