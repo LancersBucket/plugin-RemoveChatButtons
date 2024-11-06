@@ -163,6 +163,13 @@ module.exports = (() => {
                         note: 'Removes the "Reply" button from messages.',
                         value: false,
                     },
+                    {
+                        type: 'switch',
+                        id: 'forwardButton',
+                        name: 'Remove Forward Button',
+                        note: 'Removes the "Forward" button from messages.',
+                        value: false,
+                    },
                 ],
             },
             {
@@ -435,12 +442,13 @@ module.exports = (() => {
 
                     // Message Actions
                     if (Messages) {
-                        const { ADD_REACTION, ADD_BURST_REACTION, EDIT, MESSAGE_ACTION_REPLY } = Messages;
-                        if (this.settings.messageActions.reactionButton) this.styler.add(getAriaLabelRule(messageActionButtonsSelector + ' ', ADD_REACTION));
+                        const { ADD_BURST_REACTION } = Messages;
                         if (this.settings.messageActions.superReactionButton) this.styler.add(getAriaLabelRule(messageActionButtonsSelector + ' ', ADD_BURST_REACTION));
-                        if (this.settings.messageActions.editButton) this.styler.add(getAriaLabelRule(messageActionButtonsSelector + ' ', EDIT));
-                        if (this.settings.messageActions.replyButton) this.styler.add(getAriaLabelRule(messageActionButtonsSelector + ' ', MESSAGE_ACTION_REPLY));
                     }
+                    if (this.settings.messageActions.reactionButton) this.styler.add(getAriaLabelRule(messageActionButtonsSelector + ' ', "Add Reaction"));
+                    if (this.settings.messageActions.editButton) this.styler.add(getAriaLabelRule(messageActionButtonsSelector + ' ', "Edit"));
+                    if (this.settings.messageActions.replyButton) this.styler.add(getAriaLabelRule(messageActionButtonsSelector + ' ', "Reply"));
+                    if (this.settings.messageActions.forwardButton) this.styler.add(getAriaLabelRule(messageActionButtonsSelector + ' ', "Forward"));
 
                     // DMs
                     if (this.settings.dms.friendsTab) this.styler.add(getCssRule(`${privateChannelsSelector} [href="/channels/@me"]`));
