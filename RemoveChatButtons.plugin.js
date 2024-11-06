@@ -265,6 +265,13 @@ module.exports = (() => {
                     },
                     {
                         type: 'switch',
+                        id: 'soundboardPanelButton',
+                        name: 'Remove Soundboard Panel Button',
+                        note: 'Removes the soundboard button from the voice chat panel in the bottom left.',
+                        value: false,
+                    },
+                    {
+                        type: 'switch',
                         id: 'krispButton',
                         name: 'Remove Noise Suppression Button',
                         note: 'Removes the noise supression button from the user voice chat panel.',
@@ -490,14 +497,12 @@ module.exports = (() => {
 
                     // Voice
                     if (Messages) {
-                        const { CAMERA_ON, CAMERA_OFF, SHARE_YOUR_SCREEN, EMBEDDED_ACTIVITIES_ROCKET_BUTTON_A11Y_LABEL, EMBEDDED_ACTIVITIES_INVALID_PERMISSIONS } = Messages;
-
                         const actionButtons = voiceActionButtonsSelector + ' ';
 
-                        if (this.settings.voice.cameraPanelButton) this.styler.add(getAriaLabelRule(actionButtons, CAMERA_ON, CAMERA_OFF));
-                        if (this.settings.voice.screensharePanelButton) this.styler.add(getAriaLabelRule(actionButtons, SHARE_YOUR_SCREEN));
-                        if (this.settings.voice.activityPanelButton)
-                            this.styler.add(getAriaLabelRule(actionButtons, EMBEDDED_ACTIVITIES_ROCKET_BUTTON_A11Y_LABEL, EMBEDDED_ACTIVITIES_INVALID_PERMISSIONS));
+                        if (this.settings.voice.cameraPanelButton) this.styler.add(getAriaLabelRule(actionButtons, "Turn On Camera", "Turn Off Camera"));
+                        if (this.settings.voice.screensharePanelButton) this.styler.add(getAriaLabelRule(actionButtons, "Share Your Screen"));
+                        if (this.settings.voice.activityPanelButton) this.styler.add(getAriaLabelRule(actionButtons, "Start An Activity"));
+                        if (this.settings.voice.soundboardPanelButton) this.styler.add(getAriaLabelRule(actionButtons, "Open Soundboard"))
                         if (this.settings.voice.krispButton) this.styler.add(getCssRule(`button${getAriaLabelSelector('Noise Suppression powered by Krisp')}`))
                     }
 
