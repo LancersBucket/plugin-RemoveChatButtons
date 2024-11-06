@@ -270,6 +270,13 @@ module.exports = (() => {
                     },
                     {
                         type: 'switch',
+                        id: 'soundboardPanelButton',
+                        name: 'Remove Soundboard Panel Button',
+                        note: 'Removes the soundboard button from the voice chat panel in the bottom left.',
+                        value: false,
+                    },
+                    {
+                        type: 'switch',
                         id: 'krispButton',
                         name: 'Remove Noise Suppression Button',
                         note: 'Removes the noise supression button from the user voice chat panel.',
@@ -387,6 +394,7 @@ module.exports = (() => {
             const emojiButtonSelector = toSelector(buttonClasses.emojiButton);
             const stickerButtonSelector = toSelector(buttonClasses.stickerButton);
             const attachButtonSelector = toSelector(buttonClasses.attachButton);
+            //console.log(buttonClasses)
 
             const appLauncherClass = getModule(Filters.byProps('channelAppLauncher'));
             const appLauncherButton = toSelector(appLauncherClass.channelAppLauncher);
@@ -430,12 +438,10 @@ module.exports = (() => {
 
                     // Chat Buttons
                     if (Messages) {
-                        const { GIF_BUTTON_LABEL } = Messages;
-
                         if (this.settings.giftButton) this.styler.add(getCssRule(`button${getAriaLabelSelector('Send a gift')}`));
-                        if (this.settings.gifButton) this.styler.add(getAriaLabelRule(channelTextAreaSelector + ' ', GIF_BUTTON_LABEL));
+                        if (this.settings.gifButton) this.styler.add(getAriaLabelRule(channelTextAreaSelector + ' ', "Open GIF picker"));
                     }
-                    if (this.settings.emojiButton) this.styler.add(getTextAreaCssRule(emojiButtonSelector));
+                    if (this.settings.emojiButton) this.styler.add(getAriaLabelRule(channelTextAreaSelector + ' ', "Select emoji"));
                     if (this.settings.stickerButton) this.styler.add(getTextAreaCssRule(stickerButtonSelector));
                     if (this.settings.attachButton) this.styler.add(getTextAreaCssRule(attachButtonSelector));
                     if (this.settings.appLauncherButton) this.styler.add(getCssRule(appLauncherButton));
@@ -493,14 +499,12 @@ module.exports = (() => {
 
                     // Voice
                     if (Messages) {
-                        const { CAMERA_ON, CAMERA_OFF, SHARE_YOUR_SCREEN, EMBEDDED_ACTIVITIES_ROCKET_BUTTON_A11Y_LABEL, EMBEDDED_ACTIVITIES_INVALID_PERMISSIONS } = Messages;
-
                         const actionButtons = voiceActionButtonsSelector + ' ';
 
-                        if (this.settings.voice.cameraPanelButton) this.styler.add(getAriaLabelRule(actionButtons, CAMERA_ON, CAMERA_OFF));
-                        if (this.settings.voice.screensharePanelButton) this.styler.add(getAriaLabelRule(actionButtons, SHARE_YOUR_SCREEN));
-                        if (this.settings.voice.activityPanelButton)
-                            this.styler.add(getAriaLabelRule(actionButtons, EMBEDDED_ACTIVITIES_ROCKET_BUTTON_A11Y_LABEL, EMBEDDED_ACTIVITIES_INVALID_PERMISSIONS));
+                        if (this.settings.voice.cameraPanelButton) this.styler.add(getAriaLabelRule(actionButtons, "Turn On Camera", "Turn Off Camera"));
+                        if (this.settings.voice.screensharePanelButton) this.styler.add(getAriaLabelRule(actionButtons, "Share Your Screen"));
+                        if (this.settings.voice.activityPanelButton) this.styler.add(getAriaLabelRule(actionButtons, "Start An Activity"));
+                        if (this.settings.voice.soundboardPanelButton) this.styler.add(getAriaLabelRule(actionButtons, "Open Soundboard"))
                         if (this.settings.voice.krispButton) this.styler.add(getCssRule(`button${getAriaLabelSelector('Noise Suppression powered by Krisp')}`))
                     }
 
