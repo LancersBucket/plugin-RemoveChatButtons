@@ -368,6 +368,7 @@ module.exports = (() => {
             const emojiButtonSelector = toSelector(buttonClasses.emojiButton);
             const stickerButtonSelector = toSelector(buttonClasses.stickerButton);
             const attachButtonSelector = toSelector(buttonClasses.attachButton);
+            //console.log(buttonClasses)
 
             const appLauncherClass = getModule(Filters.byProps('channelAppLauncher'));
             const appLauncherButton = toSelector(appLauncherClass.channelAppLauncher);
@@ -428,12 +429,10 @@ module.exports = (() => {
 
                     // Chat Buttons
                     if (Messages) {
-                        const { GIF_BUTTON_LABEL } = Messages;
-
                         if (this.settings.giftButton) this.styler.add(getCssRule(`button${getAriaLabelSelector('Send a gift')}`));
-                        if (this.settings.gifButton) this.styler.add(getAriaLabelRule(channelTextAreaSelector + ' ', GIF_BUTTON_LABEL));
+                        if (this.settings.gifButton) this.styler.add(getAriaLabelRule(channelTextAreaSelector + ' ', "Open GIF picker"));
                     }
-                    if (this.settings.emojiButton) this.styler.add(getTextAreaCssRule(emojiButtonSelector));
+                    if (this.settings.emojiButton) this.styler.add(getAriaLabelRule(channelTextAreaSelector + ' ', "Select emoji"));
                     if (this.settings.stickerButton) this.styler.add(getTextAreaCssRule(stickerButtonSelector));
                     if (this.settings.attachButton) this.styler.add(getTextAreaCssRule(attachButtonSelector));
                     if (this.settings.appLauncherButton) this.styler.add(getCssRule(appLauncherButton));
