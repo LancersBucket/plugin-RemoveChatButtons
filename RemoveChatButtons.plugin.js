@@ -143,13 +143,6 @@ module.exports = (() => {
                     },
                     {
                         type: 'switch',
-                        id: 'superReactionButton',
-                        name: 'Remove Super Reaction Button',
-                        note: 'Removes the "Add Super Reaction" button from messages.',
-                        value: false,
-                    },
-                    {
-                        type: 'switch',
                         id: 'editButton',
                         name: 'Remove Edit Button',
                         note: 'Removes the "Edit" button from messages.',
@@ -335,9 +328,10 @@ module.exports = (() => {
         ],
         changelog: [
             {
-                title: 'Fixed',
-                type: 'fixed',
-                items: ['Fixed several issues.'],
+                title: 'v1.7.1',
+                type: 'improved',
+                items: ['Removed Super Reactions toggle, as they don\'t exist anymore.',
+                        'Fixed gif and gift buttons not functioning.'],
             },
         ],
     };
@@ -390,10 +384,8 @@ module.exports = (() => {
 
             const buttonClasses = getModule(Filters.byProps('emojiButton', 'stickerButton'));
             const channelTextAreaSelector = toSelector(buttonClasses.channelTextArea);
-            const emojiButtonSelector = toSelector(buttonClasses.emojiButton);
             const stickerButtonSelector = toSelector(buttonClasses.stickerButton);
             const attachButtonSelector = toSelector(buttonClasses.attachButton);
-            //console.log(buttonClasses)
 
             const appLauncherClass = getModule(Filters.byProps('channelAppLauncher'));
             const appLauncherButton = toSelector(appLauncherClass.channelAppLauncher);
@@ -436,20 +428,14 @@ module.exports = (() => {
                     const Messages = createMessagesProxy();
 
                     // Chat Buttons
-                    if (Messages) {
-                        if (this.settings.giftButton) this.styler.add(getCssRule(`button${getAriaLabelSelector('Send a gift')}`));
-                        if (this.settings.gifButton) this.styler.add(getAriaLabelRule(channelTextAreaSelector + ' ', "Open GIF picker"));
-                    }
+                    if (this.settings.giftButton) this.styler.add(getCssRule(`button${getAriaLabelSelector('Send a gift')}`));
+                    if (this.settings.gifButton) this.styler.add(getAriaLabelRule(channelTextAreaSelector + ' ', "Open GIF picker"));
                     if (this.settings.emojiButton) this.styler.add(getAriaLabelRule(channelTextAreaSelector + ' ', "Select emoji"));
                     if (this.settings.stickerButton) this.styler.add(getTextAreaCssRule(stickerButtonSelector));
                     if (this.settings.attachButton) this.styler.add(getTextAreaCssRule(attachButtonSelector));
                     if (this.settings.appLauncherButton) this.styler.add(getCssRule(appLauncherButton));
 
                     // Message Actions
-                    if (Messages) {
-                        const { ADD_BURST_REACTION } = Messages;
-                        if (this.settings.messageActions.superReactionButton) this.styler.add(getAriaLabelRule(messageActionButtonsSelector + ' ', ADD_BURST_REACTION));
-                    }
                     if (this.settings.messageActions.reactionButton) this.styler.add(getAriaLabelRule(messageActionButtonsSelector + ' ', "Add Reaction"));
                     if (this.settings.messageActions.editButton) this.styler.add(getAriaLabelRule(messageActionButtonsSelector + ' ', "Edit"));
                     if (this.settings.messageActions.replyButton) this.styler.add(getAriaLabelRule(messageActionButtonsSelector + ' ', "Reply"));
