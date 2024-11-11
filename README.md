@@ -1,4 +1,6 @@
-# RemoveChatButtons
+# Chat Buttons Begone!
+
+This plugin is based on the work of [QbDesu](https://github.com/QbDesu)'s [RemoveChatButtons](https://github.com/BleedingBD/plugin-RemoveChatButtons) plugin.
 
 This plugin allow you to hide all those annoying Chat Buttons that always bothered you. And much more!  
 Gift button? Begone! Sticker button? Begone!  
