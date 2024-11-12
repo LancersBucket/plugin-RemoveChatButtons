@@ -81,7 +81,7 @@ module.exports = (() => {
                     github_username: 'LancersBucket'
                 },
             ],
-            version: '1.7.0',
+            version: '1.7.1',
             description: 'Hide annoying stuff from your Discord client.',
             github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
             github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/RemoveChatButtons.plugin.js',
