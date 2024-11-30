@@ -335,7 +335,7 @@ module.exports = (() => {
                         cancelText: 'Cancel',
                         onConfirm: () => {
                             require('request').get(
-                                'https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js',
+                                'https://zerebos.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js',
                                 async (error, response, body) => {
                                     if (error) return require('electron').shell.openExternal('https://betterdiscord.app/Download?id=9');
                                     await new Promise((r) =>
