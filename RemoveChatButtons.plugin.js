@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 1.7.1
+ * @version 1.7.2
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/RemoveChatButtons.plugin.js
  */
@@ -81,7 +81,7 @@ module.exports = (() => {
                     github_username: 'LancersBucket'
                 },
             ],
-            version: '1.7.1',
+            version: '1.7.2',
             description: 'Hide annoying stuff from your Discord client.',
             github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
             github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/RemoveChatButtons.plugin.js',
@@ -328,10 +328,9 @@ module.exports = (() => {
         ],
         changelog: [
             {
-                title: 'v1.7.1',
-                type: 'improved',
-                items: ['Removed Super Reactions toggle, as they don\'t exist anymore.',
-                        'Fixed gif and gift buttons not functioning.'],
+                title: 'v1.7.2',
+                type: 'fixed',
+                items: ['Fixed ZeresPluginLibrary dependency download URL'],
             },
         ],
     };
@@ -347,7 +346,7 @@ module.exports = (() => {
                         cancelText: 'Cancel',
                         onConfirm: () => {
                             require('request').get(
-                                'https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js',
+                                'https://zerebos.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js',
                                 async (error, response, body) => {
                                     if (error) return require('electron').shell.openExternal('https://betterdiscord.app/Download?id=9');
                                     await new Promise((r) =>
