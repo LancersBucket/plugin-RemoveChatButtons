@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.0.0
+ * @version 2.0.1
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/RemoveChatButtons.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.0.0',
+        version: '2.0.1',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/BleedingBD/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/BleedingBD/plugin-RemoveChatButtons/main/RemoveChatButtons.plugin.js',
@@ -128,6 +128,13 @@ const config = {
             name: 'Message Actions',
             id: 'messageActions',
             settings: [
+                {
+                    type: 'switch',
+                    id: 'quickRections',
+                    name: 'Remove Quick Reactions',
+                    note: 'Removes the quick reactions from messages.',
+                    value: false,
+                },
                 {
                     type: 'switch',
                     id: 'reactionButton',
@@ -219,13 +226,13 @@ const config = {
                     note: 'Removes the "public" badge that covers part of server\'s banner.',
                     value: false,
                 },
-                {
+                /*{
                     type: 'switch',
                     id: 'boostBar',
                     name: 'Remove Boost Bar',
                     note: 'Removes the boost progress bar from the channel list.',
                     value: true,
-                },
+                },*/
                 {
                     type: 'switch',
                     id: 'inviteButton',
@@ -315,9 +322,9 @@ const config = {
     ],
     changelog: [
         {
-            title: 'v2.0.0',
+            title: 'v2.0.1',
             type: 'fixed',
-            items: ['Completely overhauled the plugin, removing ZeresPluginLibrary as a dependency.'],
+            items: ['Fixed quick reactions not being removed.', 'Seperated quick reactions and add reaction button as two different options.','Removed boost bar option. This will be added back in a future update.'],
         },
     ],
 };
@@ -361,6 +368,7 @@ module.exports = class RemoveChatButtons {
         // Message Actions
         if (Messages) {
             const { ADD_BURST_REACTION } = Messages;
+            if (this.settings.messageActions.quickReactions) this.styler.add(this.getAriaLabelRuleLoose(this.messageActionButtonsSelector + ' ', "Click to react with"));
             if (this.settings.messageActions.superReactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', ADD_BURST_REACTION));
             if (this.settings.messageActions.reactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Add Reaction"));
             if (this.settings.messageActions.editButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Edit"));
@@ -377,12 +385,16 @@ module.exports = class RemoveChatButtons {
 
         // Channels
         if (Messages) {
+            
             if (this.settings.channels.publicBadge) {
                 const { DISCOVERABLE_GUILD_HEADER_PUBLIC_INFO } = Messages;
                 this.styler.add(this.getAriaLabelRule(this.communityInfoPillSelector, DISCOVERABLE_GUILD_HEADER_PUBLIC_INFO));
             }
 
-            if (this.settings.channels.boostBar) {
+            // Removing for now. Currently just creates a bunch of empty aria rules that remove the emojis.
+            // This porbably broke at some point long ago, either during the transition to 2.0.0
+            // or it's been broken in BD for a while.
+            /*if (this.settings.channels.boostBar) {
                 const {
                     PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP_COMPLETE,
                     PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP,
@@ -398,7 +410,7 @@ module.exports = class RemoveChatButtons {
                     PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP.replace('{levelName}', PREMIUM_GUILD_TIER_3),
                 ];
                 this.styler.add(this.getAriaLabelRule('', ...selectors));
-            }
+            }*/
 
             if (this.settings.channels.inviteButton) {
                 const { CREATE_INSTANT_INVITE } = Messages;
@@ -508,6 +520,14 @@ module.exports = class RemoveChatButtons {
 
     getAriaLabelRule(pre, ...labels) {
         return this.getCssRule(labels.map((label) => `${pre || ''}${this.getAriaLabelSelector(label)}`).join(', '));
+    }
+
+    getAriaLabelSelectorLoose(label) {
+        return `[aria-label*="${label}"]`;
+    }
+
+    getAriaLabelRuleLoose(pre, ...labels) {
+        return this.getCssRule(labels.map((label) => `${pre || ''}${this.getAriaLabelSelectorLoose(label)}`).join(', '));
     }
 
     get channelTextAreaSelector() {
