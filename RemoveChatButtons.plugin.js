@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.0.1
+ * @version 2.0.2
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/RemoveChatButtons.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.0.1',
+        version: '2.0.2',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/BleedingBD/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/BleedingBD/plugin-RemoveChatButtons/main/RemoveChatButtons.plugin.js',
@@ -214,7 +214,7 @@ const config = {
                 },
             ],
         },
-        {
+        /*{
             type: 'category',
             name: 'Channel List',
             id: 'channels',
@@ -226,13 +226,13 @@ const config = {
                     note: 'Removes the "public" badge that covers part of server\'s banner.',
                     value: false,
                 },
-                /*{
+                {
                     type: 'switch',
                     id: 'boostBar',
                     name: 'Remove Boost Bar',
                     note: 'Removes the boost progress bar from the channel list.',
                     value: true,
-                },*/
+                },
                 {
                     type: 'switch',
                     id: 'inviteButton',
@@ -241,7 +241,7 @@ const config = {
                     value: false,
                 },
             ],
-        },
+        },*/
         {
             type: 'category',
             name: 'Voice',
@@ -322,9 +322,9 @@ const config = {
     ],
     changelog: [
         {
-            title: 'v2.0.1',
+            title: 'v2.0.2',
             type: 'fixed',
-            items: ['Fixed quick reactions not being removed.', 'Seperated quick reactions and add reaction button as two different options.','Removed boost bar option. This will be added back in a future update.'],
+            items: ['Actually fixed quick reactions not being removed.','Temporarily removed the channel list options. They will be re-added in a future update.'],
         },
     ],
 };
@@ -353,28 +353,21 @@ module.exports = class RemoveChatButtons {
     }
 
     addStyles() {
-        const Messages = this.createMessagesProxy();
-
         // Chat Buttons
-        if (Messages) {
-            if (this.settings.emojiButton) this.styler.add(this.getAriaLabelRule(this.channelTextAreaSelector + ' ', "Select emoji"));
-            if (this.settings.stickerButton) this.styler.add(this.getTextAreaCssRule(this.stickerButtonSelector));
-            if (this.settings.gifButton) this.styler.add(this.getAriaLabelRule(this.channelTextAreaSelector + ' ', "Open GIF picker"));
-            if (this.settings.giftButton) this.styler.add(this.getCssRule(`button${this.getAriaLabelSelector('Send a gift')}`));
-            if (this.settings.attachButton) this.styler.add(this.getTextAreaCssRule(this.attachButtonSelector));
-            if (this.settings.appLauncherButton) this.styler.add(this.getCssRule(this.appLauncherButton));
-        }
+        if (this.settings.emojiButton) this.styler.add(this.getAriaLabelRule(this.channelTextAreaSelector + ' ', "Select emoji"));
+        if (this.settings.stickerButton) this.styler.add(this.getTextAreaCssRule(this.stickerButtonSelector));
+        if (this.settings.gifButton) this.styler.add(this.getAriaLabelRule(this.channelTextAreaSelector + ' ', "Open GIF picker"));
+        if (this.settings.giftButton) this.styler.add(this.getCssRule(`button${this.getAriaLabelSelector('Send a gift')}`));
+        if (this.settings.attachButton) this.styler.add(this.getTextAreaCssRule(this.attachButtonSelector));
+        if (this.settings.appLauncherButton) this.styler.add(this.getCssRule(this.appLauncherButton));
 
         // Message Actions
-        if (Messages) {
-            const { ADD_BURST_REACTION } = Messages;
-            if (this.settings.messageActions.quickReactions) this.styler.add(this.getAriaLabelRuleLoose(this.messageActionButtonsSelector + ' ', "Click to react with"));
-            if (this.settings.messageActions.superReactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', ADD_BURST_REACTION));
-            if (this.settings.messageActions.reactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Add Reaction"));
-            if (this.settings.messageActions.editButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Edit"));
-            if (this.settings.messageActions.replyButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Reply"));
-            if (this.settings.messageActions.forwardButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Forward"));
-        }
+        if (this.settings.messageActions.quickReactions) this.styler.add(this.getAriaLabelRuleLoose(this.messageActionButtonsSelector + ' ', "Click to react with"));
+        if (this.settings.messageActions.superReactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Add Super Reaction"));
+        if (this.settings.messageActions.reactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Add Reaction"));
+        if (this.settings.messageActions.editButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Edit"));
+        if (this.settings.messageActions.replyButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Reply"));
+        if (this.settings.messageActions.forwardButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Forward"));
 
         // DMs
         if (this.settings.dms.friendsTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/channels/@me"]`));
@@ -384,50 +377,45 @@ module.exports = class RemoveChatButtons {
         if (this.settings.dms.discordShopTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/shop"]`));
 
         // Channels
-        if (Messages) {
-            
-            if (this.settings.channels.publicBadge) {
-                const { DISCOVERABLE_GUILD_HEADER_PUBLIC_INFO } = Messages;
-                this.styler.add(this.getAriaLabelRule(this.communityInfoPillSelector, DISCOVERABLE_GUILD_HEADER_PUBLIC_INFO));
-            }
-
-            // Removing for now. Currently just creates a bunch of empty aria rules that remove the emojis.
-            // This porbably broke at some point long ago, either during the transition to 2.0.0
-            // or it's been broken in BD for a while.
-            /*if (this.settings.channels.boostBar) {
-                const {
-                    PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP_COMPLETE,
-                    PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP,
-                    PREMIUM_GUILD_TIER_1,
-                    PREMIUM_GUILD_TIER_2,
-                    PREMIUM_GUILD_TIER_3,
-                } = Messages;
-
-                const selectors = [
-                    PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP_COMPLETE,
-                    PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP.replace('{levelName}', PREMIUM_GUILD_TIER_1),
-                    PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP.replace('{levelName}', PREMIUM_GUILD_TIER_2),
-                    PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP.replace('{levelName}', PREMIUM_GUILD_TIER_3),
-                ];
-                this.styler.add(this.getAriaLabelRule('', ...selectors));
-            }*/
-
-            if (this.settings.channels.inviteButton) {
-                const { CREATE_INSTANT_INVITE } = Messages;
-                this.styler.add(this.getAriaLabelRule(this.iconItemSelector, CREATE_INSTANT_INVITE));
-            }
+        // Removing this section for now. The old system that used const Messages = this.createMessagesProxy(); uses functions that have been depreciated for a long time.
+        // This can be done without it, I just need to take the time to find all the Aria rules.
+        /*
+        if (this.settings.channels.publicBadge) {
+            const { DISCOVERABLE_GUILD_HEADER_PUBLIC_INFO } = Messages;
+            this.styler.add(this.getAriaLabelRule(this.communityInfoPillSelector, DISCOVERABLE_GUILD_HEADER_PUBLIC_INFO));
         }
+        if (this.settings.channels.boostBar) {
+            const {
+                PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP_COMPLETE,
+                PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP,
+                PREMIUM_GUILD_TIER_1,
+                PREMIUM_GUILD_TIER_2,
+                PREMIUM_GUILD_TIER_3,
+            } = Messages;
+
+            const selectors = [
+                PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP_COMPLETE,
+                PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP.replace('{levelName}', PREMIUM_GUILD_TIER_1),
+                PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP.replace('{levelName}', PREMIUM_GUILD_TIER_2),
+                PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP.replace('{levelName}', PREMIUM_GUILD_TIER_3),
+            ];
+            this.styler.add(this.getAriaLabelRule('', ...selectors));
+        }
+        if (this.settings.channels.inviteButton) {
+            const { CREATE_INSTANT_INVITE } = Messages;
+            console.log(CREATE_INSTANT_INVITE);
+            this.styler.add(this.getAriaLabelRule(this.iconItemSelector, CREATE_INSTANT_INVITE));
+        }
+        */
 
         // Voice
-        if (Messages) {
-            const actionButtons = this.voiceActionButtonsSelector + ' ';
+        const actionButtons = this.voiceActionButtonsSelector + ' ';
 
-            if (this.settings.voice.cameraPanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, "Turn On Camera", "Turn Off Camera"));
-            if (this.settings.voice.screensharePanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, "Share Your Screen"));
-            if (this.settings.voice.activityPanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, "Start An Activity"));
-            if (this.settings.voice.soundboardPanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, "Open Soundboard"));
-            if (this.settings.voice.krispButton) this.styler.add(this.getCssRule(`button${this.getAriaLabelSelector('Noise Suppression powered by Krisp')}`));
-        }
+        if (this.settings.voice.cameraPanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, "Turn On Camera", "Turn Off Camera"));
+        if (this.settings.voice.screensharePanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, "Share Your Screen"));
+        if (this.settings.voice.activityPanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, "Start An Activity"));
+        if (this.settings.voice.soundboardPanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, "Open Soundboard"));
+        if (this.settings.voice.krispButton) this.styler.add(this.getCssRule(`button${this.getAriaLabelSelector('Noise Suppression powered by Krisp')}`));
 
         // Toolbar
         if (this.settings.toolbar.helpButton) this.styler.add(this.getCssRule(`a[href="https://support.discord.com"]`));
@@ -480,28 +468,6 @@ module.exports = class RemoveChatButtons {
                 }
                 this.api.Data.save('settings', this.settings);
                 this.refreshStyles();
-            },
-        });
-    }
-
-    createMessagesProxy() {
-        const LocaleManager = this.api.findModuleByProps('Messages');
-        if (!LocaleManager) {
-            this.api.UI.showToast('LocaleManager not found!', { type: 'error' });
-            return {};
-        }
-        if (!LocaleManager.Messages) {
-            this.api.UI.showToast('Messages not found!', { type: 'error' });
-            return {};
-        }
-
-        return new Proxy(LocaleManager.Messages, {
-            get: (target, prop) => {
-                const message = target[prop];
-                if (typeof message === 'string') return message;
-                if (message?.message) return message.message;
-                this.api.UI.showToast(`Translation not found: ${prop}`, { type: 'error' });
-                return prop;
             },
         });
     }
