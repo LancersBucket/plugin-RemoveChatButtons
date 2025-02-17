@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.0.2
+ * @version 2.0.3
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/RemoveChatButtons.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.0.2',
+        version: '2.0.3',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/BleedingBD/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/BleedingBD/plugin-RemoveChatButtons/main/RemoveChatButtons.plugin.js',
@@ -130,7 +130,7 @@ const config = {
             settings: [
                 {
                     type: 'switch',
-                    id: 'quickRections',
+                    id: 'quickReactions',
                     name: 'Remove Quick Reactions',
                     note: 'Removes the quick reactions from messages.',
                     value: false,
@@ -322,9 +322,9 @@ const config = {
     ],
     changelog: [
         {
-            title: 'v2.0.2',
+            title: 'v2.0.3',
             type: 'fixed',
-            items: ['Actually fixed quick reactions not being removed.','Temporarily removed the channel list options. They will be re-added in a future update.'],
+            items: ['Actually fixed quick reactions not being removed. For real this time. You may have to re-enable the option again.'],
         },
     ],
 };
@@ -362,7 +362,7 @@ module.exports = class RemoveChatButtons {
         if (this.settings.appLauncherButton) this.styler.add(this.getCssRule(this.appLauncherButton));
 
         // Message Actions
-        if (this.settings.messageActions.quickReactions) this.styler.add(this.getAriaLabelRuleLoose(this.messageActionButtonsSelector + ' ', "Click to react with"));
+        if (this.settings.messageActions.quickReactions) this.styler.add(this.getAriaLabelRuleLoose(this.messageActionButtonsSelector + ' ', "Click to react with "));
         if (this.settings.messageActions.superReactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Add Super Reaction"));
         if (this.settings.messageActions.reactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Add Reaction"));
         if (this.settings.messageActions.editButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Edit"));
