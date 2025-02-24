@@ -1,12 +1,12 @@
 /**
- * @name RemoveChatButtons
- * @displayName RemoveChatButtons
+ * @name ChatButtonsBegone
+ * @displayName ChatButtonsBegone
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.0.3
+ * @version 2.1.0
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
- * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/RemoveChatButtons.plugin.js
+ * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -67,7 +67,7 @@ class Styler {
 
 const config = {
     info: {
-        name: 'RemoveChatButtons',
+        name: 'ChatButtonsBegone',
         authors: [
             {
                 name: 'Bucket',
@@ -75,10 +75,10 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.0.3',
+        version: '2.1.0',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/BleedingBD/plugin-RemoveChatButtons',
-        github_raw: 'https://raw.githubusercontent.com/BleedingBD/plugin-RemoveChatButtons/main/RemoveChatButtons.plugin.js',
+        github_raw: 'https://raw.githubusercontent.com/BleedingBD/plugin-RemoveChatButtons/main/ChatButtonsBegone.plugin.js',
     },
     defaultConfig: [
         {
@@ -321,15 +321,10 @@ const config = {
         },
     ],
     changelog: [
-        {
-            title: 'v2.0.3',
-            type: 'fixed',
-            items: ['Actually fixed quick reactions not being removed. For real this time. You may have to re-enable the option again.'],
-        },
     ],
 };
 
-module.exports = class RemoveChatButtons {
+module.exports = class ChatButtonsBegone {
     constructor(meta) {
         this.meta = meta;
         this.api = new BdApi(this.meta.name);
