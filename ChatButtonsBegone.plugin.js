@@ -127,6 +127,7 @@ const config = {
             type: 'category',
             name: 'Message Actions',
             id: 'messageActions',
+            collapsible: true,
             settings: [
                 {
                     type: 'switch',
@@ -176,6 +177,7 @@ const config = {
             type: 'category',
             name: 'Direct Messages',
             id: 'dms',
+            collapsible: true,
             settings: [
                 {
                     type: 'switch',
@@ -246,6 +248,7 @@ const config = {
             type: 'category',
             name: 'Voice',
             id: 'voice',
+            collapsible: true,
             settings: [
                 {
                     type: 'switch',
@@ -288,6 +291,7 @@ const config = {
             type: 'category',
             name: 'Toolbar',
             id: 'toolbar',
+            collapsible: true,
             settings: [
                 {
                     type: 'switch',
@@ -309,6 +313,7 @@ const config = {
             type: 'category',
             name: 'Compatibility',
             id: 'compatibility',
+            collapsible: true,
             settings: [
                 {
                     type: 'switch',
@@ -446,7 +451,10 @@ module.exports = class ChatButtonsBegone {
         settings.forEach(setting => {
             if (setting.type === 'category') {
                 setting.settings.forEach(subSetting => {
+                    // Try to set the value, if it's missing, initialize to default value.
+                    try {
                     subSetting.value = this.settings[setting.id][subSetting.id];
+                    } catch (error) {}
                 });
             } else {
                 setting.value = this.settings[setting.id];
@@ -457,7 +465,13 @@ module.exports = class ChatButtonsBegone {
             settings,
             onChange: (category, id, value) => {
                 if (category === 'messageActions' || category === 'dms' || category === 'channels' || category === 'voice' || category === 'toolbar' || category === 'compatibility') {
+                    // Try to modify the key, if the category is missing, create it.
+                    try {
+                        this.settings[category][id] = value;
+                    } catch (error) {
+                        this.settings[category] = {};
                     this.settings[category][id] = value;
+                    }
                 } else {
                     this.settings[id] = value;
                 }
