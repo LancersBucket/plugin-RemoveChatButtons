@@ -405,7 +405,7 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.toolbar.inboxButton) this.styler.add(this.getCssRule(this.inboxButtonSelector));
 
         // Compatibility
-        if (this.settings.compatibility.invisibleTypingButton) this.styler.add(this.getTextAreaCssRule('.invisible-typing-button'));
+        if (this.settings.compatibility.invisibleTypingButton) this.styler.add(this.getTextAreaCssRule('.invisibleTypingButton'));
     }
 
     refreshStyles() {
