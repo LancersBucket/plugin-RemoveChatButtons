@@ -216,18 +216,20 @@ const config = {
                 },
             ],
         },
-        /*{
+        {
             type: 'category',
             name: 'Channel List',
             id: 'channels',
+            collapsible: true,
             settings: [
-                {
+                // Left disabled because I'm not sure what this did before.
+                /*{
                     type: 'switch',
                     id: 'publicBadge',
                     name: 'Remove Public Badge',
                     note: 'Removes the "public" badge that covers part of server\'s banner.',
                     value: false,
-                },
+                },*/
                 {
                     type: 'switch',
                     id: 'boostBar',
@@ -243,7 +245,7 @@ const config = {
                     value: false,
                 },
             ],
-        },*/
+        },
         {
             type: 'category',
             name: 'Voice',
@@ -377,36 +379,17 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.dms.discordShopTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/shop"]`));
 
         // Channels
-        // Removing this section for now. The old system that used const Messages = this.createMessagesProxy(); uses functions that have been depreciated for a long time.
-        // This can be done without it, I just need to take the time to find all the Aria rules.
-        /*
-        if (this.settings.channels.publicBadge) {
-            const { DISCOVERABLE_GUILD_HEADER_PUBLIC_INFO } = Messages;
-            this.styler.add(this.getAriaLabelRule(this.communityInfoPillSelector, DISCOVERABLE_GUILD_HEADER_PUBLIC_INFO));
-        }
+        // I really don't know what this is referencing.
+        // if (this.settings.channels.publicBadge) {
+        //     const { DISCOVERABLE_GUILD_HEADER_PUBLIC_INFO } = Messages;
+        //     this.styler.add(this.getAriaLabelRule(this.communityInfoPillSelector, DISCOVERABLE_GUILD_HEADER_PUBLIC_INFO));
+        // }
         if (this.settings.channels.boostBar) {
-            const {
-                PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP_COMPLETE,
-                PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP,
-                PREMIUM_GUILD_TIER_1,
-                PREMIUM_GUILD_TIER_2,
-                PREMIUM_GUILD_TIER_3,
-            } = Messages;
-
-            const selectors = [
-                PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP_COMPLETE,
-                PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP.replace('{levelName}', PREMIUM_GUILD_TIER_1),
-                PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP.replace('{levelName}', PREMIUM_GUILD_TIER_2),
-                PREMIUM_GUILD_SUBSCRIPTIONS_NUDGE_TOOLTIP.replace('{levelName}', PREMIUM_GUILD_TIER_3),
-            ];
-            this.styler.add(this.getAriaLabelRule('', ...selectors));
+            this.styler.add(this.getDataListItemIdRuleLoose('', 'channels___boosts'));
         }
         if (this.settings.channels.inviteButton) {
-            const { CREATE_INSTANT_INVITE } = Messages;
-            console.log(CREATE_INSTANT_INVITE);
-            this.styler.add(this.getAriaLabelRule(this.iconItemSelector, CREATE_INSTANT_INVITE));
+            this.styler.add(this.getAriaLabelRule(this.iconItemSelector, "Create Invite"));
         }
-        */
 
         // Voice
         const actionButtons = this.voiceActionButtonsSelector + ' ';
@@ -453,7 +436,7 @@ module.exports = class ChatButtonsBegone {
                 setting.settings.forEach(subSetting => {
                     // Try to set the value, if it's missing, initialize to default value.
                     try {
-                    subSetting.value = this.settings[setting.id][subSetting.id];
+                        subSetting.value = this.settings[setting.id][subSetting.id];    
                     } catch (error) {}
                 });
             } else {
@@ -470,7 +453,7 @@ module.exports = class ChatButtonsBegone {
                         this.settings[category][id] = value;
                     } catch (error) {
                         this.settings[category] = {};
-                    this.settings[category][id] = value;
+                        this.settings[category][id] = value;
                     }
                 } else {
                     this.settings[id] = value;
@@ -503,6 +486,14 @@ module.exports = class ChatButtonsBegone {
 
     getAriaLabelRuleLoose(pre, ...labels) {
         return this.getCssRule(labels.map((label) => `${pre || ''}${this.getAriaLabelSelectorLoose(label)}`).join(', '));
+    }
+
+    getDataListItemIdLoose(label) {
+        return `[data-list-item-id*="${label}"]`;
+    }
+
+    getDataListItemIdRuleLoose(pre, ...labels) {
+        return this.getCssRule(labels.map((label) => `${pre || ''}${this.getDataListItemIdLoose(label)}`).join(', '));
     }
 
     get channelTextAreaSelector() {
