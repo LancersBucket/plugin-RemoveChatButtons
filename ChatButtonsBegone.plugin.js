@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.2.0
+ * @version 2.3.0
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.2.0',
+        version: '2.3.0',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/BleedingBD/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/BleedingBD/plugin-RemoveChatButtons/main/ChatButtonsBegone.plugin.js',
@@ -93,14 +93,14 @@ const config = {
             id: 'stickerButton',
             name: 'Remove Sticker Button',
             note: 'Removes the Sticker button from the chat.',
-            value: true,
+            value: false,
         },
         {
             type: 'switch',
             id: 'gifButton',
             name: 'Remove GIF Button',
             note: 'Removes the GIF button from the chat.',
-            value: true,
+            value: false,
         },
         {
             type: 'switch',
@@ -148,7 +148,7 @@ const config = {
                     id: 'superReactionButton',
                     name: 'Remove Super Reaction Button',
                     note: 'Removes the "Add Super Reaction" button from messages.',
-                    value: false,
+                    value: true,
                 },
                 {
                     type: 'switch',
@@ -205,14 +205,14 @@ const config = {
                     id: 'discordBirthdayTab',
                     name: 'Remove Discord\'s Birthday Tab',
                     note: 'Removes the seasonal "Discord\'s Birthday" tab button from the DM list.',
-                    value: true,
+                    value: false,
                 },
                 {
                     type: 'switch',
                     id: 'discordShopTab',
                     name: 'Remove Discord\'s Shop Tab',
                     note: 'Removes the Discord Shop tab button from the DM list.',
-                    value: false,
+                    value: true,
                 },
             ],
         },
@@ -313,6 +313,21 @@ const config = {
         },
         {
             type: 'category',
+            name: 'Miscellaneous',
+            id: 'miscellaneous',
+            collapsible: true,
+            settings: [
+                {
+                    type: 'switch',
+                    id: 'activitySection',
+                    name: 'Remove Activities Section',
+                    note: "Removes the Activities Section from the server member list.",
+                    value: false,
+                },
+            ],
+        },
+        {
+            type: 'category',
             name: 'Compatibility',
             id: 'compatibility',
             collapsible: true,
@@ -338,6 +353,21 @@ module.exports = class ChatButtonsBegone {
         this.styler = new Styler(this.meta.name);
         this.settings = this.api.Data.load('settings') || this.defaultSettings();
         this.refreshLocaleFn = this.refreshLocaleFn.bind(this);
+
+        // Ensure all keys exist in settings
+        this.ensureDefaultSettings();
+    }
+
+    ensureDefaultSettings() {
+        const defaultSettings = this.defaultSettings();
+        for (const key in defaultSettings) {
+            if (typeof defaultSettings[key] === 'object' && !Array.isArray(defaultSettings[key])) {
+                this.settings[key] = { ...defaultSettings[key], ...this.settings[key] };
+            } else if (!(key in this.settings)) {
+                this.settings[key] = defaultSettings[key];
+            }
+        }
+        this.api.Data.save('settings', this.settings);
     }
 
     defaultSettings() {
@@ -384,12 +414,8 @@ module.exports = class ChatButtonsBegone {
         //     const { DISCOVERABLE_GUILD_HEADER_PUBLIC_INFO } = Messages;
         //     this.styler.add(this.getAriaLabelRule(this.communityInfoPillSelector, DISCOVERABLE_GUILD_HEADER_PUBLIC_INFO));
         // }
-        if (this.settings.channels.boostBar) {
-            this.styler.add(this.getDataListItemIdRuleLoose('', 'channels___boosts'));
-        }
-        if (this.settings.channels.inviteButton) {
-            this.styler.add(this.getAriaLabelRule(this.iconItemSelector, "Create Invite"));
-        }
+        if (this.settings.channels.boostBar) this.styler.add(this.getDataListItemIdRuleLoose('', 'channels___boosts'));
+        if (this.settings.channels.inviteButton) this.styler.add(this.getAriaLabelRule(this.iconItemSelector, "Create Invite"));
 
         // Voice
         const actionButtons = this.voiceActionButtonsSelector + ' ';
@@ -404,6 +430,9 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.toolbar.helpButton) this.styler.add(this.getCssRule(`a[href="https://support.discord.com"]`));
         if (this.settings.toolbar.inboxButton) this.styler.add(this.getCssRule(this.inboxButtonSelector));
 
+        // Miscellaneous
+        if (this.settings.miscellaneous.activitySection) this.styler.add(this.getCssRule("[class*='membersGroup']:has([role=button]), [class*='member'] [class*='container']:has([class*='badges'])"));
+        
         // Compatibility
         if (this.settings.compatibility.invisibleTypingButton) this.styler.add(this.getTextAreaCssRule('.invisibleTypingButton'));
     }
@@ -447,7 +476,7 @@ module.exports = class ChatButtonsBegone {
         return this.api.UI.buildSettingsPanel({
             settings,
             onChange: (category, id, value) => {
-                if (category === 'messageActions' || category === 'dms' || category === 'channels' || category === 'voice' || category === 'toolbar' || category === 'compatibility') {
+                if (category !== '') {
                     // Try to modify the key, if the category is missing, create it.
                     try {
                         this.settings[category][id] = value;

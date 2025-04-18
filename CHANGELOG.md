@@ -1,4 +1,14 @@
 # Changelog
+## v2.3.0
+### Added
+- New option to disable the activities section in server member lists
+
+### Changed
+- Options related to Nitro are now all enabled by default
+- Options not realted to Nitro are not all disabled by default
+
+### Fixed
+- Future additions are now propery added to the config file
 
 ## v2.2.0
 ### Added
