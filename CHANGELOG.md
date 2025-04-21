@@ -1,4 +1,11 @@
 # Changelog
+## v2.4.0
+### Added
+- Option to remove the Quick Switcher in the DM list (Find or start a conversation search box) [Direct Messages]
+- Option to remove the Active Now section in the DM list [Direct Messages]
+- Option to remove the Avatar Popover buttons (Buttons that appear when hovering over a user's profile picture) [Miscellaneous]
+- Option to remove Nameplates from members in the server member list [Miscellaneous]
+
 ## v2.3.0
 ### Added
 - New option to disable the activities section in server member lists

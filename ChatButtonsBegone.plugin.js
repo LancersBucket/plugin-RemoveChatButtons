@@ -181,6 +181,13 @@ const config = {
             settings: [
                 {
                     type: 'switch',
+                    id: 'quickSwitcher',
+                    name: 'Remove Quick Switcher',
+                    note: 'Removes the quick switcher (Find or start a conversation) from the DM list.',
+                    value: false,
+                },
+                {
+                    type: 'switch',
                     id: 'friendsTab',
                     name: 'Remove Friends Tab',
                     note: 'Removes the friends tab button from the DM list.',
@@ -213,6 +220,13 @@ const config = {
                     name: 'Remove Discord\'s Shop Tab',
                     note: 'Removes the Discord Shop tab button from the DM list.',
                     value: true,
+                },
+                {
+                    type: 'switch',
+                    id: 'activeNow',
+                    name: 'Remove Active Now Section',
+                    note: 'Removes the "Active Now" section from the Friends tab.',
+                    value: false,
                 },
             ],
         },
@@ -324,6 +338,20 @@ const config = {
                     note: "Removes the Activities Section from the server member list.",
                     value: false,
                 },
+                {
+                    type: 'switch',
+                    id: 'namePlate',
+                    name: 'Remove Nameplates',
+                    note: "Removes the nameplates from server members.",
+                    value: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'avatarPopover',
+                    name: 'Remove Avatar Popover',
+                    note: "Removes the buttons when you hover over a user's profile picture.",
+                    value: false,
+                }
             ],
         },
         {
@@ -402,11 +430,13 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.messageActions.forwardButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Forward"));
 
         // DMs
+        if (this.settings.dms.quickSwitcher) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [class*=searchBar]`));
         if (this.settings.dms.friendsTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/channels/@me"]`));
         if (this.settings.dms.premiumTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/store"]`));
         if (this.settings.dms.snowsgivingTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="//discord.com/snowsgiving"]`));
         if (this.settings.dms.discordBirthdayTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/activities"]`));
         if (this.settings.dms.discordShopTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/shop"]`));
+        if (this.settings.dms.activeNow) this.styler.add(this.getCssRule("[class*=nowPlayingColumn]"));
 
         // Channels
         // I really don't know what this is referencing.
@@ -432,6 +462,8 @@ module.exports = class ChatButtonsBegone {
 
         // Miscellaneous
         if (this.settings.miscellaneous.activitySection) this.styler.add(this.getCssRule("[class*='membersGroup']:has([role=button]), [class*='member'] [class*='container']:has([class*='badges'])"));
+        if (this.settings.miscellaneous.avatarPopover) this.styler.add(this.getCssRule("[class*=avatarPopover]"))
+        if (this.settings.miscellaneous.namePlate) this.styler.add(this.getCssRule("[class*=member] [class*=nameplated] [class*=container]"))
         
         // Compatibility
         if (this.settings.compatibility.invisibleTypingButton) this.styler.add(this.getTextAreaCssRule('.invisibleTypingButton'));
