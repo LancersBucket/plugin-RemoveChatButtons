@@ -1,4 +1,10 @@
 # Changelog
+## v2.5.0
+### Added
+- Option to remove the "Edit Image with Apps" button when hovering over images [Message Actions]
+- Option to remove Nitro advertisements not covered by other settings [Miscellaneous]
+    - Currently only covers the profile editing menu
+
 ## v2.4.0
 ### Added
 - Option to remove the Quick Switcher in the DM list (Find or start a conversation search box) [Direct Messages]

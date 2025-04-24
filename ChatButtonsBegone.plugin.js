@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.4.0
+ * @version 2.5.0
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.4.0',
+        version: '2.5.0',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/BleedingBD/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/BleedingBD/plugin-RemoveChatButtons/main/ChatButtonsBegone.plugin.js',
@@ -171,6 +171,13 @@ const config = {
                     note: 'Removes the "Forward" button from messages.',
                     value: false,
                 },
+                {
+                    type: 'switch',
+                    id: 'editImage',
+                    name: 'Remove Edit Image Button',
+                    note: 'Removes the "Edit Image with Apps" button from images.',
+                    value: false,
+                }
             ],
         },
         {
@@ -351,7 +358,14 @@ const config = {
                     name: 'Remove Avatar Popover',
                     note: "Removes the buttons when you hover over a user's profile picture.",
                     value: false,
-                }
+                },
+                {
+                    type: 'switch',
+                    id: 'nitroUpsell',
+                    name: 'Remove Nitro Advertising',
+                    note: "Removes Nitro advertising thoughout various parts of Discord. Note: May not remove all of them.",
+                    value: false,
+                },
             ],
         },
         {
@@ -428,6 +442,8 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.messageActions.editButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Edit"));
         if (this.settings.messageActions.replyButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Reply"));
         if (this.settings.messageActions.forwardButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Forward"));
+        
+        if (this.settings.messageActions.editImage) this.styler.add(this.getCssRule("[aria-label='Edit Image with Apps']"));
 
         // DMs
         if (this.settings.dms.quickSwitcher) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [class*=searchBar]`));
@@ -464,6 +480,11 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.miscellaneous.activitySection) this.styler.add(this.getCssRule("[class*='membersGroup']:has([role=button]), [class*='member'] [class*='container']:has([class*='badges'])"));
         if (this.settings.miscellaneous.avatarPopover) this.styler.add(this.getCssRule("[class*=avatarPopover]"))
         if (this.settings.miscellaneous.namePlate) this.styler.add(this.getCssRule("[class*=member] [class*=nameplated] [class*=container]"))
+        if (this.settings.miscellaneous.nitroUpsell) {
+            this.styler.add(this.getCssRule("[class*=upsellContainer]"));
+            this.styler.add(this.getCssRule("[class*=premiumFeature]"));
+            this.styler.add(this.getCssRule("[id*=profile-customization-tab] div[class*=container]:has([class*=artContainer])"))
+        }
         
         // Compatibility
         if (this.settings.compatibility.invisibleTypingButton) this.styler.add(this.getTextAreaCssRule('.invisibleTypingButton'));
