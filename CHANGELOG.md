@@ -1,4 +1,8 @@
 # Changelog
+## v2.5.1
+### Fixed
+- Erroneous github and github_raw links.
+
 ## v2.5.0
 ### Added
 - Option to remove the "Edit Image with Apps" button when hovering over images [Message Actions]

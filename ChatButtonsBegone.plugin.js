@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.5.0
+ * @version 2.5.1
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -75,10 +75,10 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.5.0',
+        version: '2.5.1',
         description: 'Hide annoying stuff from your Discord client.',
-        github: 'https://github.com/BleedingBD/plugin-RemoveChatButtons',
-        github_raw: 'https://raw.githubusercontent.com/BleedingBD/plugin-RemoveChatButtons/main/ChatButtonsBegone.plugin.js',
+        github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
+        github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
     },
     defaultConfig: [
         {
