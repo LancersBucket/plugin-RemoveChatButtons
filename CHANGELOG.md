@@ -1,4 +1,10 @@
 # Changelog
+## v2.5.2
+### Added
+- Remove Nameplates toggle now remove nameplates in the DM list (thanks [@Zacam](https://github.com/Zacam)!) 
+### Fixed
+- Fixed Nameplates toggle removing member name too (thanks [@Zacam](https://github.com/Zacam)!)
+
 ## v2.5.1
 ### Fixed
 - Erroneous github and github_raw links.

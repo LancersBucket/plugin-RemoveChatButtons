@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.5.1
+ * @version 2.5.2
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.5.1',
+        version: '2.5.2',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -479,7 +479,11 @@ module.exports = class ChatButtonsBegone {
         // Miscellaneous
         if (this.settings.miscellaneous.activitySection) this.styler.add(this.getCssRule("[class*='membersGroup']:has([role=button]), [class*='member'] [class*='container']:has([class*='badges'])"));
         if (this.settings.miscellaneous.avatarPopover) this.styler.add(this.getCssRule("[class*=avatarPopover]"))
-        if (this.settings.miscellaneous.namePlate) this.styler.add(this.getCssRule("[class*=member] [class*=nameplated] [class*=container]"))
+        if (this.settings.miscellaneous.namePlate) {
+            this.styler.add(this.getCssRule("[class*=member] [class*=nameplated] [class*=container]:has(img)"))
+            this.styler.add(this.getCssRule("div[class*='interactive']:hover>div[class*='container']:has(img)"))
+            this.styler.add(this.getCssRule("div[class*='interactiveSelected']>div[class*='container']:has(img)"))
+        }
         if (this.settings.miscellaneous.nitroUpsell) {
             this.styler.add(this.getCssRule("[class*=upsellContainer]"));
             this.styler.add(this.getCssRule("[class*=premiumFeature]"));
