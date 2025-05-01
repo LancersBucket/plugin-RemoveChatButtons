@@ -1,4 +1,19 @@
 # Changelog
+## v2.6.0
+### Added
+- Option to remove placeholder "Message ..." in message bar [Message Actions] (thanks [@Zacam](https://github.com/Zacam)!) 
+- Option to remove "Add a Server" and "Discovery" button [Miscellaneous] (thanks [@Zacam](https://github.com/Zacam)!) 
+
+### Changed
+- Moved some settings from "Channel List" and "Miscellaneous" into new "Server List" category
+    - You will need to re-enable any settings that were moved
+        - Boost Bar
+        - Invite Button
+        - Acitivities Section
+        - Nameplates
+- Settings categories are now collapsed by default
+    - This should help with finding the settings you need
+
 ## v2.5.2
 ### Added
 - Remove Nameplates toggle now remove nameplates in the DM list (thanks [@Zacam](https://github.com/Zacam)!) 

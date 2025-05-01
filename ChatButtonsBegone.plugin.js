@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.5.2
+ * @version 2.6.0
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.5.2',
+        version: '2.6.0',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -128,6 +128,7 @@ const config = {
             name: 'Message Actions',
             id: 'messageActions',
             collapsible: true,
+            shown: false,
             settings: [
                 {
                     type: 'switch',
@@ -177,7 +178,14 @@ const config = {
                     name: 'Remove Edit Image Button',
                     note: 'Removes the "Edit Image with Apps" button from images.',
                     value: false,
-                }
+                },
+                {
+                    type: 'switch',
+                    id: 'placeholderText',
+                    name: 'Remove Placeholder Text in message area',
+                    note: "Removes the placeholder text 'Message ...' in the message area.",
+                    value: false,
+                },
             ],
         },
         {
@@ -185,6 +193,7 @@ const config = {
             name: 'Direct Messages',
             id: 'dms',
             collapsible: true,
+            shown: false,
             settings: [
                 {
                     type: 'switch',
@@ -239,18 +248,11 @@ const config = {
         },
         {
             type: 'category',
-            name: 'Channel List',
-            id: 'channels',
+            name: 'Servers',
+            id: 'servers',
             collapsible: true,
+            shown: false,
             settings: [
-                // Left disabled because I'm not sure what this did before.
-                /*{
-                    type: 'switch',
-                    id: 'publicBadge',
-                    name: 'Remove Public Badge',
-                    note: 'Removes the "public" badge that covers part of server\'s banner.',
-                    value: false,
-                },*/
                 {
                     type: 'switch',
                     id: 'boostBar',
@@ -265,6 +267,20 @@ const config = {
                     note: "Removes the invite button from the channel list entries. (It's also available in the context menu and the server settings anyway.)",
                     value: false,
                 },
+                {
+                    type: 'switch',
+                    id: 'activitySection',
+                    name: 'Remove Activities Section',
+                    note: "Removes the Activities Section from the server member list.",
+                    value: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'namePlate',
+                    name: 'Remove Nameplates',
+                    note: "Removes the nameplates from server members.",
+                    value: false,
+                },
             ],
         },
         {
@@ -272,6 +288,7 @@ const config = {
             name: 'Voice',
             id: 'voice',
             collapsible: true,
+            shown: false,
             settings: [
                 {
                     type: 'switch',
@@ -315,6 +332,7 @@ const config = {
             name: 'Toolbar',
             id: 'toolbar',
             collapsible: true,
+            shown: false,
             settings: [
                 {
                     type: 'switch',
@@ -337,26 +355,27 @@ const config = {
             name: 'Miscellaneous',
             id: 'miscellaneous',
             collapsible: true,
+            shown: false,
             settings: [
-                {
-                    type: 'switch',
-                    id: 'activitySection',
-                    name: 'Remove Activities Section',
-                    note: "Removes the Activities Section from the server member list.",
-                    value: false,
-                },
-                {
-                    type: 'switch',
-                    id: 'namePlate',
-                    name: 'Remove Nameplates',
-                    note: "Removes the nameplates from server members.",
-                    value: false,
-                },
                 {
                     type: 'switch',
                     id: 'avatarPopover',
                     name: 'Remove Avatar Popover',
                     note: "Removes the buttons when you hover over a user's profile picture.",
+                    value: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'addServerButton',
+                    name: "Remove 'Add a Server' Button",
+                    note: "Removes the 'Add a Server' button from the server list.",
+                    value: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'discoverButton',
+                    name: "Remove Discover Button",
+                    note: "Removes the 'Discover' button from the server list.",
                     value: false,
                 },
                 {
@@ -373,6 +392,7 @@ const config = {
             name: 'Compatibility',
             id: 'compatibility',
             collapsible: true,
+            shown: false,
             settings: [
                 {
                     type: 'switch',
@@ -442,8 +462,8 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.messageActions.editButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Edit"));
         if (this.settings.messageActions.replyButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Reply"));
         if (this.settings.messageActions.forwardButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Forward"));
-        
         if (this.settings.messageActions.editImage) this.styler.add(this.getCssRule("[aria-label='Edit Image with Apps']"));
+        if (this.settings.messageActions.placeholderText) this.styler.add(this.getCssRule('[class*=placeholder][class*=slateTextArea]'))
 
         // DMs
         if (this.settings.dms.quickSwitcher) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [class*=searchBar]`));
@@ -454,14 +474,15 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.dms.discordShopTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/shop"]`));
         if (this.settings.dms.activeNow) this.styler.add(this.getCssRule("[class*=nowPlayingColumn]"));
 
-        // Channels
-        // I really don't know what this is referencing.
-        // if (this.settings.channels.publicBadge) {
-        //     const { DISCOVERABLE_GUILD_HEADER_PUBLIC_INFO } = Messages;
-        //     this.styler.add(this.getAriaLabelRule(this.communityInfoPillSelector, DISCOVERABLE_GUILD_HEADER_PUBLIC_INFO));
-        // }
-        if (this.settings.channels.boostBar) this.styler.add(this.getDataListItemIdRuleLoose('', 'channels___boosts'));
-        if (this.settings.channels.inviteButton) this.styler.add(this.getAriaLabelRule(this.iconItemSelector, "Create Invite"));
+        // Servers
+        if (this.settings.servers.boostBar) this.styler.add(this.getDataListItemIdRuleLoose('', 'channels___boosts'));
+        if (this.settings.servers.inviteButton) this.styler.add(this.getAriaLabelRule(this.iconItemSelector, "Create Invite"));
+        if (this.settings.servers.activitySection) this.styler.add(this.getCssRule("[class*='membersGroup']:has([role=button]), [class*='member'] [class*='container']:has([class*='badges'])"));
+        if (this.settings.servers.namePlate) {
+            this.styler.add(this.getCssRule("[class*=member] [class*=nameplated] [class*=container]:has(img)"))
+            this.styler.add(this.getCssRule("div[class*='interactive']:hover>div[class*='container']:has(img)"))
+            this.styler.add(this.getCssRule("div[class*='interactiveSelected']>div[class*='container']:has(img)"))
+        }
 
         // Voice
         const actionButtons = this.voiceActionButtonsSelector + ' ';
@@ -477,19 +498,15 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.toolbar.inboxButton) this.styler.add(this.getCssRule(this.inboxButtonSelector));
 
         // Miscellaneous
-        if (this.settings.miscellaneous.activitySection) this.styler.add(this.getCssRule("[class*='membersGroup']:has([role=button]), [class*='member'] [class*='container']:has([class*='badges'])"));
         if (this.settings.miscellaneous.avatarPopover) this.styler.add(this.getCssRule("[class*=avatarPopover]"))
-        if (this.settings.miscellaneous.namePlate) {
-            this.styler.add(this.getCssRule("[class*=member] [class*=nameplated] [class*=container]:has(img)"))
-            this.styler.add(this.getCssRule("div[class*='interactive']:hover>div[class*='container']:has(img)"))
-            this.styler.add(this.getCssRule("div[class*='interactiveSelected']>div[class*='container']:has(img)"))
-        }
         if (this.settings.miscellaneous.nitroUpsell) {
             this.styler.add(this.getCssRule("[class*=upsellContainer]"));
             this.styler.add(this.getCssRule("[class*=premiumFeature]"));
             this.styler.add(this.getCssRule("[id*=profile-customization-tab] div[class*=container]:has([class*=artContainer])"))
         }
-        
+        if (this.settings.miscellaneous.addServerButton) this.styler.add(this.getCssRule("div[class*='itemsContainer'] > div[data-direction='vertical'] > div[class*='tutorialContainer']:not(:first-child)"));
+        if (this.settings.miscellaneous.discoverButton) this.styler.add(this.getCssRule("div[class*='itemsContainer'] > div[data-direction='vertical'] > div[class*='listItem']"))
+
         // Compatibility
         if (this.settings.compatibility.invisibleTypingButton) this.styler.add(this.getTextAreaCssRule('.invisibleTypingButton'));
     }
