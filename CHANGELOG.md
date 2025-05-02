@@ -1,4 +1,9 @@
 # Changelog
+## v2.7.0
+### Added
+- After this version, if there is a new version of the plugin, it will now prompt for an update (thanks [@MisansProducts](https://github.com/MisansProducts))
+    - This functionality can be disabled with the Check For Updates toggle [Update Settings]
+
 ## v2.6.0
 ### Added
 - Option to remove placeholder "Message ..." in message bar [Message Actions] (thanks [@Zacam](https://github.com/Zacam)!) 

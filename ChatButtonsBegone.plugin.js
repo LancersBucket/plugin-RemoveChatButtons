@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.6.0
+ * @version 2.7.0
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.6.0',
+        version: '2.7.0',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -403,6 +403,22 @@ const config = {
                 },
             ],
         },
+        {
+            type: 'category',
+            name: 'Update Settings',
+            id: 'core',
+            collapsible: true,
+            shown: false,
+            settings: [
+                {
+                    type: 'switch',
+                    id: 'checkForUpdates',
+                    name: 'Check for Updates',
+                    note: 'Check for updates on startup.',
+                    value: true,
+                },
+            ],
+        }
     ],
     changelog: [
     ],
@@ -522,7 +538,60 @@ module.exports = class ChatButtonsBegone {
         setTimeout(this.refreshStyles(), 1000);
     }
 
+    checkForUpdates() {
+        try {
+            // Check the latest version on remote
+            const request = new XMLHttpRequest();
+            request.open("GET", config.info.github_raw);
+            request.onload = function() {
+                if (request.status === 200) {
+                    const remoteVersion = request.responseText.match(/version: ["']([\d.]+)["']/i)[1];
+                    const localVersion = config.info.version;
+
+                    const compareVersions = (a, b) => {
+                        const aParts = a.split('.').map(Number);
+                        const bParts = b.split('.').map(Number);
+                
+                        for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+                            const aPart = aParts[i] || 0;
+                            const bPart = bParts[i] || 0;
+                
+                            if (aPart > bPart) return 1;
+                            if (aPart < bPart) return -1;
+                        }
+                        return 0;
+                    }
+
+                    if (remoteVersion && compareVersions(remoteVersion, localVersion) > 0) {
+                        BdApi.UI.showConfirmationModal("ChatButtonsBegone Update",
+                            `A new version of ChatButtonsBegone (**v${remoteVersion}**) is available!\n\n` + 
+                            `You are on **v${localVersion}**. Please see the [changelog](https://github.com/LancersBucket/plugin-RemoveChatButtons/blob/main/CHANGELOG.md) for a list of changes.\n\n` +
+                            `Would you like to update now?`,
+                            {
+                                confirmText: "Update",
+                                onConfirm: () => {
+                                    // Replace the plugin with the new version
+                                    // BetterDiscord will automatically reload the plugin
+                                    require("fs").writeFileSync(
+                                        require("path").join(BdApi.Plugins.folder, `${config.info.name}.plugin.js`),
+                                        request.responseText
+                                    );
+                                }
+                            }
+                        );
+                    }
+                }
+            };
+            request.send();
+        } catch (err) {
+            console.error("[ChatButtonsBegone] Failed to check for updates:", err);
+        }
+    }
+
     start() {
+        if (this.settings.core.checkForUpdates) {
+            this.checkForUpdates();
+        }
         this.addStyles();
         if (this.LocaleManager) this.LocaleManager.on('locale', this.refreshLocaleFn);
     }
