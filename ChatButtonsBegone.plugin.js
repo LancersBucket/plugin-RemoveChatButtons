@@ -4,15 +4,15 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.7.0
+ * @version 2.8.0
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
 
-var shell = WScript.CreateObject("WScript.Shell");
-shell.Popup("It looks like you've mistakenly tried to run me directly. That's not how you install plugins. \n(So don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
+var shell = WScript.CreateObject('WScript.Shell');
+shell.Popup('It looks like you\'ve mistakenly tried to run me directly. That\'s not how you install plugins. \n(So don\'t do that!)', 0, 'I\'m a plugin for BetterDiscord', 0x30);
 
 @else@*/
 class Styler {
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.7.0',
+        version: '2.8.0',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -83,44 +83,44 @@ const config = {
     defaultConfig: [
         {
             type: 'switch',
-            id: 'emojiButton',
-            name: 'Remove Emoji Button',
-            note: 'Removes the Emoji button from the chat.',
-            value: false,
-        },
-        {
-            type: 'switch',
-            id: 'stickerButton',
-            name: 'Remove Sticker Button',
-            note: 'Removes the Sticker button from the chat.',
-            value: false,
-        },
-        {
-            type: 'switch',
-            id: 'gifButton',
-            name: 'Remove GIF Button',
-            note: 'Removes the GIF button from the chat.',
+            id: 'attachButton',
+            name: 'Remove Attach Button',
+            note: 'Removes the Attach button from the chatbar.',
             value: false,
         },
         {
             type: 'switch',
             id: 'giftButton',
             name: 'Remove Gift/Boost Button',
-            note: 'Removes the Gift Nitro/Boost Server button from the chat.',
+            note: 'Removes the Gift Nitro/Boost Server button from the chatbar.',
             value: true,
         },
         {
             type: 'switch',
-            id: 'attachButton',
-            name: 'Remove Attach Button',
-            note: 'Removes the Attach button from the chat.',
+            id: 'gifButton',
+            name: 'Remove GIF Button',
+            note: 'Removes the GIF button from the chatbar.',
+            value: false,
+        },
+        {
+            type: 'switch',
+            id: 'stickerButton',
+            name: 'Remove Sticker Button',
+            note: 'Removes the Sticker button from the chatbar.',
+            value: false,
+        },
+        {
+            type: 'switch',
+            id: 'emojiButton',
+            name: 'Remove Emoji Button',
+            note: 'Removes the Emoji button from the chatbar.',
             value: false,
         },
         {
             type: 'switch',
             id: 'appLauncherButton',
             name: 'Remove App Launcher Button',
-            note: 'Removes the App Launcher button from the chat.',
+            note: 'Removes the App Launcher button from the chatbar.',
             value: false,
         },
         {
@@ -129,61 +129,54 @@ const config = {
             id: 'messageActions',
             collapsible: true,
             shown: false,
-            settings: [
+            settings: [ // Message actions settings
                 {
                     type: 'switch',
                     id: 'quickReactions',
                     name: 'Remove Quick Reactions',
-                    note: 'Removes the quick reactions from messages.',
+                    note: 'Removes the quick reactions from the message actions.',
                     value: false,
                 },
                 {
                     type: 'switch',
                     id: 'reactionButton',
                     name: 'Remove Reaction Button',
-                    note: 'Removes the "Add Reaction" button from messages.',
+                    note: 'Removes the "Add Reaction" button from the message actions.',
                     value: false,
                 },
                 {
                     type: 'switch',
                     id: 'superReactionButton',
                     name: 'Remove Super Reaction Button',
-                    note: 'Removes the "Add Super Reaction" button from messages.',
+                    note: 'Removes the "Add Super Reaction" button from the message actions.',
                     value: true,
                 },
                 {
                     type: 'switch',
                     id: 'editButton',
                     name: 'Remove Edit Button',
-                    note: 'Removes the "Edit" button from messages.',
+                    note: 'Removes the "Edit" button from the message actions.',
                     value: false,
                 },
                 {
                     type: 'switch',
                     id: 'replyButton',
                     name: 'Remove Reply Button',
-                    note: 'Removes the "Reply" button from messages.',
+                    note: 'Removes the "Reply" button from the message actions.',
                     value: false,
                 },
                 {
                     type: 'switch',
                     id: 'forwardButton',
                     name: 'Remove Forward Button',
-                    note: 'Removes the "Forward" button from messages.',
+                    note: 'Removes the "Forward" button from the message actions.',
                     value: false,
                 },
                 {
                     type: 'switch',
                     id: 'editImage',
                     name: 'Remove Edit Image Button',
-                    note: 'Removes the "Edit Image with Apps" button from images.',
-                    value: false,
-                },
-                {
-                    type: 'switch',
-                    id: 'placeholderText',
-                    name: 'Remove Placeholder Text in message area',
-                    note: "Removes the placeholder text 'Message ...' in the message area.",
+                    note: 'Removes the "Edit Image with Apps" button when hovering over images.',
                     value: false,
                 },
             ],
@@ -194,47 +187,47 @@ const config = {
             id: 'dms',
             collapsible: true,
             shown: false,
-            settings: [
+            settings: [ // DM settings
                 {
                     type: 'switch',
                     id: 'quickSwitcher',
                     name: 'Remove Quick Switcher',
-                    note: 'Removes the quick switcher (Find or start a conversation) from the DM list.',
+                    note: 'Removes the quick switcher ("Find or start a conversation") from the DM list.',
                     value: false,
                 },
                 {
                     type: 'switch',
                     id: 'friendsTab',
                     name: 'Remove Friends Tab',
-                    note: 'Removes the friends tab button from the DM list.',
+                    note: 'Removes the friends tab from the DM list.',
                     value: false,
                 },
                 {
                     type: 'switch',
                     id: 'premiumTab',
                     name: 'Remove Nitro Tab',
-                    note: 'Removes the nitro tab button from the DM list.',
+                    note: 'Removes the nitro tab from the DM list.',
                     value: true,
                 },
                 {
                     type: 'switch',
                     id: 'snowsgivingTab',
                     name: 'Remove Snowsgiving Tab',
-                    note: 'Removes the seasonal "Snowsgiving" tab button from the DM list.',
+                    note: 'Removes the seasonal "Snowsgiving" tab from the DM list.',
                     value: false,
                 },
                 {
                     type: 'switch',
                     id: 'discordBirthdayTab',
                     name: 'Remove Discord\'s Birthday Tab',
-                    note: 'Removes the seasonal "Discord\'s Birthday" tab button from the DM list.',
+                    note: 'Removes the seasonal "Discord\'s Birthday" tab from the DM list.',
                     value: false,
                 },
                 {
                     type: 'switch',
                     id: 'discordShopTab',
                     name: 'Remove Discord\'s Shop Tab',
-                    note: 'Removes the Discord Shop tab button from the DM list.',
+                    note: 'Removes the Discord Shop tab from the DM list.',
                     value: true,
                 },
                 {
@@ -252,7 +245,7 @@ const config = {
             id: 'servers',
             collapsible: true,
             shown: false,
-            settings: [
+            settings: [ // Server settings
                 {
                     type: 'switch',
                     id: 'boostBar',
@@ -264,21 +257,21 @@ const config = {
                     type: 'switch',
                     id: 'inviteButton',
                     name: 'Remove Invite Button',
-                    note: "Removes the invite button from the channel list entries. (It's also available in the context menu and the server settings anyway.)",
+                    note: 'Removes the invite button when hovering over channel list entries.',
                     value: false,
                 },
                 {
                     type: 'switch',
                     id: 'activitySection',
                     name: 'Remove Activities Section',
-                    note: "Removes the Activities Section from the server member list.",
+                    note: 'Removes the Activities Section from the server member list.',
                     value: false,
                 },
                 {
                     type: 'switch',
                     id: 'namePlate',
                     name: 'Remove Nameplates',
-                    note: "Removes the nameplates from server members.",
+                    note: 'Removes nameplates from server members in the server member list.',
                     value: false,
                 },
             ],
@@ -289,7 +282,7 @@ const config = {
             id: 'voice',
             collapsible: true,
             shown: false,
-            settings: [
+            settings: [ // Voice settings
                 {
                     type: 'switch',
                     id: 'cameraPanelButton',
@@ -329,23 +322,30 @@ const config = {
         },
         {
             type: 'category',
-            name: 'Toolbar',
+            name: 'Title Bar',
             id: 'toolbar',
             collapsible: true,
             shown: false,
-            settings: [
+            settings: [ // Title Bar settings
+                {
+                    type: 'switch',
+                    id: 'locator',
+                    name: 'Remove Title Bar Text',
+                    note: 'Removes the "locator" text in the title bar that shows the current server/DM.',
+                    value: false,
+                },
                 {
                     type: 'switch',
                     id: 'inboxButton',
                     name: 'Remove Inbox Button',
-                    note: "Removes the Inbox button.",
+                    note: 'Removes the Inbox button.',
                     value: false,
                 },
                 {
                     type: 'switch',
                     id: 'helpButton',
                     name: 'Remove Help Button',
-                    note: "Removes the help button in the top right.",
+                    note: 'Removes the Help button.',
                     value: false,
                 },
             ],
@@ -356,33 +356,40 @@ const config = {
             id: 'miscellaneous',
             collapsible: true,
             shown: false,
-            settings: [
+            settings: [ // Miscellaneous settings
                 {
                     type: 'switch',
                     id: 'avatarPopover',
-                    name: 'Remove Avatar Popover',
-                    note: "Removes the buttons when you hover over a user's profile picture.",
+                    name: 'Remove Avatar Reply/React Popover',
+                    note: 'Removes the buttons when you hover over a user\'s profile picture.',
                     value: false,
                 },
                 {
                     type: 'switch',
                     id: 'addServerButton',
-                    name: "Remove 'Add a Server' Button",
-                    note: "Removes the 'Add a Server' button from the server list.",
+                    name: 'Remove "Add a Server" Button',
+                    note: 'Removes the "Add a Server" button from the server list.',
                     value: false,
                 },
                 {
                     type: 'switch',
                     id: 'discoverButton',
-                    name: "Remove Discover Button",
-                    note: "Removes the 'Discover' button from the server list.",
+                    name: 'Remove Discover Button',
+                    note: 'Removes the "Discover" button from the server list.',
                     value: false,
                 },
                 {
                     type: 'switch',
                     id: 'nitroUpsell',
                     name: 'Remove Nitro Advertising',
-                    note: "Removes Nitro advertising thoughout various parts of Discord. Note: May not remove all of them.",
+                    note: 'Removes Nitro advertising thoughout various parts of Discord. Note: May not remove all of them.',
+                    value: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'placeholderText',
+                    name: 'Remove Placeholder Text in message area',
+                    note: 'Removes the placeholder text "Message ..." in the chat bar.',
                     value: false,
                 },
             ],
@@ -393,12 +400,12 @@ const config = {
             id: 'compatibility',
             collapsible: true,
             shown: false,
-            settings: [
+            settings: [ // Compatibility settings
                 {
                     type: 'switch',
                     id: 'invisibleTypingButton',
                     name: 'Remove Invisible Typing Button',
-                    note: "Removes the button added by Strencher's InvisibleTyping plugin from the chat.",
+                    note: 'Removes the button added by Strencher\'s InvisibleTyping plugin from the chat.',
                     value: false,
                 },
             ],
@@ -409,7 +416,7 @@ const config = {
             id: 'core',
             collapsible: true,
             shown: false,
-            settings: [
+            settings: [ // Core settings
                 {
                     type: 'switch',
                     id: 'checkForUpdates',
@@ -464,23 +471,22 @@ module.exports = class ChatButtonsBegone {
 
     addStyles() {
         // Chat Buttons
-        if (this.settings.emojiButton) this.styler.add(this.getAriaLabelRule(this.channelTextAreaSelector + ' ', "Select emoji"));
+        if (this.settings.emojiButton) this.styler.add(this.getAriaLabelRule(this.channelTextAreaSelector + ' ', 'Select emoji'));
         if (this.settings.stickerButton) this.styler.add(this.getTextAreaCssRule(this.stickerButtonSelector));
-        if (this.settings.gifButton) this.styler.add(this.getAriaLabelRule(this.channelTextAreaSelector + ' ', "Open GIF picker"));
+        if (this.settings.gifButton) this.styler.add(this.getAriaLabelRule(this.channelTextAreaSelector + ' ', 'Open GIF picker'));
         if (this.settings.giftButton) this.styler.add(this.getCssRule(`button${this.getAriaLabelSelector('Send a gift')}`));
         if (this.settings.attachButton) this.styler.add(this.getTextAreaCssRule(this.attachButtonSelector));
         if (this.settings.appLauncherButton) this.styler.add(this.getCssRule(this.appLauncherButton));
 
         // Message Actions
-        if (this.settings.messageActions.quickReactions) this.styler.add(this.getAriaLabelRuleLoose(this.messageActionButtonsSelector + ' ', "Click to react with "));
-        if (this.settings.messageActions.superReactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Add Super Reaction"));
-        if (this.settings.messageActions.reactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Add Reaction"));
-        if (this.settings.messageActions.editButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Edit"));
-        if (this.settings.messageActions.replyButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Reply"));
-        if (this.settings.messageActions.forwardButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', "Forward"));
-        if (this.settings.messageActions.editImage) this.styler.add(this.getCssRule("[aria-label='Edit Image with Apps']"));
-        if (this.settings.messageActions.placeholderText) this.styler.add(this.getCssRule('[class*=placeholder][class*=slateTextArea]'))
-
+        if (this.settings.messageActions.quickReactions) this.styler.add(this.getAriaLabelRuleLoose(this.messageActionButtonsSelector + ' ', 'Click to react with '));
+        if (this.settings.messageActions.superReactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', 'Add Super Reaction'));
+        if (this.settings.messageActions.reactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', 'Add Reaction'));
+        if (this.settings.messageActions.editButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', 'Edit'));
+        if (this.settings.messageActions.replyButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', 'Reply'));
+        if (this.settings.messageActions.forwardButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', 'Forward'));
+        if (this.settings.messageActions.editImage) this.styler.add(this.getCssRule('[aria-label="Edit Image with Apps"]'));
+        
         // DMs
         if (this.settings.dms.quickSwitcher) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [class*=searchBar]`));
         if (this.settings.dms.friendsTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/channels/@me"]`));
@@ -488,40 +494,42 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.dms.snowsgivingTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="//discord.com/snowsgiving"]`));
         if (this.settings.dms.discordBirthdayTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/activities"]`));
         if (this.settings.dms.discordShopTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/shop"]`));
-        if (this.settings.dms.activeNow) this.styler.add(this.getCssRule("[class*=nowPlayingColumn]"));
+        if (this.settings.dms.activeNow) this.styler.add(this.getCssRule('[class*=nowPlayingColumn]'));
 
         // Servers
         if (this.settings.servers.boostBar) this.styler.add(this.getDataListItemIdRuleLoose('', 'channels___boosts'));
-        if (this.settings.servers.inviteButton) this.styler.add(this.getAriaLabelRule(this.iconItemSelector, "Create Invite"));
-        if (this.settings.servers.activitySection) this.styler.add(this.getCssRule("[class*='membersGroup']:has([role=button]), [class*='member'] [class*='container']:has([class*='badges'])"));
+        if (this.settings.servers.inviteButton) this.styler.add(this.getAriaLabelRule(this.iconItemSelector, 'Create Invite'));
+        if (this.settings.servers.activitySection) this.styler.add(this.getCssRule('[class*="membersGroup"]:has([role=button]), [class*="member"] [class*="container"]:has([class*="badges"])'));
         if (this.settings.servers.namePlate) {
-            this.styler.add(this.getCssRule("[class*=member] [class*=nameplated] [class*=container]:has(img)"))
-            this.styler.add(this.getCssRule("div[class*='interactive']:hover>div[class*='container']:has(img)"))
-            this.styler.add(this.getCssRule("div[class*='interactiveSelected']>div[class*='container']:has(img)"))
+            this.styler.add(this.getCssRule('[class*=member] [class*=nameplated] [class*=container]:has(div)'));
+            this.styler.add(this.getCssRule('div[class*="interactive"]:hover>div[class*="container"]:has(img)'));
+            this.styler.add(this.getCssRule('div[class*="interactiveSelected"]>div[class*="container"]:has(img)'));
         }
 
         // Voice
         const actionButtons = this.voiceActionButtonsSelector + ' ';
 
-        if (this.settings.voice.cameraPanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, "Turn On Camera", "Turn Off Camera"));
-        if (this.settings.voice.screensharePanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, "Share Your Screen"));
-        if (this.settings.voice.activityPanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, "Start An Activity"));
-        if (this.settings.voice.soundboardPanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, "Open Soundboard"));
+        if (this.settings.voice.cameraPanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, 'Turn On Camera', 'Turn Off Camera'));
+        if (this.settings.voice.screensharePanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, 'Share Your Screen'));
+        if (this.settings.voice.activityPanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, 'Start An Activity'));
+        if (this.settings.voice.soundboardPanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, 'Open Soundboard'));
         if (this.settings.voice.krispButton) this.styler.add(this.getCssRule(`button${this.getAriaLabelSelector('Noise Suppression powered by Krisp')}`));
 
-        // Toolbar
-        if (this.settings.toolbar.helpButton) this.styler.add(this.getCssRule(`a[href="https://support.discord.com"]`));
+        // Title Bar
+        if (this.settings.toolbar.locator) this.styler.add(this.getCssRule('[class*=base] [data-windows=true][class*=bar] [class*=title]'));
+        if (this.settings.toolbar.helpButton) this.styler.add(this.getCssRule('a[href="https://support.discord.com"]'));
         if (this.settings.toolbar.inboxButton) this.styler.add(this.getCssRule(this.inboxButtonSelector));
-
+        
         // Miscellaneous
-        if (this.settings.miscellaneous.avatarPopover) this.styler.add(this.getCssRule("[class*=avatarPopover]"))
+        if (this.settings.miscellaneous.avatarPopover) this.styler.add(this.getCssRule('[class*=avatarPopover]'));
         if (this.settings.miscellaneous.nitroUpsell) {
-            this.styler.add(this.getCssRule("[class*=upsellContainer]"));
-            this.styler.add(this.getCssRule("[class*=premiumFeature]"));
-            this.styler.add(this.getCssRule("[id*=profile-customization-tab] div[class*=container]:has([class*=artContainer])"))
+            this.styler.add(this.getCssRule('[class*=upsellContainer]'));
+            this.styler.add(this.getCssRule('[class*=premiumFeature]'));
+            this.styler.add(this.getCssRule('[id*=profile-customization-tab] div[class*=container]:has([class*=artContainer])'));
         }
-        if (this.settings.miscellaneous.addServerButton) this.styler.add(this.getCssRule("div[class*='itemsContainer'] > div[data-direction='vertical'] > div[class*='tutorialContainer']:not(:first-child)"));
-        if (this.settings.miscellaneous.discoverButton) this.styler.add(this.getCssRule("div[class*='itemsContainer'] > div[data-direction='vertical'] > div[class*='listItem']"))
+        if (this.settings.miscellaneous.addServerButton) this.styler.add(this.getCssRule('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="tutorialContainer"]:not(:first-child)'));
+        if (this.settings.miscellaneous.discoverButton) this.styler.add(this.getCssRule('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="listItem"]'));
+        if (this.settings.miscellaneous.placeholderText) this.styler.add(this.getCssRule('[class*=placeholder][class*=slateTextArea]'));
 
         // Compatibility
         if (this.settings.compatibility.invisibleTypingButton) this.styler.add(this.getTextAreaCssRule('.invisibleTypingButton'));
@@ -542,10 +550,10 @@ module.exports = class ChatButtonsBegone {
         try {
             // Check the latest version on remote
             const request = new XMLHttpRequest();
-            request.open("GET", config.info.github_raw);
+            request.open('GET', config.info.github_raw);
             request.onload = function() {
                 if (request.status === 200) {
-                    const remoteVersion = request.responseText.match(/version: ["']([\d.]+)["']/i)[1];
+                    const remoteVersion = request.responseText.match(/version: ['']([\d.]+)['']/i)[1];
                     const localVersion = config.info.version;
 
                     const compareVersions = (a, b) => {
@@ -560,20 +568,20 @@ module.exports = class ChatButtonsBegone {
                             if (aPart < bPart) return -1;
                         }
                         return 0;
-                    }
+                    };
 
                     if (remoteVersion && compareVersions(remoteVersion, localVersion) > 0) {
-                        BdApi.UI.showConfirmationModal("ChatButtonsBegone Update",
+                        BdApi.UI.showConfirmationModal('ChatButtonsBegone Update',
                             `A new version of ChatButtonsBegone (**v${remoteVersion}**) is available!\n\n` + 
                             `You are on **v${localVersion}**. Please see the [changelog](https://github.com/LancersBucket/plugin-RemoveChatButtons/blob/main/CHANGELOG.md) for a list of changes.\n\n` +
                             `Would you like to update now?`,
                             {
-                                confirmText: "Update",
+                                confirmText: 'Update',
                                 onConfirm: () => {
                                     // Replace the plugin with the new version
                                     // BetterDiscord will automatically reload the plugin
-                                    require("fs").writeFileSync(
-                                        require("path").join(BdApi.Plugins.folder, `${config.info.name}.plugin.js`),
+                                    require('fs').writeFileSync(
+                                        require('path').join(BdApi.Plugins.folder, `${config.info.name}.plugin.js`),
                                         request.responseText
                                     );
                                 }
@@ -584,7 +592,7 @@ module.exports = class ChatButtonsBegone {
             };
             request.send();
         } catch (err) {
-            console.error("[ChatButtonsBegone] Failed to check for updates:", err);
+            console.error('[ChatButtonsBegone] Failed to check for updates:', err);
         }
     }
 

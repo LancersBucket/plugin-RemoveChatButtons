@@ -1,4 +1,18 @@
 # Changelog
+## v2.8.0
+### Added
+- Option to remove the Title Bar "Locator" Text [Title Bar]
+
+### Fixed
+- Nameplate toggle not removing nameplates
+
+### Changed
+- Moved Placeholder Text to Miscellaneous instead of Message Actions
+    - You will need to re-enable the setting if you had it enabled before
+- Reworded and rewrote setting name and descriptions
+- Renamed Toolbar category to Title Bar
+- Reordered the chat bar options to match how they appear in discord
+
 ## v2.7.0
 ### Added
 - After this version, if there is a new version of the plugin, it will now prompt for an update (thanks [@MisansProducts](https://github.com/MisansProducts))
