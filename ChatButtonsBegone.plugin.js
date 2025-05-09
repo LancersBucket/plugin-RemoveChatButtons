@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.8.0
+ * @version 2.8.1
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.8.0',
+        version: '2.8.1',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -437,7 +437,6 @@ module.exports = class ChatButtonsBegone {
         this.api = new BdApi(this.meta.name);
         this.styler = new Styler(this.meta.name);
         this.settings = this.api.Data.load('settings') || this.defaultSettings();
-        this.refreshLocaleFn = this.refreshLocaleFn.bind(this);
 
         // Ensure all keys exist in settings
         this.ensureDefaultSettings();
@@ -501,7 +500,9 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.servers.inviteButton) this.styler.add(this.getAriaLabelRule(this.iconItemSelector, 'Create Invite'));
         if (this.settings.servers.activitySection) this.styler.add(this.getCssRule('[class*="membersGroup"]:has([role=button]), [class*="member"] [class*="container"]:has([class*="badges"])'));
         if (this.settings.servers.namePlate) {
-            this.styler.add(this.getCssRule('[class*=member] [class*=nameplated] [class*=container]:has(div)'));
+            // Server list
+            this.styler.add(this.getCssRule('[class*=member] [class*=nameplated] [style*=linear-gradient]'));
+            // DM list
             this.styler.add(this.getCssRule('div[class*="interactive"]:hover>div[class*="container"]:has(img)'));
             this.styler.add(this.getCssRule('div[class*="interactiveSelected"]>div[class*="container"]:has(img)'));
         }
@@ -540,10 +541,6 @@ module.exports = class ChatButtonsBegone {
         this.addStyles();
         this.api.Data.save('settings', this.settings);
         this.api.UI.showToast('Styles refreshed.', { type: 'info' });
-    }
-
-    refreshLocaleFn() {
-        setTimeout(this.refreshStyles(), 1000);
     }
 
     checkForUpdates() {
@@ -601,12 +598,10 @@ module.exports = class ChatButtonsBegone {
             this.checkForUpdates();
         }
         this.addStyles();
-        if (this.LocaleManager) this.LocaleManager.on('locale', this.refreshLocaleFn);
     }
 
     stop() {
         this.styler.removeAll();
-        if (this.LocaleManager) this.LocaleManager.off('locale', this.refreshLocaleFn);
     }
 
     getSettingsPanel() {

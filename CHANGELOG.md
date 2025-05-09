@@ -1,4 +1,9 @@
 # Changelog
+## v2.8.1
+### Fixed
+- Nameplate toggle not removing nameplates (thanks [@Zacam](https://github.com/Zacam)!) 
+    - Made the CSS injection a looser rule to hopefully make it more resistant against client side changes
+
 ## v2.8.0
 ### Added
 - Option to remove the Title Bar "Locator" Text [Title Bar]
@@ -11,11 +16,11 @@
     - You will need to re-enable the setting if you had it enabled before
 - Reworded and rewrote setting name and descriptions
 - Renamed Toolbar category to Title Bar
-- Reordered the chat bar options to match how they appear in discord
+- Reordered the chat bar options to match how they appear in Discord
 
 ## v2.7.0
 ### Added
-- After this version, if there is a new version of the plugin, it will now prompt for an update (thanks [@MisansProducts](https://github.com/MisansProducts))
+- After this version, if there is a new version of the plugin, it will now prompt for an update (thanks [@MisansProducts](https://github.com/MisansProducts)!)
     - This functionality can be disabled with the Check For Updates toggle [Update Settings]
 
 ## v2.6.0
