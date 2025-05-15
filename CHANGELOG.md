@@ -1,4 +1,9 @@
 # Changelog
+## v2.8.2
+### Fixed
+- Main chat bar toggles not saving toggle state on change
+- GIF, Emoji, Sticker, and App Launcher buttons not hiding
+
 ## v2.8.1
 ### Fixed
 - Nameplate toggle not removing nameplates (thanks [@Zacam](https://github.com/Zacam)!) 

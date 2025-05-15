@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.8.1
+ * @version 2.8.2
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.8.1',
+        version: '2.8.2',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -470,12 +470,12 @@ module.exports = class ChatButtonsBegone {
 
     addStyles() {
         // Chat Buttons
-        if (this.settings.emojiButton) this.styler.add(this.getAriaLabelRule(this.channelTextAreaSelector + ' ', 'Select emoji'));
-        if (this.settings.stickerButton) this.styler.add(this.getTextAreaCssRule(this.stickerButtonSelector));
-        if (this.settings.gifButton) this.styler.add(this.getAriaLabelRule(this.channelTextAreaSelector + ' ', 'Open GIF picker'));
-        if (this.settings.giftButton) this.styler.add(this.getCssRule(`button${this.getAriaLabelSelector('Send a gift')}`));
         if (this.settings.attachButton) this.styler.add(this.getTextAreaCssRule(this.attachButtonSelector));
-        if (this.settings.appLauncherButton) this.styler.add(this.getCssRule(this.appLauncherButton));
+        if (this.settings.giftButton) this.styler.add(this.getCssRule('button[aria-label="Send a gift"]'));
+        if (this.settings.gifButton) this.styler.add(this.getCssRule('[class*=buttonContainer]:has(button[aria-label="Open GIF picker"])'));
+        if (this.settings.stickerButton) this.styler.add(this.getCssRule('[class*=buttonContainer]:has(button[aria-label="Open sticker picker"])'));
+        if (this.settings.emojiButton) this.styler.add(this.getCssRule('[class*=buttonContainer]:has(button[aria-label="Select emoji"])'));
+        if (this.settings.appLauncherButton) this.styler.add(this.getCssRule("[class*=channelAppLauncher]"));
 
         // Message Actions
         if (this.settings.messageActions.quickReactions) this.styler.add(this.getAriaLabelRuleLoose(this.messageActionButtonsSelector + ' ', 'Click to react with '));
@@ -622,7 +622,7 @@ module.exports = class ChatButtonsBegone {
         return this.api.UI.buildSettingsPanel({
             settings,
             onChange: (category, id, value) => {
-                if (category !== '') {
+                if (category !== null) {
                     // Try to modify the key, if the category is missing, create it.
                     try {
                         this.settings[category][id] = value;
@@ -676,24 +676,9 @@ module.exports = class ChatButtonsBegone {
         return this.toSelector(buttonClasses.channelTextArea);
     }
 
-    get emojiButtonSelector() {
-        const buttonClasses = this.api.findModuleByProps('emojiButton', 'stickerButton');
-        return this.toSelector(buttonClasses.emojiButton);
-    }
-
-    get stickerButtonSelector() {
-        const buttonClasses = this.api.findModuleByProps('emojiButton', 'stickerButton');
-        return this.toSelector(buttonClasses.stickerButton);
-    }
-
     get attachButtonSelector() {
         const buttonClasses = this.api.findModuleByProps('emojiButton', 'stickerButton');
         return this.toSelector(buttonClasses.attachButton);
-    }
-
-    get appLauncherButton() {
-        const appLauncherClass = this.api.findModuleByProps('channelAppLauncher');
-        return this.toSelector(appLauncherClass.channelAppLauncher);
     }
 
     get messageActionButtonsSelector() {
