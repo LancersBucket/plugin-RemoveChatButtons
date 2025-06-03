@@ -1,4 +1,17 @@
 # Changelog
+## v2.9.0
+### Added
+- Option to remove Server Guide [Servers]
+- Option to remove Event Button [Servers]
+- Option to remove Channels & Roles Button [Servers]
+- Option to remove Browse Channels Button [Servers]
+- Option to remove Server Boosts Button [Servers]
+- Option to remove Clan Tags [Miscellaneous]
+
+### Changed
+- Moved Nameplates toggle Miscellaneous, as it applies to the member list in both Servers and DMs now
+    - You will need to re-enable the setting if you had it enabled before
+
 ## v2.8.2
 ### Fixed
 - Main chat bar toggles not saving toggle state on change
