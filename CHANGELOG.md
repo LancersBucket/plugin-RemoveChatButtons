@@ -1,4 +1,11 @@
 # Changelog
+## v2.10.0
+### Added
+- Config migration system to allow for relocation of settings while preserving its state.
+- Option to Simplify the Active Now Section [Direct Messages]
+    - Hides all Active Now insets for Twitch (thanks [@Zacam](https://github.com/Zacam)!) and Rich Presence
+- Option to remove Discord Quest related things [Miscellaneous] (thanks [@Zacam](https://github.com/Zacam)!)
+
 ## v2.9.0
 ### Added
 - Option to remove Server Guide [Servers]

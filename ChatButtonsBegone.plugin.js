@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.9.0
+ * @version 2.10.0
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.9.0',
+        version: '2.10.0',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -235,6 +235,13 @@ const config = {
                     id: 'activeNow',
                     name: 'Remove Active Now Section',
                     note: 'Removes the "Active Now" section from the Friends tab.',
+                    value: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'simplifyActiveNow',
+                    name: 'Simplify Active Now Section',
+                    note: 'Simplifies the "Active Now" section by removing Twitch and Rich Presence blocks.',
                     value: false,
                 },
             ],
@@ -421,6 +428,13 @@ const config = {
                 },
                 {
                     type: 'switch',
+                    id: 'noQuests',
+                    name: 'Remove Quests',
+                    note: 'Removes Quest related popups and interactions.',
+                    value: false,
+                },
+                {
+                    type: 'switch',
                     id: 'placeholderText',
                     name: 'Remove Placeholder Text in message area',
                     note: 'Removes the placeholder text "Message ..." in the chat bar.',
@@ -468,8 +482,6 @@ const config = {
             ],
         }
     ],
-    changelog: [
-    ],
 };
 
 module.exports = class ChatButtonsBegone {
@@ -478,9 +490,72 @@ module.exports = class ChatButtonsBegone {
         this.api = new BdApi(this.meta.name);
         this.styler = new Styler(this.meta.name);
         this.settings = this.api.Data.load('settings') || this.defaultSettings();
+        
+        // Get settings version and migrate it to a newer version if needed
+        this.settingVersion = this.api.Data.load('settingVersion');
+        if (!this.settingVersion) {
+            this.settingVersion = config.info.version;
+            this.api.Data.save('settingVersion', this.settingVersion);
+        }
+        this.migrateConfigIfNeeded();
 
         // Ensure all keys exist in settings
         this.ensureDefaultSettings();
+    }
+
+    migrateConfigIfNeeded() {
+        // List of migrations in order
+        const migrations = [
+            /* EXAMPLE MIGRATIONS
+            {
+                from: "1.0.0",
+                to: "1.1.0",
+                migrate: (config) => {
+                    // Example: rename 'oldKey' to 'newKey'
+                    if (config.oldKey) {
+                        config.newKey = config.oldKey;
+                        delete config.oldKey;
+                    }
+                    return config;
+                }
+            },
+            {
+                from: "1.1.0",
+                to: "2.0.0",
+                migrate: (config) => {
+                    // Example: remove 'deprecatedKey'
+                    delete config.deprecatedKey;
+                    return config;
+                }
+            }
+            */
+        ];
+
+        const compareVersions = (a,b) => {
+            const aParts = a.split('.').map(Number);
+            const bParts = b.split('.').map(Number);
+            for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+                const aPart = aParts[i] || 0;
+                const bPart = bParts[i] || 0;
+                if (aPart > bPart) return 1;
+                if (aPart < bPart) return -1;
+            }
+            return 0;
+        }
+
+        let currentVersion = this.settingVersion;
+        for (const { from, to, migrate } of migrations) {
+            if (compareVersions(currentVersion, from) >= 0 && compareVersions(currentVersion, to) <= 0) {
+                this.settings = migrate(this.settings);
+                currentVersion = to;
+            }
+        }
+
+        if (this.settingVersion !== config.info.version) {
+            this.settingVersion = config.info.version;
+            this.api.Data.save('settingVersion', this.settingVersion);
+            this.api.Data.save('settings', this.settings);
+        }
     }
 
     ensureDefaultSettings() {
@@ -535,6 +610,10 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.dms.discordBirthdayTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/activities"]`));
         if (this.settings.dms.discordShopTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/shop"]`));
         if (this.settings.dms.activeNow) this.styler.add(this.getCssRule('[class*=nowPlayingColumn]'));
+        if (this.settings.dms.simplifyActiveNow) {
+            this.styler.add(this.getCssRule('div[class*="inset"]:has(div[class*="twitchSection"])'));
+            this.styler.add(this.getCssRule('div[class*="inset"]:has(div[class*="activitySection"])'));
+        }
 
         // Servers
         if (this.settings.servers.boostBar) this.styler.add(this.getDataListItemIdRuleLoose('', 'channels___boosts'));
@@ -578,6 +657,10 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.miscellaneous.discoverButton) this.styler.add(this.getCssRule('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="listItem"]'));
         if (this.settings.miscellaneous.placeholderText) this.styler.add(this.getCssRule('[class*=placeholder][class*=slateTextArea]'));
         if (this.settings.miscellaneous.avatarPopover) this.styler.add(this.getCssRule('[class*=avatarPopover]'));
+        if (this.settings.miscellaneous.noQuests) {
+            // TODO: Currently only supports the Quests in the active now section.
+            this.styler.add(this.getCssRule('div[class*="inset"]:has(div[class*="promotedTag"])'));
+        }
 
         // Compatibility
         if (this.settings.compatibility.invisibleTypingButton) this.styler.add(this.getTextAreaCssRule('.invisibleTypingButton'));
@@ -600,19 +683,17 @@ module.exports = class ChatButtonsBegone {
                     const remoteVersion = request.responseText.match(/version: ['']([\d.]+)['']/i)[1];
                     const localVersion = config.info.version;
 
-                    const compareVersions = (a, b) => {
+                    const compareVersions = (a,b) => {
                         const aParts = a.split('.').map(Number);
                         const bParts = b.split('.').map(Number);
-                
                         for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
                             const aPart = aParts[i] || 0;
                             const bPart = bParts[i] || 0;
-                
                             if (aPart > bPart) return 1;
                             if (aPart < bPart) return -1;
                         }
                         return 0;
-                    };
+                    }
 
                     if (remoteVersion && compareVersions(remoteVersion, localVersion) > 0) {
                         BdApi.UI.showConfirmationModal('ChatButtonsBegone Update',
