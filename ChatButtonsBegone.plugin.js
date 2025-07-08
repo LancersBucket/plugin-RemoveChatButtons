@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.10.0
+ * @version 2.10.1
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.10.0',
+        version: '2.10.1',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -586,7 +586,7 @@ module.exports = class ChatButtonsBegone {
 
     addStyles() {
         // Chat Buttons
-        if (this.settings.attachButton) this.styler.add(this.getTextAreaCssRule(this.attachButtonSelector));
+        if (this.settings.attachButton) this.styler.add(this.getCssRule('button[class*="attachButton"]'));
         if (this.settings.giftButton) this.styler.add(this.getCssRule('button[aria-label="Send a gift"]'));
         if (this.settings.gifButton) this.styler.add(this.getCssRule('[class*=buttonContainer]:has(button[aria-label="Open GIF picker"])'));
         if (this.settings.stickerButton) this.styler.add(this.getCssRule('[class*=buttonContainer]:has(button[aria-label="Open sticker picker"])'));
@@ -594,12 +594,12 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.appLauncherButton) this.styler.add(this.getCssRule("[class*=channelAppLauncher]"));
 
         // Message Actions
-        if (this.settings.messageActions.quickReactions) this.styler.add(this.getAriaLabelRuleLoose(this.messageActionButtonsSelector + ' ', 'Click to react with '));
-        if (this.settings.messageActions.superReactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', 'Add Super Reaction'));
-        if (this.settings.messageActions.reactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', 'Add Reaction'));
-        if (this.settings.messageActions.editButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', 'Edit'));
-        if (this.settings.messageActions.replyButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', 'Reply'));
-        if (this.settings.messageActions.forwardButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector + ' ', 'Forward'));
+        if (this.settings.messageActions.quickReactions) this.styler.add(this.getAriaLabelRuleLoose(this.messageActionButtonsSelector, 'Click to react with '));
+        if (this.settings.messageActions.superReactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector, 'Add Super Reaction'));
+        if (this.settings.messageActions.reactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector, 'Add Reaction'));
+        if (this.settings.messageActions.editButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector, 'Edit'));
+        if (this.settings.messageActions.replyButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector, 'Reply'));
+        if (this.settings.messageActions.forwardButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector, 'Forward'));
         if (this.settings.messageActions.editImage) this.styler.add(this.getCssRule('[aria-label="Edit Image with Apps"]'));
         
         // DMs
@@ -622,12 +622,10 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.servers.channelsAndRoles) this.styler.add(this.getCssRule('div[class*=containerDefault]:has(div[aria-label="Channels & Roles"] + div[class*=link])'));
         if (this.settings.servers.browseChannels) this.styler.add(this.getCssRule('div[class*=containerDefault]:has(div[aria-label="Browse Channels"] + div[class*=link])'));
         if (this.settings.servers.boostsButton) this.styler.add(this.getCssRule('div[class*=containerDefault]:has(div[aria-label="Server Boosts"] + div[class*=link])'));
-        if (this.settings.servers.inviteButton) this.styler.add(this.getAriaLabelRule(this.iconItemSelector, 'Create Invite'));
+        if (this.settings.servers.inviteButton) this.styler.add(this.getCssRule('div[class*=iconItem][aria-label="Create Invite"]'));
         if (this.settings.servers.activitySection) this.styler.add(this.getCssRule('[class*="membersGroup"]:has([role=button]), [class*="member"] [class*="container"]:has([class*="badges"])'));
 
         // Voice
-        const actionButtons = this.voiceActionButtonsSelector + ' ';
-
         if (this.settings.voice.cameraPanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, 'Turn On Camera', 'Turn Off Camera'));
         if (this.settings.voice.screensharePanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, 'Share Your Screen'));
         if (this.settings.voice.activityPanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, 'Start An Activity'));
@@ -637,7 +635,7 @@ module.exports = class ChatButtonsBegone {
         // Title Bar
         if (this.settings.toolbar.locator) this.styler.add(this.getCssRule('[class*=base] [data-windows=true][class*=bar] [class*=title]'));
         if (this.settings.toolbar.helpButton) this.styler.add(this.getCssRule('a[href="https://support.discord.com"]'));
-        if (this.settings.toolbar.inboxButton) this.styler.add(this.getCssRule(this.inboxButtonSelector));
+        if (this.settings.toolbar.inboxButton) this.styler.add(this.getCssRule('div[class*=recentsIcon]'));
         
         // Miscellaneous
         if (this.settings.servers.namePlate) {
@@ -652,6 +650,8 @@ module.exports = class ChatButtonsBegone {
             this.styler.add(this.getCssRule('[class*=upsellContainer]'));
             this.styler.add(this.getCssRule('[class*=premiumFeature]'));
             this.styler.add(this.getCssRule('[id*=profile-customization-tab] div[class*=container]:has([class*=artContainer])'));
+            // Upsell in Profiles > Per-Server Profiles (Only should hide if user does not have Nitro)
+            this.styler.add(this.getCssRule('div[class*=upsellOverlayContainer]:has(div > [class*=disabled])'))
         }
         if (this.settings.miscellaneous.addServerButton) this.styler.add(this.getCssRule('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="tutorialContainer"]:not(:first-child)'));
         if (this.settings.miscellaneous.discoverButton) this.styler.add(this.getCssRule('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="listItem"]'));
@@ -663,7 +663,7 @@ module.exports = class ChatButtonsBegone {
         }
 
         // Compatibility
-        if (this.settings.compatibility.invisibleTypingButton) this.styler.add(this.getTextAreaCssRule('.invisibleTypingButton'));
+        if (this.settings.compatibility.invisibleTypingButton) this.styler.add(this.getCssRule('div[class*="buttons"] div:has(button[class*="invisibleTypingButton"])'))
     }
 
     refreshStyles() {
@@ -771,10 +771,6 @@ module.exports = class ChatButtonsBegone {
         return `${selector} { display: none !important; }`;
     }
 
-    getTextAreaCssRule(child) {
-        return this.getCssRule(`${this.channelTextAreaSelector} ${child}`);
-    }
-
     getAriaLabelSelector(label) {
         return `[aria-label="${label}"]`;
     }
@@ -799,19 +795,9 @@ module.exports = class ChatButtonsBegone {
         return this.getCssRule(labels.map((label) => `${pre || ''}${this.getDataListItemIdLoose(label)}`).join(', '));
     }
 
-    get channelTextAreaSelector() {
-        const buttonClasses = this.api.findModuleByProps('emojiButton', 'stickerButton');
-        return this.toSelector(buttonClasses.channelTextArea);
-    }
-
-    get attachButtonSelector() {
-        const buttonClasses = this.api.findModuleByProps('emojiButton', 'stickerButton');
-        return this.toSelector(buttonClasses.attachButton);
-    }
-
     get messageActionButtonsSelector() {
         const messageActionButtonsClass = this.api.findModuleByProps('buttons', 'cozyMessage')?.buttons;
-        return this.toSelector(messageActionButtonsClass);
+        return this.toSelector(messageActionButtonsClass) + ' ';
     }
 
     get privateChannelsSelector() {
@@ -819,24 +805,9 @@ module.exports = class ChatButtonsBegone {
         return this.toSelector(privateChannelsClass);
     }
 
-    get communityInfoPillSelector() {
-        const communityInfoPillClass = this.api.findModuleByProps('communityInfoPill')?.communityInfoPill;
-        return this.toSelector(communityInfoPillClass);
-    }
-
-    get iconItemSelector() {
-        const iconItemClass = this.api.findModuleByProps('iconBase', 'iconItem')?.iconItem;
-        return this.toSelector(iconItemClass);
-    }
-
     get voiceActionButtonsSelector() {
         const voiceActionButtonsClass = this.api.findModuleByProps('actionButtons', 'voiceUsers')?.actionButtons;
-        return this.toSelector(voiceActionButtonsClass);
-    }
-
-    get inboxButtonSelector() {
-        const inboxButtonClass = this.api.findModuleByProps('recentsIcon')?.recentsIcon;
-        return this.toSelector(inboxButtonClass);
+        return this.toSelector(voiceActionButtonsClass) + '';
     }
 
     toSelector(classString) {

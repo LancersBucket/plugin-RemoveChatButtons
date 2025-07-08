@@ -1,4 +1,11 @@
 # Changelog
+## v2.10.1
+### Added
+- Remove Nitro Advertisting [Miscellaneous] now removes Nitro advertising from the per-server profile page
+
+### Changed
+- Cleaned up legacy code to ensure future Discord and BD version compatability (thanks [@Zacam](https://github.com/Zacam)!)
+
 ## v2.10.0
 ### Added
 - Config migration system to allow for relocation of settings while preserving its state.
