@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.10.1
+ * @version 2.11.0
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.10.1',
+        version: '2.11.0',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -349,7 +349,7 @@ const config = {
                 {
                     type: 'switch',
                     id: 'krispButton',
-                    name: 'Remove Noise Suppression Button',
+                    name: 'Remove Noise Suppression (Krisp) Button',
                     note: 'Removes the noise supression button from the user voice chat panel.',
                     value: false,
                 },
@@ -467,7 +467,7 @@ const config = {
         },
         {
             type: 'category',
-            name: 'Update Settings',
+            name: 'Core Settings',
             id: 'core',
             collapsible: true,
             shown: false,
@@ -478,6 +478,13 @@ const config = {
                     name: 'Check for Updates',
                     note: 'Check for updates on startup.',
                     value: true,
+                },
+                {
+                    type: 'switch',
+                    id: 'debug',
+                    name: 'Enable Debugging',
+                    note: 'Enables debug output, and provides more verbose information.',
+                    value: false,
                 },
             ],
         }
@@ -494,6 +501,7 @@ module.exports = class ChatButtonsBegone {
         // Get settings version and migrate it to a newer version if needed
         this.settingVersion = this.api.Data.load('settingVersion');
         if (!this.settingVersion) {
+            this.warn("Key settingVersion not found, creating...")
             this.settingVersion = config.info.version;
             this.api.Data.save('settingVersion', this.settingVersion);
         }
@@ -547,15 +555,17 @@ module.exports = class ChatButtonsBegone {
         for (const { from, to, migrate } of migrations) {
             if (compareVersions(currentVersion, from) >= 0 && compareVersions(currentVersion, to) <= 0) {
                 this.settings = migrate(this.settings);
+                this.log(`Migrated config from b${from} to v${to}`);
                 currentVersion = to;
             }
         }
 
         if (this.settingVersion !== config.info.version) {
+            this.log("Updating config version to latest");
             this.settingVersion = config.info.version;
             this.api.Data.save('settingVersion', this.settingVersion);
-            this.api.Data.save('settings', this.settings);
         }
+        this.api.Data.save('settings', this.settings);
     }
 
     ensureDefaultSettings() {
@@ -626,10 +636,10 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.servers.activitySection) this.styler.add(this.getCssRule('[class*="membersGroup"]:has([role=button]), [class*="member"] [class*="container"]:has([class*="badges"])'));
 
         // Voice
-        if (this.settings.voice.cameraPanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, 'Turn On Camera', 'Turn Off Camera'));
-        if (this.settings.voice.screensharePanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, 'Share Your Screen'));
-        if (this.settings.voice.activityPanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, 'Start An Activity'));
-        if (this.settings.voice.soundboardPanelButton) this.styler.add(this.getAriaLabelRule(actionButtons, 'Open Soundboard'));
+        if (this.settings.voice.cameraPanelButton) this.styler.add(this.getAriaLabelRule(this.voiceActionButtonsSelector, 'Turn On Camera', 'Turn Off Camera'));
+        if (this.settings.voice.screensharePanelButton) this.styler.add(this.getAriaLabelRule(this.voiceActionButtonsSelector, 'Share Your Screen'));
+        if (this.settings.voice.activityPanelButton) this.styler.add(this.getAriaLabelRule(this.voiceActionButtonsSelector, 'Start An Activity'));
+        if (this.settings.voice.soundboardPanelButton) this.styler.add(this.getAriaLabelRule(this.voiceActionButtonsSelector, 'Open Soundboard'));
         if (this.settings.voice.krispButton) this.styler.add(this.getCssRule(`button${this.getAriaLabelSelector('Noise Suppression powered by Krisp')}`));
 
         // Title Bar
@@ -651,7 +661,9 @@ module.exports = class ChatButtonsBegone {
             this.styler.add(this.getCssRule('[class*=premiumFeature]'));
             this.styler.add(this.getCssRule('[id*=profile-customization-tab] div[class*=container]:has([class*=artContainer])'));
             // Upsell in Profiles > Per-Server Profiles (Only should hide if user does not have Nitro)
-            this.styler.add(this.getCssRule('div[class*=upsellOverlayContainer]:has(div > [class*=disabled])'))
+            this.styler.add(this.getCssRule('div[class*=upsellOverlayContainer]:has(div > [class*=disabled])'));
+            // Offer badge
+            this.styler.add(this.getCssRule('div[class*=premiumTrialBadge]'));
         }
         if (this.settings.miscellaneous.addServerButton) this.styler.add(this.getCssRule('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="tutorialContainer"]:not(:first-child)'));
         if (this.settings.miscellaneous.discoverButton) this.styler.add(this.getCssRule('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="listItem"]'));
@@ -663,7 +675,9 @@ module.exports = class ChatButtonsBegone {
         }
 
         // Compatibility
-        if (this.settings.compatibility.invisibleTypingButton) this.styler.add(this.getCssRule('div[class*="buttons"] div:has(button[class*="invisibleTypingButton"])'))
+        if (this.settings.compatibility.invisibleTypingButton) this.styler.add(this.getCssRule('div[class*="buttons"] div:has(button[class*="invisibleTypingButton"])'));
+        
+        this.log(this.styler.styles.size, 'styles loaded.');
     }
 
     refreshStyles() {
@@ -671,14 +685,15 @@ module.exports = class ChatButtonsBegone {
         this.addStyles();
         this.api.Data.save('settings', this.settings);
         this.api.UI.showToast('Styles refreshed.', { type: 'info' });
+        this.log('Styles refreshed.');
     }
 
-    checkForUpdates() {
+    async checkForUpdates() {
         try {
             // Check the latest version on remote
             const request = new XMLHttpRequest();
             request.open('GET', config.info.github_raw);
-            request.onload = function() {
+            request.onload = function () {
                 if (request.status === 200) {
                     const remoteVersion = request.responseText.match(/version: ['']([\d.]+)['']/i)[1];
                     const localVersion = config.info.version;
@@ -698,7 +713,7 @@ module.exports = class ChatButtonsBegone {
                     if (remoteVersion && compareVersions(remoteVersion, localVersion) > 0) {
                         BdApi.UI.showConfirmationModal('ChatButtonsBegone Update',
                             `A new version of ChatButtonsBegone (**v${remoteVersion}**) is available!\n\n` + 
-                            `You are on **v${localVersion}**. Please see the [changelog](https://github.com/LancersBucket/plugin-RemoveChatButtons/blob/main/CHANGELOG.md) for a list of changes.\n\n` +
+                            `You are on **v${localVersion}**. Please see the [changelog](${config.info.github}/blob/main/CHANGELOG.md) for a list of changes.\n\n` +
                             `Would you like to update now?`,
                             {
                                 confirmText: 'Update',
@@ -715,17 +730,31 @@ module.exports = class ChatButtonsBegone {
                     }
                 }
             };
-            request.send();
-        } catch (err) {
-            console.error('[ChatButtonsBegone] Failed to check for updates:', err);
+        } catch (e) {
+            this.error('Failed to check for updates:', e);
         }
     }
 
-    start() {
+    // This doesn't make the error handling work the way I wanted, but it does reduce the unessesary output.
+    async start() {
+        // Ensure all keys exist in settings
+        this.ensureDefaultSettings();
+
         if (this.settings.core.checkForUpdates) {
-            this.checkForUpdates();
+            await this.checkForUpdates();
         }
-        this.addStyles();
+
+        try {
+            this.addStyles();
+        } catch (error) {
+            this.error(`Failed to apply styles. Please report this error to ${config.info.github}/issues:\n\n`, error);
+            BdApi.UI.showToast('ChatButtonsBegone encountered an error! Check the console for more information.',
+                {
+                    type: 'error',
+                    timeout: '5000',
+                }
+            )
+        }
     }
 
     stop() {
@@ -740,7 +769,9 @@ module.exports = class ChatButtonsBegone {
                     // Try to set the value, if it's missing, initialize to default value.
                     try {
                         subSetting.value = this.settings[setting.id][subSetting.id];    
-                    } catch (error) {}
+                    } catch (error) {
+                        this.error(error);
+                    }
                 });
             } else {
                 setting.value = this.settings[setting.id];
@@ -812,6 +843,22 @@ module.exports = class ChatButtonsBegone {
 
     toSelector(classString) {
         return classString ? '.' + classString.replace(/ /g, '.') : '';
+    }
+
+    log(...args) {
+        if (this.settings.core.debug) {
+            console.log(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
+        }
+    }
+    warn(...args) {
+        if (this.settings.core.debug) {
+            console.warn(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
+        }
+    }
+    error(...args) {
+        if (this.settings.core.debug) {
+            console.error(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
+        }
     }
 };
 /*@end@*/

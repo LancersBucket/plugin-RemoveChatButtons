@@ -1,4 +1,17 @@
 # Changelog
+## v2.11.0
+### Added
+- Option to enable better console debugging [Core Settings]
+    - Enhanced logging and debugging throughout the plugin
+- Plugin now checks for updates before fully running, allowing the user to update even if the plugin is broken
+
+### Changed
+- Renamed Update Settings to Core Settings
+
+### Fixed
+- (Better)Discord should now load faster when opening the app with ChatButtonsBegone enabled
+- Plugin load issue (thanks [@Zacam](https://github.com/Zacam)!)
+
 ## v2.10.1
 ### Added
 - Remove Nitro Advertisting [Miscellaneous] now removes Nitro advertising from the per-server profile page
