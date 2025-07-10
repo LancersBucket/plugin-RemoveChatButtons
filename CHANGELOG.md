@@ -1,4 +1,9 @@
 # Changelog
+## v2.11.1
+### Fixed
+- Update checker should work again
+- Boost Bar should be properly removed again (thanks [@Zacam](https://github.com/Zacam)!)
+
 ## v2.11.0
 ### Added
 - Option to enable better console debugging [Core Settings]

@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.11.0
+ * @version 2.11.1
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.11.0',
+        version: '2.11.1',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -561,7 +561,7 @@ module.exports = class ChatButtonsBegone {
         }
 
         if (this.settingVersion !== config.info.version) {
-            this.log("Updating config version to latest");
+            this.log("Setting config version to latest...");
             this.settingVersion = config.info.version;
             this.api.Data.save('settingVersion', this.settingVersion);
         }
@@ -601,7 +601,7 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.gifButton) this.styler.add(this.getCssRule('[class*=buttonContainer]:has(button[aria-label="Open GIF picker"])'));
         if (this.settings.stickerButton) this.styler.add(this.getCssRule('[class*=buttonContainer]:has(button[aria-label="Open sticker picker"])'));
         if (this.settings.emojiButton) this.styler.add(this.getCssRule('[class*=buttonContainer]:has(button[aria-label="Select emoji"])'));
-        if (this.settings.appLauncherButton) this.styler.add(this.getCssRule("[class*=channelAppLauncher]"));
+        if (this.settings.appLauncherButton) this.styler.add(this.getCssRule('[class*=channelAppLauncher]'));
 
         // Message Actions
         if (this.settings.messageActions.quickReactions) this.styler.add(this.getAriaLabelRuleLoose(this.messageActionButtonsSelector, 'Click to react with '));
@@ -613,7 +613,7 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.messageActions.editImage) this.styler.add(this.getCssRule('[aria-label="Edit Image with Apps"]'));
         
         // DMs
-        if (this.settings.dms.quickSwitcher) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [class*=searchBar]`));
+        if (this.settings.dms.quickSwitcher) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [class*="searchBar"]`));
         if (this.settings.dms.friendsTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/channels/@me"]`));
         if (this.settings.dms.premiumTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/store"]`));
         if (this.settings.dms.snowsgivingTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="//discord.com/snowsgiving"]`));
@@ -626,7 +626,7 @@ module.exports = class ChatButtonsBegone {
         }
 
         // Servers
-        if (this.settings.servers.boostBar) this.styler.add(this.getDataListItemIdRuleLoose('', 'channels___boosts'));
+        if (this.settings.servers.boostBar) this.styler.add(this.getCssRule('ul[aria-label="Channels"] div:has(> div[class*="container"] [class*="boostCountText"])'));
         if (this.settings.servers.serverGuide) this.styler.add(this.getCssRule('div[class*=containerDefault]:has(div[aria-label="Server Guide"] + div[class*=link])'));
         if (this.settings.servers.eventButton) this.styler.add(this.getCssRule('div[class*=containerDefault]:has(div[id*=upcoming-events] ~ div[class*=link])'));
         if (this.settings.servers.channelsAndRoles) this.styler.add(this.getCssRule('div[class*=containerDefault]:has(div[aria-label="Channels & Roles"] + div[class*=link])'));
@@ -693,12 +693,12 @@ module.exports = class ChatButtonsBegone {
             // Check the latest version on remote
             const request = new XMLHttpRequest();
             request.open('GET', config.info.github_raw);
-            request.onload = function () {
+            request.onload = () => {
                 if (request.status === 200) {
-                    const remoteVersion = request.responseText.match(/version: ['']([\d.]+)['']/i)[1];
+                    const remoteVersion = request.responseText.match(/version: ['"]([\d.]+)['"]/i)?.[1];
                     const localVersion = config.info.version;
 
-                    const compareVersions = (a,b) => {
+                    const compareVersions = (a, b) => {
                         const aParts = a.split('.').map(Number);
                         const bParts = b.split('.').map(Number);
                         for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
@@ -708,28 +708,33 @@ module.exports = class ChatButtonsBegone {
                             if (aPart < bPart) return -1;
                         }
                         return 0;
-                    }
-
+                    };
                     if (remoteVersion && compareVersions(remoteVersion, localVersion) > 0) {
+                        this.log(`Update to v${remoteVersion} available.`);
                         BdApi.UI.showConfirmationModal('ChatButtonsBegone Update',
-                            `A new version of ChatButtonsBegone (**v${remoteVersion}**) is available!\n\n` + 
+                            `A new version of ChatButtonsBegone (**v${remoteVersion}**) is available!\n\n` +
                             `You are on **v${localVersion}**. Please see the [changelog](${config.info.github}/blob/main/CHANGELOG.md) for a list of changes.\n\n` +
                             `Would you like to update now?`,
                             {
                                 confirmText: 'Update',
                                 onConfirm: () => {
-                                    // Replace the plugin with the new version
-                                    // BetterDiscord will automatically reload the plugin
+                                    this.log("Updating plugin...");
                                     require('fs').writeFileSync(
                                         require('path').join(BdApi.Plugins.folder, `${config.info.name}.plugin.js`),
                                         request.responseText
                                     );
+                                    this.log("Plugin updated! BetterDiscord will now reload the plugin.")
                                 }
                             }
                         );
+                    } else {
+                        this.log("No updates available.")
                     }
+                } else {
+                    this.error(`Failed to check for updates. Status: ${request.status}`);
                 }
             };
+            request.send();
         } catch (e) {
             this.error('Failed to check for updates:', e);
         }
@@ -741,13 +746,14 @@ module.exports = class ChatButtonsBegone {
         this.ensureDefaultSettings();
 
         if (this.settings.core.checkForUpdates) {
+            this.log("Checking for updates...")
             await this.checkForUpdates();
         }
 
         try {
             this.addStyles();
         } catch (error) {
-            this.error(`Failed to apply styles. Please report this error to ${config.info.github}/issues:\n\n`, error);
+            this.error(`Failed to apply styles. Please report the following error to ${config.info.github}/issues:\n\n`, error);
             BdApi.UI.showToast('ChatButtonsBegone encountered an error! Check the console for more information.',
                 {
                     type: 'error',
@@ -758,7 +764,9 @@ module.exports = class ChatButtonsBegone {
     }
 
     stop() {
+        this.log("Stopping Plugin...");
         this.styler.removeAll();
+        this.log("All styles purged.")
     }
 
     getSettingsPanel() {
