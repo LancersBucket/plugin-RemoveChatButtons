@@ -2,6 +2,7 @@
 ## v2.11.1
 ### Fixed
 - Update checker should work again
+    - **NOTE: USERS WITH v2.11.0 WILL NEED TO MANUALLY UPDATE TO v2.11.1+**
 - Boost Bar should be properly removed again (thanks [@Zacam](https://github.com/Zacam)!)
 
 ## v2.11.0
