@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.11.1
+ * @version 2.12.0
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.11.1',
+        version: '2.12.0',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -206,7 +206,7 @@ const config = {
                     type: 'switch',
                     id: 'premiumTab',
                     name: 'Remove Nitro Tab',
-                    note: 'Removes the nitro tab from the DM list.',
+                    note: 'Removes the Nitro tab from the DM list.',
                     value: true,
                 },
                 {
@@ -231,18 +231,16 @@ const config = {
                     value: true,
                 },
                 {
-                    type: 'switch',
+                    type: 'dropdown',
                     id: 'activeNow',
-                    name: 'Remove Active Now Section',
-                    note: 'Removes the "Active Now" section from the Friends tab.',
-                    value: false,
-                },
-                {
-                    type: 'switch',
-                    id: 'simplifyActiveNow',
-                    name: 'Simplify Active Now Section',
-                    note: 'Simplifies the "Active Now" section by removing Twitch and Rich Presence blocks.',
-                    value: false,
+                    name: 'Active Now Section',
+                    note: 'Controls the visibility of the "Active Now" section in the Friends tab. "Remove" removes the section, "Simplify" removes Twitch and Rich Presence blocks.',
+                    value: 'show',
+                    options: [
+                        { label: "Show", value: 'show' },
+                        { label: "Simplify", value: 'simplify' },
+                        { label: "Remove", value: 'remove' },
+                    ],
                 },
             ],
         },
@@ -400,10 +398,30 @@ const config = {
                     value: false,
                 },
                 {
-                    type: 'switch',
+                    type: 'dropdown',
                     id: 'clanTag',
-                    name: 'Remove Clan Tag',
-                    note: 'Removes Clan Tags from members in the member list.',
+                    name: 'Clan Tag',
+                    note: 'Controls the visibility of the Clan Tags. "Member List" removes it in member lists (Server/DM and messages), "Profile" removes it in profiles, "Global" removes it everywhere.',
+                    value: 'show',
+                    options: [
+                        { label: "Show", value: 'show' },
+                        { label: "Member List", value: 'memberlist' },
+                        { label: "Profile", value: 'profile' },
+                        { label: "Global", value: 'global' },
+                    ],
+                },
+                {
+                    type: 'dropdown',
+                    id: 'avatarDecoration',
+                    name: 'Avatar Decoration',
+                    note: 'Controls the visibility of avatar decorations. "Member List" removes it in member lists (Server/DM and messages), "Profile" removes it in profiles, "Global" removes it everywhere.',
+                    value: 'show',
+                    options: [
+                        { label: "Show", value: 'show' },
+                        { label: "Member List", value: 'memberlist' },
+                        { label: "Profile", value: 'profile' },
+                        { label: "Global", value: 'global' },
+                    ],
                 },
                 {
                     type: 'switch',
@@ -537,6 +555,30 @@ module.exports = class ChatButtonsBegone {
                 }
             }
             */
+            {
+                from: "2.11.1",
+                to: "2.12.0",
+                migrate: (config) => {
+                    // Combine activeNow and simplifyActiveNow
+                    if (config.dms.activeNow == true) {
+                        config.dms.activeNow = 'remove';
+                    } else if (config.dms.simplifyActiveNow == true) {
+                        config.dms.activeNow = 'simplify'
+                    } else {
+                        config.dms.activeNow = 'show';
+                    }
+                    delete config.dms.simplifyActiveNow;
+
+                    // Migrate old clanTag setting to dropdown
+                    if (config.miscellaneous.clanTag == true) {
+                        config.miscellaneous.clanTag = 'memberlist';
+                    } else {
+                        config.miscellaneous.clanTag = 'show';
+                    }
+
+                    return config;
+                }
+            },
         ];
 
         const compareVersions = (a,b) => {
@@ -552,16 +594,18 @@ module.exports = class ChatButtonsBegone {
         }
 
         let currentVersion = this.settingVersion;
+        let didmigrate = false;
         for (const { from, to, migrate } of migrations) {
-            if (compareVersions(currentVersion, from) >= 0 && compareVersions(currentVersion, to) <= 0) {
+            if (compareVersions(currentVersion, from) >= 0 && compareVersions(currentVersion, to) < 0) {
                 this.settings = migrate(this.settings);
-                this.log(`Migrated config from b${from} to v${to}`);
+                this.log(`Migrated config from v${from} to v${to}`);
                 currentVersion = to;
+                didmigrate = true;
             }
         }
+        if (!didmigrate) this.log("No config migrations needed.");
 
         if (this.settingVersion !== config.info.version) {
-            this.log("Setting config version to latest...");
             this.settingVersion = config.info.version;
             this.api.Data.save('settingVersion', this.settingVersion);
         }
@@ -594,14 +638,21 @@ module.exports = class ChatButtonsBegone {
         }, {});
     }
 
+    addCssStyle(selector) {
+        this.styler.add(this.getCssRule(selector));
+    }
+
     addStyles() {
+        this.warn("Adding temporary fix for dropdowns.")
+        this.styler.add(":root { --text-normal: var(--text-default); --background-secondary: var(--background-base-lower);}");
+
         // Chat Buttons
-        if (this.settings.attachButton) this.styler.add(this.getCssRule('button[class*="attachButton"]'));
-        if (this.settings.giftButton) this.styler.add(this.getCssRule('button[aria-label="Send a gift"]'));
-        if (this.settings.gifButton) this.styler.add(this.getCssRule('[class*=buttonContainer]:has(button[aria-label="Open GIF picker"])'));
-        if (this.settings.stickerButton) this.styler.add(this.getCssRule('[class*=buttonContainer]:has(button[aria-label="Open sticker picker"])'));
-        if (this.settings.emojiButton) this.styler.add(this.getCssRule('[class*=buttonContainer]:has(button[aria-label="Select emoji"])'));
-        if (this.settings.appLauncherButton) this.styler.add(this.getCssRule('[class*=channelAppLauncher]'));
+        if (this.settings.attachButton) this.addCssStyle('button[class*="attachButton"]');
+        if (this.settings.giftButton) this.addCssStyle('button[aria-label="Send a gift"]');
+        if (this.settings.gifButton) this.addCssStyle('[class*=buttonContainer]:has(button[aria-label="Open GIF picker"])');
+        if (this.settings.stickerButton) this.addCssStyle('[class*=buttonContainer]:has(button[aria-label="Open sticker picker"])');
+        if (this.settings.emojiButton) this.addCssStyle('[class*=buttonContainer]:has(button[aria-label="Select emoji"])');
+        if (this.settings.appLauncherButton) this.addCssStyle('[class*=channelAppLauncher]');
 
         // Message Actions
         if (this.settings.messageActions.quickReactions) this.styler.add(this.getAriaLabelRuleLoose(this.messageActionButtonsSelector, 'Click to react with '));
@@ -610,72 +661,98 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.messageActions.editButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector, 'Edit'));
         if (this.settings.messageActions.replyButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector, 'Reply'));
         if (this.settings.messageActions.forwardButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector, 'Forward'));
-        if (this.settings.messageActions.editImage) this.styler.add(this.getCssRule('[aria-label="Edit Image with Apps"]'));
+        if (this.settings.messageActions.editImage) this.addCssStyle('[aria-label="Edit Image with Apps"]');
         
         // DMs
-        if (this.settings.dms.quickSwitcher) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [class*="searchBar"]`));
-        if (this.settings.dms.friendsTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/channels/@me"]`));
-        if (this.settings.dms.premiumTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/store"]`));
-        if (this.settings.dms.snowsgivingTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="//discord.com/snowsgiving"]`));
-        if (this.settings.dms.discordBirthdayTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/activities"]`));
-        if (this.settings.dms.discordShopTab) this.styler.add(this.getCssRule(`${this.privateChannelsSelector} [href="/shop"]`));
-        if (this.settings.dms.activeNow) this.styler.add(this.getCssRule('[class*=nowPlayingColumn]'));
-        if (this.settings.dms.simplifyActiveNow) {
-            this.styler.add(this.getCssRule('div[class*="inset"]:has(div[class*="twitchSection"])'));
-            this.styler.add(this.getCssRule('div[class*="inset"]:has(div[class*="activitySection"])'));
+        if (this.settings.dms.quickSwitcher) this.addCssStyle(`${this.privateChannelsSelector} [class*="searchBar"]`);
+        if (this.settings.dms.friendsTab) this.addCssStyle(`${this.privateChannelsSelector} [href="/channels/@me"]`);
+        if (this.settings.dms.premiumTab) this.addCssStyle(`${this.privateChannelsSelector} [href="/store"]`);
+        if (this.settings.dms.snowsgivingTab) this.addCssStyle(`${this.privateChannelsSelector} [href="//discord.com/snowsgiving"]`);
+        if (this.settings.dms.discordBirthdayTab) this.addCssStyle(`${this.privateChannelsSelector} [href="/activities"]`);
+        if (this.settings.dms.discordShopTab) {
+            this.addCssStyle(`${this.privateChannelsSelector} [href="/shop"]`);
+            this.addCssStyle('[class*=profileButtons]>div:has(button[aria-label="Shop"])');
+        }
+        if (this.settings.dms.activeNow == 'simplify') {
+            this.addCssStyle('div[class*="inset"]:has(div[class*="twitchSection"])');
+            this.addCssStyle('div[class*="inset"]:has(div[class*="activitySection"])');
+        }
+        else if (this.settings.dms.activeNow == 'remove') {
+            this.addCssStyle('[class*=nowPlayingColumn]');
         }
 
         // Servers
-        if (this.settings.servers.boostBar) this.styler.add(this.getCssRule('ul[aria-label="Channels"] div:has(> div[class*="container"] [class*="boostCountText"])'));
-        if (this.settings.servers.serverGuide) this.styler.add(this.getCssRule('div[class*=containerDefault]:has(div[aria-label="Server Guide"] + div[class*=link])'));
-        if (this.settings.servers.eventButton) this.styler.add(this.getCssRule('div[class*=containerDefault]:has(div[id*=upcoming-events] ~ div[class*=link])'));
-        if (this.settings.servers.channelsAndRoles) this.styler.add(this.getCssRule('div[class*=containerDefault]:has(div[aria-label="Channels & Roles"] + div[class*=link])'));
-        if (this.settings.servers.browseChannels) this.styler.add(this.getCssRule('div[class*=containerDefault]:has(div[aria-label="Browse Channels"] + div[class*=link])'));
-        if (this.settings.servers.boostsButton) this.styler.add(this.getCssRule('div[class*=containerDefault]:has(div[aria-label="Server Boosts"] + div[class*=link])'));
-        if (this.settings.servers.inviteButton) this.styler.add(this.getCssRule('div[class*=iconItem][aria-label="Create Invite"]'));
-        if (this.settings.servers.activitySection) this.styler.add(this.getCssRule('[class*="membersGroup"]:has([role=button]), [class*="member"] [class*="container"]:has([class*="badges"])'));
+        if (this.settings.servers.boostBar) this.addCssStyle('ul[aria-label="Channels"] div:has(> div[class*="container"] [class*="boostCountText"])');
+        if (this.settings.servers.serverGuide) this.addCssStyle('div[class*=containerDefault]:has(div[aria-label="Server Guide"] + div[class*=link])');
+        if (this.settings.servers.eventButton) this.addCssStyle('div[class*=containerDefault]:has(div[id*=upcoming-events] ~ div[class*=link])');
+        if (this.settings.servers.channelsAndRoles) this.addCssStyle('div[class*=containerDefault]:has(div[aria-label="Channels & Roles"] + div[class*=link])');
+        if (this.settings.servers.browseChannels) this.addCssStyle('div[class*=containerDefault]:has(div[aria-label="Browse Channels"] + div[class*=link])');
+        if (this.settings.servers.boostsButton) this.addCssStyle('div[class*=containerDefault]:has(div[aria-label="Server Boosts"] + div[class*=link])');
+        if (this.settings.servers.inviteButton) this.addCssStyle('div[class*=iconItem][aria-label="Create Invite"]');
+        if (this.settings.servers.activitySection) this.addCssStyle('[class*="membersGroup"]:has([role=button]), [class*="member"] [class*="container"]:has([class*="badges"])');
 
         // Voice
         if (this.settings.voice.cameraPanelButton) this.styler.add(this.getAriaLabelRule(this.voiceActionButtonsSelector, 'Turn On Camera', 'Turn Off Camera'));
         if (this.settings.voice.screensharePanelButton) this.styler.add(this.getAriaLabelRule(this.voiceActionButtonsSelector, 'Share Your Screen'));
         if (this.settings.voice.activityPanelButton) this.styler.add(this.getAriaLabelRule(this.voiceActionButtonsSelector, 'Start An Activity'));
         if (this.settings.voice.soundboardPanelButton) this.styler.add(this.getAriaLabelRule(this.voiceActionButtonsSelector, 'Open Soundboard'));
-        if (this.settings.voice.krispButton) this.styler.add(this.getCssRule(`button${this.getAriaLabelSelector('Noise Suppression powered by Krisp')}`));
+        if (this.settings.voice.krispButton) this.addCssStyle(`button${this.getAriaLabelSelector('Noise Suppression powered by Krisp')}`);
 
         // Title Bar
-        if (this.settings.toolbar.locator) this.styler.add(this.getCssRule('[class*=base] [data-windows=true][class*=bar] [class*=title]'));
-        if (this.settings.toolbar.helpButton) this.styler.add(this.getCssRule('a[href="https://support.discord.com"]'));
-        if (this.settings.toolbar.inboxButton) this.styler.add(this.getCssRule('div[class*=recentsIcon]'));
+        if (this.settings.toolbar.locator) this.addCssStyle('[class*=base] [data-windows=true][class*=bar] [class*=title]');
+        if (this.settings.toolbar.helpButton) this.addCssStyle('a[href="https://support.discord.com"]');
+        if (this.settings.toolbar.inboxButton) this.addCssStyle('div[class*=recentsIcon]');
         
         // Miscellaneous
         if (this.settings.servers.namePlate) {
             // Server list
-            this.styler.add(this.getCssRule('[class*=member] [class*=nameplated] [style*=linear-gradient]'));
+            this.addCssStyle('[class*=member] [class*=nameplated] [style*=linear-gradient]');
             // DM list
-            this.styler.add(this.getCssRule('div[class*="interactive"]:hover>div[class*="container"]:has(img)'));
-            this.styler.add(this.getCssRule('div[class*="interactiveSelected"]>div[class*="container"]:has(img)'));
+            this.addCssStyle('div[class*="interactive"]:hover>div[class*="container"]:has(img)');
+            this.addCssStyle('div[class*="interactiveSelected"]>div[class*="container"]:has(img)');
         }
-        if (this.settings.miscellaneous.clanTag) this.styler.add(this.getCssRule('span[class*=clanTag]'));
+        
+        // Clan Tags
+        if (this.settings.miscellaneous.clanTag == 'memberlist') {
+            this.addCssStyle('span[class*=clanTag]');
+        } else if (this.settings.miscellaneous.clanTag == 'profile') {
+            this.addCssStyle('span[class*=guildTagContainer]');
+        }
+        else if (this.settings.miscellaneous.clanTag == 'global') {
+            this.addCssStyle('span[class*=clanTag]');
+            this.addCssStyle('span[class*=guildTagContainer]');
+        }
+        
+        // Avatar Decorations
+        if (this.settings.miscellaneous.avatarDecoration == 'memberlist') {
+            this.addCssStyle('div[class*="member"] div[class*=avatar] [class*=avatarDecoration]');
+        } else if (this.settings.miscellaneous.avatarDecoration == 'profile') {
+            this.addCssStyle('div[class*="user-profile-popout"] div[class*=avatar] [class*=avatarDecoration]');
+            this.addCssStyle('div[class*="profile"] div[class*=avatar] [class*=avatarDecoration]');
+        } else if (this.settings.miscellaneous.avatarDecoration == 'global') {
+            this.addCssStyle('[class*=avatarDecoration]');
+        }
+        
         if (this.settings.miscellaneous.nitroUpsell) {
-            this.styler.add(this.getCssRule('[class*=upsellContainer]'));
-            this.styler.add(this.getCssRule('[class*=premiumFeature]'));
-            this.styler.add(this.getCssRule('[id*=profile-customization-tab] div[class*=container]:has([class*=artContainer])'));
+            this.addCssStyle('[class*=upsellContainer]');
+            this.addCssStyle('[class*=premiumFeature]');
+            this.addCssStyle('[id*=profile-customization-tab] div[class*=container]:has([class*=artContainer])');
             // Upsell in Profiles > Per-Server Profiles (Only should hide if user does not have Nitro)
-            this.styler.add(this.getCssRule('div[class*=upsellOverlayContainer]:has(div > [class*=disabled])'));
+            this.addCssStyle('div[class*=upsellOverlayContainer]:has(div > [class*=disabled])');
             // Offer badge
-            this.styler.add(this.getCssRule('div[class*=premiumTrialBadge]'));
+            this.addCssStyle('div[class*=premiumTrialBadge]');
         }
-        if (this.settings.miscellaneous.addServerButton) this.styler.add(this.getCssRule('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="tutorialContainer"]:not(:first-child)'));
-        if (this.settings.miscellaneous.discoverButton) this.styler.add(this.getCssRule('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="listItem"]'));
-        if (this.settings.miscellaneous.placeholderText) this.styler.add(this.getCssRule('[class*=placeholder][class*=slateTextArea]'));
-        if (this.settings.miscellaneous.avatarPopover) this.styler.add(this.getCssRule('[class*=avatarPopover]'));
+        if (this.settings.miscellaneous.addServerButton) this.addCssStyle('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="tutorialContainer"]:not(:first-child)');
+        if (this.settings.miscellaneous.discoverButton) this.addCssStyle('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="listItem"]');
+        if (this.settings.miscellaneous.placeholderText) this.addCssStyle('[class*=placeholder][class*=slateTextArea]');
+        if (this.settings.miscellaneous.avatarPopover) this.addCssStyle('[class*=avatarPopover]');
         if (this.settings.miscellaneous.noQuests) {
             // TODO: Currently only supports the Quests in the active now section.
-            this.styler.add(this.getCssRule('div[class*="inset"]:has(div[class*="promotedTag"])'));
+            this.addCssStyle('div[class*="inset"]:has(div[class*="promotedTag"])');
         }
 
         // Compatibility
-        if (this.settings.compatibility.invisibleTypingButton) this.styler.add(this.getCssRule('div[class*="buttons"] div:has(button[class*="invisibleTypingButton"])'));
+        if (this.settings.compatibility.invisibleTypingButton) this.addCssStyle('div[class*="buttons"] div:has(button[class*="invisibleTypingButton"])');
         
         this.log(this.styler.styles.size, 'styles loaded.');
     }

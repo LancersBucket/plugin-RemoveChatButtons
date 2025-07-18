@@ -1,4 +1,31 @@
 # Changelog
+## v2.12.0
+### Added
+- Converted some settings into dropdowns, expanding their capabilities
+    - Merged "Remove Active Now" and "Simplify Active Now" into "Active Now" [Direct Messages]
+        - Show: Keeps Active Now
+        - Simplify: Simplifies Active Now
+        - Remove: Removes Active Now
+    - Enhanced "Remove Clan Tag" into "Clan Tag" [Miscellaneous]
+        - Show: Keeps Clan Tags
+        - Member List: Removes Clan Tags in Server/DM members lists and messages
+        - Profile: Removes Clan Tags in profiles
+        - Global: Removes Clan Tags entirely
+- Option to modify Avatar Decorations [Miscellaneous]
+    - Show: Keeps Avatar Decorations
+    - Member List: Removes Avatar Decorations in Server/DM members lists and messages
+    - Profile: Removes Avatar Decorations in profiles
+    - Global: Removes Avatar Decorations entirely
+
+### Changed
+- Remove Discord Shop Tab [Direct Messages] now also removes shop button in profile view. (thanks [@Zacam](https://github.com/Zacam)!)
+
+### Fixed
+- Issue with config migration where it could overwrite certain config settings
+
+### Known Issues
+- Due to an issue with [BetterDiscord](https://github.com/BetterDiscord/BetterDiscord/pull/1966), the text and background of the dropdowns are broken. This plugin will implement a temporary fix until this is fixed in BetterDiscord.
+
 ## v2.11.1
 ### Fixed
 - Update checker should work again
