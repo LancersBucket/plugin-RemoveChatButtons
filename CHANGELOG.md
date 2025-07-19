@@ -1,4 +1,9 @@
 # Changelog
+## v2.12.1
+### Fixed
+- Config migrator now correctly migrates configs from < v2.10.0
+- Voice options work again
+
 ## v2.12.0
 ### Added
 - Converted some settings into dropdowns, expanding their capabilities

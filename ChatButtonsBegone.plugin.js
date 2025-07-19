@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.12.0
+ * @version 2.12.1
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.12.0',
+        version: '2.12.1',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -520,7 +520,7 @@ module.exports = class ChatButtonsBegone {
         this.settingVersion = this.api.Data.load('settingVersion');
         if (!this.settingVersion) {
             this.warn("Key settingVersion not found, creating...")
-            this.settingVersion = config.info.version;
+            this.settingVersion = "0.0.0";
             this.api.Data.save('settingVersion', this.settingVersion);
         }
         this.migrateConfigIfNeeded();
@@ -596,7 +596,7 @@ module.exports = class ChatButtonsBegone {
         let currentVersion = this.settingVersion;
         let didmigrate = false;
         for (const { from, to, migrate } of migrations) {
-            if (compareVersions(currentVersion, from) >= 0 && compareVersions(currentVersion, to) < 0) {
+            if (compareVersions(currentVersion, to) < 0) {
                 this.settings = migrate(this.settings);
                 this.log(`Migrated config from v${from} to v${to}`);
                 currentVersion = to;
@@ -692,11 +692,14 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.servers.activitySection) this.addCssStyle('[class*="membersGroup"]:has([role=button]), [class*="member"] [class*="container"]:has([class*="badges"])');
 
         // Voice
-        if (this.settings.voice.cameraPanelButton) this.styler.add(this.getAriaLabelRule(this.voiceActionButtonsSelector, 'Turn On Camera', 'Turn Off Camera'));
-        if (this.settings.voice.screensharePanelButton) this.styler.add(this.getAriaLabelRule(this.voiceActionButtonsSelector, 'Share Your Screen'));
-        if (this.settings.voice.activityPanelButton) this.styler.add(this.getAriaLabelRule(this.voiceActionButtonsSelector, 'Start An Activity'));
-        if (this.settings.voice.soundboardPanelButton) this.styler.add(this.getAriaLabelRule(this.voiceActionButtonsSelector, 'Open Soundboard'));
-        if (this.settings.voice.krispButton) this.addCssStyle(`button${this.getAriaLabelSelector('Noise Suppression powered by Krisp')}`);
+        if (this.settings.voice.cameraPanelButton) {
+            this.addCssStyle('div[class*="actionButtons"] button[aria-label="Turn On Camera"]');
+            this.addCssStyle('div[class*="actionButtons"] button[aria-label="Turn Off Camera"]');
+        }
+        if (this.settings.voice.screensharePanelButton) this.addCssStyle('div[class*="actionButtons"] button[aria-label="Share Your Screen"]');
+        if (this.settings.voice.activityPanelButton) this.addCssStyle('div[class*="actionButtons"] button[aria-label="Start An Activity"]');
+        if (this.settings.voice.soundboardPanelButton) this.addCssStyle('div[class*="actionButtons"] div:has(> button[aria-label="Open Soundboard"])');
+        if (this.settings.voice.krispButton) this.addCssStyle('button[aria-label="Noise Suppression powered by Krisp"]');
 
         // Title Bar
         if (this.settings.toolbar.locator) this.addCssStyle('[class*=base] [data-windows=true][class*=bar] [class*=title]');
