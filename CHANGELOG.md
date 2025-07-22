@@ -1,4 +1,12 @@
 # Changelog
+## v2.12.2
+### Added
+- Option to remove profile badges
+
+### Fixed
+- Boost Bar should be properly removed again (thanks [@Zacam](https://github.com/Zacam)!)
+- Errors now properly output in the console even if Enable Debugging is disabled.
+
 ## v2.12.1
 ### Fixed
 - Config migrator now correctly migrates configs from < v2.10.0

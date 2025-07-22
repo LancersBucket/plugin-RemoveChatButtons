@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.12.1
+ * @version 2.12.2
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.12.1',
+        version: '2.12.2',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -465,6 +465,13 @@ const config = {
                     note: 'Removes the buttons when you hover over a user\'s profile picture.',
                     value: false,
                 },
+                {
+                    type: 'switch',
+                    id: 'hideBadges',
+                    name: 'Remove Pofile Badges',
+                    note: "Removes the badges from user profiles.",
+                    value: false,  
+                },
             ],
         },
         {
@@ -501,7 +508,7 @@ const config = {
                     type: 'switch',
                     id: 'debug',
                     name: 'Enable Debugging',
-                    note: 'Enables debug output, and provides more verbose information.',
+                    note: 'Enables debug output, which provides more verbose information.',
                     value: false,
                 },
             ],
@@ -516,10 +523,12 @@ module.exports = class ChatButtonsBegone {
         this.styler = new Styler(this.meta.name);
         this.settings = this.api.Data.load('settings') || this.defaultSettings();
         
-        // Get settings version and migrate it to a newer version if needed
+        // Get settingsVersion key, and create it if it doesn't exist.
+        // This should only occur when updating from version before v2.10.0.
         this.settingVersion = this.api.Data.load('settingVersion');
         if (!this.settingVersion) {
-            this.warn("Key settingVersion not found, creating...")
+            this.warn("Key settingVersion not found, creating...");
+            // Initalize it to v0.0.0 if it doesn't exist to tell the migrator to run.
             this.settingVersion = "0.0.0";
             this.api.Data.save('settingVersion', this.settingVersion);
         }
@@ -559,7 +568,7 @@ module.exports = class ChatButtonsBegone {
                 from: "2.11.1",
                 to: "2.12.0",
                 migrate: (config) => {
-                    // Combine activeNow and simplifyActiveNow
+                    // Combine activeNow and simplifyActiveNow into the dropdown activeNow
                     if (config.dms.activeNow == true) {
                         config.dms.activeNow = 'remove';
                     } else if (config.dms.simplifyActiveNow == true) {
@@ -603,9 +612,10 @@ module.exports = class ChatButtonsBegone {
                 didmigrate = true;
             }
         }
-        if (!didmigrate) this.log("No config migrations needed.");
+        if (!didmigrate) this.log('No config migrations needed.');
 
-        if (this.settingVersion !== config.info.version) {
+        // If the current version is less than the current, update to current.
+        if (currentVersion !== config.info.version) {
             this.settingVersion = config.info.version;
             this.api.Data.save('settingVersion', this.settingVersion);
         }
@@ -638,13 +648,15 @@ module.exports = class ChatButtonsBegone {
         }, {});
     }
 
+    // Helper function for adding a CSS rule.
     addCssStyle(selector) {
         this.styler.add(this.getCssRule(selector));
     }
 
     addStyles() {
         this.warn("Adding temporary fix for dropdowns.")
-        this.styler.add(":root { --text-normal: var(--text-default); --background-secondary: var(--background-base-lower);}");
+        // BD uses old versions of variables for setting menus, so add back the old variables.
+        this.styler.add(":root { --text-normal: var(--text-default); --background-secondary: var(--background-base-lower); }");
 
         // Chat Buttons
         if (this.settings.attachButton) this.addCssStyle('button[class*="attachButton"]');
@@ -682,7 +694,7 @@ module.exports = class ChatButtonsBegone {
         }
 
         // Servers
-        if (this.settings.servers.boostBar) this.addCssStyle('ul[aria-label="Channels"] div:has(> div[class*="container"] [class*="boostCountText"])');
+        if (this.settings.servers.boostBar) this.addCssStyle('ul[aria-label="Channels"] div:has(div[class*="progress"])');
         if (this.settings.servers.serverGuide) this.addCssStyle('div[class*=containerDefault]:has(div[aria-label="Server Guide"] + div[class*=link])');
         if (this.settings.servers.eventButton) this.addCssStyle('div[class*=containerDefault]:has(div[id*=upcoming-events] ~ div[class*=link])');
         if (this.settings.servers.channelsAndRoles) this.addCssStyle('div[class*=containerDefault]:has(div[aria-label="Channels & Roles"] + div[class*=link])');
@@ -698,6 +710,7 @@ module.exports = class ChatButtonsBegone {
         }
         if (this.settings.voice.screensharePanelButton) this.addCssStyle('div[class*="actionButtons"] button[aria-label="Share Your Screen"]');
         if (this.settings.voice.activityPanelButton) this.addCssStyle('div[class*="actionButtons"] button[aria-label="Start An Activity"]');
+        // Why in the nine hells is the soundboard button in it's own special div? Did Discord do this just to piss me in particular off?
         if (this.settings.voice.soundboardPanelButton) this.addCssStyle('div[class*="actionButtons"] div:has(> button[aria-label="Open Soundboard"])');
         if (this.settings.voice.krispButton) this.addCssStyle('button[aria-label="Noise Suppression powered by Krisp"]');
 
@@ -720,8 +733,7 @@ module.exports = class ChatButtonsBegone {
             this.addCssStyle('span[class*=clanTag]');
         } else if (this.settings.miscellaneous.clanTag == 'profile') {
             this.addCssStyle('span[class*=guildTagContainer]');
-        }
-        else if (this.settings.miscellaneous.clanTag == 'global') {
+        } else if (this.settings.miscellaneous.clanTag == 'global') {
             this.addCssStyle('span[class*=clanTag]');
             this.addCssStyle('span[class*=guildTagContainer]');
         }
@@ -753,10 +765,11 @@ module.exports = class ChatButtonsBegone {
             // TODO: Currently only supports the Quests in the active now section.
             this.addCssStyle('div[class*="inset"]:has(div[class*="promotedTag"])');
         }
+        if (this.settings.miscellaneous.hideBadges) this.addCssStyle('div[aria-label="User Badges"]');
 
         // Compatibility
         if (this.settings.compatibility.invisibleTypingButton) this.addCssStyle('div[class*="buttons"] div:has(button[class*="invisibleTypingButton"])');
-        
+
         this.log(this.styler.styles.size, 'styles loaded.');
     }
 
@@ -803,12 +816,12 @@ module.exports = class ChatButtonsBegone {
                                         require('path').join(BdApi.Plugins.folder, `${config.info.name}.plugin.js`),
                                         request.responseText
                                     );
-                                    this.log("Plugin updated! BetterDiscord will now reload the plugin.")
+                                    this.log("Plugin updated! BetterDiscord will now reload the plugin.");
                                 }
                             }
                         );
                     } else {
-                        this.log("No updates available.")
+                        this.log("No updates available.");
                     }
                 } else {
                     this.error(`Failed to check for updates. Status: ${request.status}`);
@@ -826,7 +839,7 @@ module.exports = class ChatButtonsBegone {
         this.ensureDefaultSettings();
 
         if (this.settings.core.checkForUpdates) {
-            this.log("Checking for updates...")
+            this.log("Checking for updates...");
             await this.checkForUpdates();
         }
 
@@ -839,14 +852,14 @@ module.exports = class ChatButtonsBegone {
                     type: 'error',
                     timeout: '5000',
                 }
-            )
+            );
         }
     }
 
     stop() {
-        this.log("Stopping Plugin...");
+        this.log("Stopping plugin...");
         this.styler.removeAll();
-        this.log("All styles purged.")
+        this.log("All styles purged.");
     }
 
     getSettingsPanel() {
@@ -924,11 +937,6 @@ module.exports = class ChatButtonsBegone {
         return this.toSelector(privateChannelsClass);
     }
 
-    get voiceActionButtonsSelector() {
-        const voiceActionButtonsClass = this.api.findModuleByProps('actionButtons', 'voiceUsers')?.actionButtons;
-        return this.toSelector(voiceActionButtonsClass) + '';
-    }
-
     toSelector(classString) {
         return classString ? '.' + classString.replace(/ /g, '.') : '';
     }
@@ -944,9 +952,7 @@ module.exports = class ChatButtonsBegone {
         }
     }
     error(...args) {
-        if (this.settings.core.debug) {
-            console.error(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
-        }
+        console.error(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
     }
 };
 /*@end@*/
