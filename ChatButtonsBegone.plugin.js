@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.12.3
+ * @version 2.12.4
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.12.3',
+        version: '2.12.4',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -711,7 +711,7 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.voice.krispButton) this.addCssStyle('button[aria-label="Noise Suppression powered by Krisp"]');
 
         // Title Bar
-        if (this.settings.toolbar.locator) this.addCssStyle('[class*=base] [data-windows=true][class*=bar] [class*=title]');
+        if (this.settings.toolbar.locator) this.addCssStyle('[class*=base] [class*=bar] [class*=title]');
         if (this.settings.toolbar.helpButton) this.addCssStyle('a[href="https://support.discord.com"]');
         if (this.settings.toolbar.inboxButton) this.addCssStyle('div[class*=recentsIcon]');
         
@@ -938,12 +938,22 @@ module.exports = class ChatButtonsBegone {
     }
 
     log(...args) {
-        if (this.settings.core.debug) {
+        try {
+            if (this.settings.core.debug) {
+                console.log(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
+            }    
+        } catch (e) {
+            this.error("Debug key not found. Falling back to debug enabled.");
             console.log(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
         }
     }
     warn(...args) {
-        if (this.settings.core.debug) {
+        try {
+            if (this.settings.core.debug) {
+                console.warn(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
+            }
+        } catch (e) {
+            this.error("Debug key not found. Falling back to debug enabled.");
             console.warn(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
         }
     }

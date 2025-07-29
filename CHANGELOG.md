@@ -1,4 +1,9 @@
 # Changelog
+## v2.12.4
+### Fixed
+- Updating from versions < v2.11.0 will now load properly
+- Title Bar not hiding 
+
 ## v2.12.3
 ### Fixed
 - Attach button not being removed (thanks [@Zacam](https://github.com/Zacam)!)
@@ -6,7 +11,7 @@
 
 ## v2.12.2
 ### Added
-- Option to remove profile badges
+- Option to remove Profile Badges [Miscellaneous]
 
 ### Fixed
 - Boost Bar should be properly removed again (thanks [@Zacam](https://github.com/Zacam)!)
