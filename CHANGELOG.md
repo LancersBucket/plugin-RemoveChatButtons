@@ -1,4 +1,9 @@
 # Changelog
+## v2.12.3
+### Fixed
+- Attach button not being removed (thanks [@Zacam](https://github.com/Zacam)!)
+- Removed temporary fix for BetterDiscord styling
+
 ## v2.12.2
 ### Added
 - Option to remove profile badges
@@ -35,9 +40,6 @@
 
 ### Fixed
 - Issue with config migration where it could overwrite certain config settings
-
-### Known Issues
-- Due to an issue with [BetterDiscord](https://github.com/BetterDiscord/BetterDiscord/pull/1966), the text and background of the dropdowns are broken. This plugin will implement a temporary fix until this is fixed in BetterDiscord.
 
 ## v2.11.1
 ### Fixed

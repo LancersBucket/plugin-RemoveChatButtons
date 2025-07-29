@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.12.2
+ * @version 2.12.3
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -75,7 +75,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.12.2',
+        version: '2.12.3',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -654,16 +654,12 @@ module.exports = class ChatButtonsBegone {
     }
 
     addStyles() {
-        this.warn("Adding temporary fix for dropdowns.")
-        // BD uses old versions of variables for setting menus, so add back the old variables.
-        this.styler.add(":root { --text-normal: var(--text-default); --background-secondary: var(--background-base-lower); }");
-
         // Chat Buttons
-        if (this.settings.attachButton) this.addCssStyle('button[class*="attachButton"]');
-        if (this.settings.giftButton) this.addCssStyle('button[aria-label="Send a gift"]');
-        if (this.settings.gifButton) this.addCssStyle('[class*=buttonContainer]:has(button[aria-label="Open GIF picker"])');
-        if (this.settings.stickerButton) this.addCssStyle('[class*=buttonContainer]:has(button[aria-label="Open sticker picker"])');
-        if (this.settings.emojiButton) this.addCssStyle('[class*=buttonContainer]:has(button[aria-label="Select emoji"])');
+        if (this.settings.attachButton) this.addCssStyle('[class*="attachWrapper"]');
+        if (this.settings.giftButton) this.addCssStyle('[aria-label="Send a gift"]');
+        if (this.settings.gifButton) this.addCssStyle('[class*=buttonContainer]:has([aria-label="Open GIF picker"])');
+        if (this.settings.stickerButton) this.addCssStyle('[class*=buttonContainer]:has([aria-label="Open sticker picker"])');
+        if (this.settings.emojiButton) this.addCssStyle('[class*=buttonContainer]:has([aria-label="Select emoji"])');
         if (this.settings.appLauncherButton) this.addCssStyle('[class*=channelAppLauncher]');
 
         // Message Actions
@@ -768,7 +764,7 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.miscellaneous.hideBadges) this.addCssStyle('div[aria-label="User Badges"]');
 
         // Compatibility
-        if (this.settings.compatibility.invisibleTypingButton) this.addCssStyle('div[class*="buttons"] div:has(button[class*="invisibleTypingButton"])');
+        if (this.settings.compatibility.invisibleTypingButton) this.addCssStyle('div[class*="buttons"] div:has([class*="invisibleTypingButton"])');
 
         this.log(this.styler.styles.size, 'styles loaded.');
     }
