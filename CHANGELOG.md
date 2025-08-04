@@ -1,4 +1,8 @@
 # Changelog
+## v2.12.5
+### Fixed
+- Title Bar removing unrelated text
+
 ## v2.12.4
 ### Fixed
 - Updating from versions < v2.11.0 will now load properly
