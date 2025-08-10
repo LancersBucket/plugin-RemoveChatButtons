@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.13.0
+ * @version 2.13.1
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -174,7 +174,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.13.0',
+        version: '2.13.1',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -684,19 +684,20 @@ module.exports = class ChatButtonsBegone {
                 from: "2.12.5",
                 to: "2.13.0",
                 migrate: (config) => {
-                    if (config.miscellaneous.namePlate) {
+                    config.profileCustomizations = {};
+                    if ('namePlate' in config.miscellaneous) {
                         config.profileCustomizations.namePlate = config.miscellaneous.namePlate;
                         delete config.miscellaneous.namePlate;
                     }
-                    if (config.miscellaneous.clanTag) {
+                    if ('clanTag' in config.miscellaneous) {
                         config.profileCustomizations.clanTag = config.miscellaneous.clanTag;
                         delete config.miscellaneous.clanTag;
                     }
-                    if (config.miscellaneous.avatarDecoration) {
+                    if ('avatarDecoration' in config.miscellaneous) {
                         config.profileCustomizations.avatarDecoration = config.miscellaneous.avatarDecoration;
                         delete config.miscellaneous.avatarDecoration;
                     }
-                    if (config.miscellaneous.hideBadges) {
+                    if ('hideBadges' in config.miscellaneous) {
                         config.profileCustomizations.hideBadges = config.miscellaneous.hideBadges;
                         delete config.miscellaneous.hideBadges;
                     }

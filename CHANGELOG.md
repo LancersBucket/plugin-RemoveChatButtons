@@ -1,4 +1,8 @@
 # Changelog
+## v2.13.1
+### Fixed
+- Migrator issues
+
 ## v2.13.0
 ### Added
 - Event hijacker system to support modifications beyond CSS changes
