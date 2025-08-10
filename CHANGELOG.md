@@ -1,4 +1,13 @@
 # Changelog
+## v2.13.0
+### Added
+- Event hijacker system to support modifications beyond CSS changes
+- Option to change the attach button back to a single click for the file select popup [Miscellaneous]
+- Profile Customizations cateogry
+
+### Changed
+- Moved Nameplates, Clan Tag, Avatar Decorations, and Profile Badges into the new Profile Customizations category
+
 ## v2.12.5
 ### Fixed
 - Title Bar removing unrelated text

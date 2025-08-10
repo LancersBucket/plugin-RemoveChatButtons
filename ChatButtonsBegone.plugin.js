@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.12.5
+ * @version 2.13.0
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -65,6 +65,105 @@ class Styler {
     }
 }
 
+class EventHijacker {
+    constructor() {
+        this.mutationObserver = null;
+        this.events = Array(1).fill([null, null]);
+
+        this.settings = {
+            singleAttachButton: false,
+        }
+    }
+
+    setSetting(key, value) {
+        if (key in this.settings) {
+            this.settings[key] = value;
+        }
+        this.stopMutationObserver();
+        this.startMutationObserver();
+    }
+
+    startMutationObserver() {
+        // Disconnect previous observer if exists
+        if (this.mutationObserver) this.mutationObserver.disconnect();
+
+        // Only fire when a button is added to the DOM
+        this.mutationObserver = new MutationObserver((mutationsList) => {
+            let buttonAdded = false;
+            for (const mutation of mutationsList) {
+                for (const node of mutation.addedNodes) {
+                    if (node.nodeType === 1) {
+                        if (
+                            (node.matches && node.matches("[class*='attachButton'][role=button]")) ||
+                            (node.querySelector && node.querySelector("[class*='attachButton'][role=button]"))
+                        ) {
+                            buttonAdded = true;
+                            break;
+                        }
+                    }
+                }
+                if (buttonAdded) break;
+            }
+            if (buttonAdded) {
+                this.removeEvents();
+                this.addEvents();
+            }
+        });
+        this.mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+        // Initial run
+        this.removeEvents();
+        this.addEvents();
+    }
+
+    stopMutationObserver() {
+        if (this.mutationObserver) this.mutationObserver.disconnect();
+        this.mutationObserver = null;
+        this.removeEvents();
+    }
+
+    async addEvents() {
+        // Attach Button (Event 0)
+        if (this.settings.singleAttachButton) {
+            const attachButtonElement = document.querySelector("[class*='attachButton'][role=button]");
+            const attachButtonHandler = (e) => {
+                var target = e.target;
+                if (target) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    
+                    var handleClick = async () => {
+                        // Redispach the click event to the original element
+                        var doubleClickEvent = new MouseEvent('dblclick', {
+                            bubbles: true,
+                            cancelable: false,
+                            view: window,
+                        });
+                        attachButtonElement.dispatchEvent(doubleClickEvent);
+                    }
+                    handleClick();
+                }
+            };
+            this.events[0] = [attachButtonElement, attachButtonHandler];
+            attachButtonElement.addEventListener('click', attachButtonHandler, { capture: true });
+        }
+    }
+
+    removeEvents() {
+        if (!this.events) return;
+        for (const [el, handler] of this.events) {
+            try {
+                el.removeEventListener('click', handler, { capture: true });
+            } catch {}
+            try {
+                el.removeEventListener('click', handler, { capture: false });
+            } catch {}
+        }
+        this.events = [];
+    }
+}
+
 const config = {
     info: {
         name: 'ChatButtonsBegone',
@@ -75,7 +174,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.12.5',
+        version: '2.13.0',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -385,11 +484,11 @@ const config = {
         },
         {
             type: 'category',
-            name: 'Miscellaneous',
-            id: 'miscellaneous',
+            name: 'Profile Customizations',
+            id: 'profileCustomizations',
             collapsible: true,
             shown: false,
-            settings: [ // Miscellaneous settings
+            settings: [ // Profile Customizations settings
                 {
                     type: 'switch',
                     id: 'namePlate',
@@ -423,6 +522,22 @@ const config = {
                         { label: "Global", value: 'global' },
                     ],
                 },
+                {
+                    type: 'switch',
+                    id: 'hideBadges',
+                    name: 'Remove Profile Badges',
+                    note: 'Removes the badges from user profiles.',
+                    value: false,  
+                },
+            ],
+        },
+        {
+            type: 'category',
+            name: 'Miscellaneous',
+            id: 'miscellaneous',
+            collapsible: true,
+            shown: false,
+            settings: [ // Miscellaneous settings
                 {
                     type: 'switch',
                     id: 'addServerButton',
@@ -467,10 +582,10 @@ const config = {
                 },
                 {
                     type: 'switch',
-                    id: 'hideBadges',
-                    name: 'Remove Pofile Badges',
-                    note: "Removes the badges from user profiles.",
-                    value: false,  
+                    id: 'singleAttachButton',
+                    name: 'Single Click File Select',
+                    note: 'Changes the file select in the Attach Button to a single click instead of a double click. Note: This will remove the ability to create a poll.',
+                    value: false,
                 },
             ],
         },
@@ -521,14 +636,14 @@ module.exports = class ChatButtonsBegone {
         this.meta = meta;
         this.api = new BdApi(this.meta.name);
         this.styler = new Styler(this.meta.name);
+        this.eventHijacker = new EventHijacker(this.meta.name);
         this.settings = this.api.Data.load('settings') || this.defaultSettings();
-        
+
         // Get settingsVersion key, and create it if it doesn't exist.
         // This should only occur when updating from version before v2.10.0.
         this.settingVersion = this.api.Data.load('settingVersion');
         if (!this.settingVersion) {
             this.warn("Key settingVersion not found, creating...");
-            // Initalize it to v0.0.0 if it doesn't exist to tell the migrator to run.
             this.settingVersion = "0.0.0";
             this.api.Data.save('settingVersion', this.settingVersion);
         }
@@ -541,29 +656,6 @@ module.exports = class ChatButtonsBegone {
     migrateConfigIfNeeded() {
         // List of migrations in order
         const migrations = [
-            /* EXAMPLE MIGRATIONS
-            {
-                from: "1.0.0",
-                to: "1.1.0",
-                migrate: (config) => {
-                    // Example: rename 'oldKey' to 'newKey'
-                    if (config.oldKey) {
-                        config.newKey = config.oldKey;
-                        delete config.oldKey;
-                    }
-                    return config;
-                }
-            },
-            {
-                from: "1.1.0",
-                to: "2.0.0",
-                migrate: (config) => {
-                    // Example: remove 'deprecatedKey'
-                    delete config.deprecatedKey;
-                    return config;
-                }
-            }
-            */
             {
                 from: "2.11.1",
                 to: "2.12.0",
@@ -588,6 +680,30 @@ module.exports = class ChatButtonsBegone {
                     return config;
                 }
             },
+            {
+                from: "2.12.5",
+                to: "2.13.0",
+                migrate: (config) => {
+                    if (config.miscellaneous.namePlate) {
+                        config.profileCustomizations.namePlate = config.miscellaneous.namePlate;
+                        delete config.miscellaneous.namePlate;
+                    }
+                    if (config.miscellaneous.clanTag) {
+                        config.profileCustomizations.clanTag = config.miscellaneous.clanTag;
+                        delete config.miscellaneous.clanTag;
+                    }
+                    if (config.miscellaneous.avatarDecoration) {
+                        config.profileCustomizations.avatarDecoration = config.miscellaneous.avatarDecoration;
+                        delete config.miscellaneous.avatarDecoration;
+                    }
+                    if (config.miscellaneous.hideBadges) {
+                        config.profileCustomizations.hideBadges = config.miscellaneous.hideBadges;
+                        delete config.miscellaneous.hideBadges;
+                    }
+
+                    return config;
+                }
+            }
         ];
 
         const compareVersions = (a,b) => {
@@ -603,19 +719,15 @@ module.exports = class ChatButtonsBegone {
         }
 
         let currentVersion = this.settingVersion;
-        let didmigrate = false;
         for (const { from, to, migrate } of migrations) {
             if (compareVersions(currentVersion, to) < 0) {
                 this.settings = migrate(this.settings);
                 this.log(`Migrated config from v${from} to v${to}`);
                 currentVersion = to;
-                didmigrate = true;
             }
         }
-        if (!didmigrate) this.log('No config migrations needed.');
-
-        // If the current version is less than the current, update to current.
-        if (currentVersion !== config.info.version) {
+        
+        if (compareVersions(this.settingVersion, config.info.version) <= 0) {
             this.settingVersion = config.info.version;
             this.api.Data.save('settingVersion', this.settingVersion);
         }
@@ -654,7 +766,7 @@ module.exports = class ChatButtonsBegone {
     }
 
     addStyles() {
-        // Chat Buttons
+        /// Chat Buttons ///
         if (this.settings.attachButton) this.addCssStyle('[class*="attachWrapper"]');
         if (this.settings.giftButton) this.addCssStyle('[aria-label="Send a gift"]');
         if (this.settings.gifButton) this.addCssStyle('[class*=buttonContainer]:has([aria-label="Open GIF picker"])');
@@ -662,7 +774,7 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.emojiButton) this.addCssStyle('[class*=buttonContainer]:has([aria-label="Select emoji"])');
         if (this.settings.appLauncherButton) this.addCssStyle('[class*=channelAppLauncher]');
 
-        // Message Actions
+        /// Message Actions ///
         if (this.settings.messageActions.quickReactions) this.styler.add(this.getAriaLabelRuleLoose(this.messageActionButtonsSelector, 'Click to react with '));
         if (this.settings.messageActions.superReactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector, 'Add Super Reaction'));
         if (this.settings.messageActions.reactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector, 'Add Reaction'));
@@ -671,7 +783,7 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.messageActions.forwardButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector, 'Forward'));
         if (this.settings.messageActions.editImage) this.addCssStyle('[aria-label="Edit Image with Apps"]');
         
-        // DMs
+        /// DMs ///
         if (this.settings.dms.quickSwitcher) this.addCssStyle(`${this.privateChannelsSelector} [class*="searchBar"]`);
         if (this.settings.dms.friendsTab) this.addCssStyle(`${this.privateChannelsSelector} [href="/channels/@me"]`);
         if (this.settings.dms.premiumTab) this.addCssStyle(`${this.privateChannelsSelector} [href="/store"]`);
@@ -689,7 +801,7 @@ module.exports = class ChatButtonsBegone {
             this.addCssStyle('[class*=nowPlayingColumn]');
         }
 
-        // Servers
+        /// Servers ///
         if (this.settings.servers.boostBar) this.addCssStyle('ul[aria-label="Channels"] div:has(div[class*="progress"])');
         if (this.settings.servers.serverGuide) this.addCssStyle('div[class*=containerDefault]:has(div[aria-label="Server Guide"] + div[class*=link])');
         if (this.settings.servers.eventButton) this.addCssStyle('div[class*=containerDefault]:has(div[id*=upcoming-events] ~ div[class*=link])');
@@ -699,7 +811,7 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.servers.inviteButton) this.addCssStyle('div[class*=iconItem][aria-label="Create Invite"]');
         if (this.settings.servers.activitySection) this.addCssStyle('[class*="membersGroup"]:has([role=button]), [class*="member"] [class*="container"]:has([class*="badges"])');
 
-        // Voice
+        /// Voice ///
         if (this.settings.voice.cameraPanelButton) {
             this.addCssStyle('div[class*="actionButtons"] button[aria-label="Turn On Camera"]');
             this.addCssStyle('div[class*="actionButtons"] button[aria-label="Turn Off Camera"]');
@@ -710,40 +822,41 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.voice.soundboardPanelButton) this.addCssStyle('div[class*="actionButtons"] div:has(> button[aria-label="Open Soundboard"])');
         if (this.settings.voice.krispButton) this.addCssStyle('button[aria-label="Noise Suppression powered by Krisp"]');
 
-        // Title Bar
+        /// Title Bar ///
         if (this.settings.toolbar.locator) this.addCssStyle('[class*=base]>[class*=bar]>[class*=title]');
         if (this.settings.toolbar.helpButton) this.addCssStyle('a[href="https://support.discord.com"]');
         if (this.settings.toolbar.inboxButton) this.addCssStyle('div[class*=recentsIcon]');
         
-        // Miscellaneous
-        if (this.settings.servers.namePlate) {
+        /// Profile Customizations ///
+        if (this.settings.profileCustomizations.namePlate) {
             // Server list
             this.addCssStyle('[class*=member] [class*=nameplated] [style*=linear-gradient]');
             // DM list
             this.addCssStyle('div[class*="interactive"]:hover>div[class*="container"]:has(img)');
             this.addCssStyle('div[class*="interactiveSelected"]>div[class*="container"]:has(img)');
         }
-        
-        // Clan Tags
-        if (this.settings.miscellaneous.clanTag == 'memberlist') {
+
+        if (this.settings.profileCustomizations.clanTag == 'memberlist') {
             this.addCssStyle('span[class*=clanTag]');
-        } else if (this.settings.miscellaneous.clanTag == 'profile') {
+        } else if (this.settings.profileCustomizations.clanTag == 'profile') {
             this.addCssStyle('span[class*=guildTagContainer]');
-        } else if (this.settings.miscellaneous.clanTag == 'global') {
+        } else if (this.settings.profileCustomizations.clanTag == 'global') {
             this.addCssStyle('span[class*=clanTag]');
             this.addCssStyle('span[class*=guildTagContainer]');
         }
-        
-        // Avatar Decorations
-        if (this.settings.miscellaneous.avatarDecoration == 'memberlist') {
+
+        if (this.settings.profileCustomizations.avatarDecoration == 'memberlist') {
             this.addCssStyle('div[class*="member"] div[class*=avatar] [class*=avatarDecoration]');
-        } else if (this.settings.miscellaneous.avatarDecoration == 'profile') {
+        } else if (this.settings.profileCustomizations.avatarDecoration == 'profile') {
             this.addCssStyle('div[class*="user-profile-popout"] div[class*=avatar] [class*=avatarDecoration]');
             this.addCssStyle('div[class*="profile"] div[class*=avatar] [class*=avatarDecoration]');
-        } else if (this.settings.miscellaneous.avatarDecoration == 'global') {
+        } else if (this.settings.profileCustomizations.avatarDecoration == 'global') {
             this.addCssStyle('[class*=avatarDecoration]');
         }
-        
+
+        if (this.settings.profileCustomizations.hideBadges) this.addCssStyle('div[aria-label="User Badges"]');
+
+        /// Miscellaneous ///
         if (this.settings.miscellaneous.nitroUpsell) {
             this.addCssStyle('[class*=upsellContainer]');
             this.addCssStyle('[class*=premiumFeature]');
@@ -758,15 +871,17 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.miscellaneous.placeholderText) this.addCssStyle('[class*=placeholder][class*=slateTextArea]');
         if (this.settings.miscellaneous.avatarPopover) this.addCssStyle('[class*=avatarPopover]');
         if (this.settings.miscellaneous.noQuests) {
-            // TODO: Currently only supports the Quests in the active now section.
+            // TODO: Currently only supports the Quests in the Active Now section.
             this.addCssStyle('div[class*="inset"]:has(div[class*="promotedTag"])');
         }
-        if (this.settings.miscellaneous.hideBadges) this.addCssStyle('div[aria-label="User Badges"]');
-
-        // Compatibility
+        
+        /// Compatibility ///
         if (this.settings.compatibility.invisibleTypingButton) this.addCssStyle('div[class*="buttons"] div:has([class*="invisibleTypingButton"])');
 
         this.log(this.styler.styles.size, 'styles loaded.');
+
+        /// Event Hijacker ///
+        this.eventHijacker.setSetting('singleAttachButton', this.settings.miscellaneous.singleAttachButton);
     }
 
     refreshStyles() {
@@ -835,12 +950,12 @@ module.exports = class ChatButtonsBegone {
         this.ensureDefaultSettings();
 
         if (this.settings.core.checkForUpdates) {
-            this.log("Checking for updates...");
             await this.checkForUpdates();
         }
 
         try {
             this.addStyles();
+            this.eventHijacker.startMutationObserver();
         } catch (error) {
             this.error(`Failed to apply styles. Please report the following error to ${config.info.github}/issues:\n\n`, error);
             BdApi.UI.showToast('ChatButtonsBegone encountered an error! Check the console for more information.',
@@ -855,6 +970,7 @@ module.exports = class ChatButtonsBegone {
     stop() {
         this.log("Stopping plugin...");
         this.styler.removeAll();
+        this.eventHijacker.stopMutationObserver();
         this.log("All styles purged.");
     }
 
