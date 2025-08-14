@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.13.1
+ * @version 2.13.2
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -174,7 +174,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.13.1',
+        version: '2.13.2',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -328,6 +328,19 @@ const config = {
                     name: 'Remove Discord\'s Shop Tab',
                     note: 'Removes the Discord Shop tab from the DM list.',
                     value: true,
+                },
+                {
+                    type: 'dropdown',
+                    id: 'DMHeader',
+                    name: 'DM Header',
+                    note: 'Controls the visibility of the DM header. "Show" shows the header, "Hide Button" removes the \'Create DM\' button, "Hide Text" removes the header text, "Remove" removes the entire header.',
+                    value: 'show',
+                    options: [
+                        { label: "Show", value: 'show' },
+                        { label: "Hide Button", value: 'hideButton' },
+                        { label: "Hide Text", value: 'hideText' },
+                        { label: "Remove", value: 'remove' },
+                    ],
                 },
                 {
                     type: 'dropdown',
@@ -639,6 +652,12 @@ module.exports = class ChatButtonsBegone {
         this.eventHijacker = new EventHijacker(this.meta.name);
         this.settings = this.api.Data.load('settings') || this.defaultSettings();
 
+        if (!this.api.Plugins.isEnabled(this.meta.name)) {
+            if (this.settings.core.checkForUpdates) {
+                this.checkForUpdates();
+            }
+        }
+
         // Get settingsVersion key, and create it if it doesn't exist.
         // This should only occur when updating from version before v2.10.0.
         this.settingVersion = this.api.Data.load('settingVersion');
@@ -794,11 +813,19 @@ module.exports = class ChatButtonsBegone {
             this.addCssStyle(`${this.privateChannelsSelector} [href="/shop"]`);
             this.addCssStyle('[class*=profileButtons]>div:has(button[aria-label="Shop"])');
         }
+        
+        if (this.settings.dms.DMHeader == 'hideButton') {
+            this.addCssStyle('h2 > [aria-label="Create DM"]');
+        } else if (this.settings.dms.DMHeader == 'hideText') {
+            this.addCssStyle('[class*="privateChannelsHeaderContainer"] > [class*="headerText"]');
+        } else if (this.settings.dms.DMHeader == 'remove') {
+            this.addCssStyle('[class*="privateChannelsHeaderContainer"]');
+        }
+        
         if (this.settings.dms.activeNow == 'simplify') {
             this.addCssStyle('div[class*="inset"]:has(div[class*="twitchSection"])');
             this.addCssStyle('div[class*="inset"]:has(div[class*="activitySection"])');
-        }
-        else if (this.settings.dms.activeNow == 'remove') {
+        } else if (this.settings.dms.activeNow == 'remove') {
             this.addCssStyle('[class*=nowPlayingColumn]');
         }
 

@@ -1,4 +1,15 @@
 # Changelog
+## v2.13.2
+### Added
+- Option to customize the DM list header [Direct Messages]
+    - Show: Keeps it
+    - Hide Button: Hides the "Create DM" button
+    - Hide Text: Hides the "Direct Message" text
+    - Remove: Removes both the text and button
+
+### Fixed
+- Plugin now checks for updates even if there is a constructor error, reducing the need to manually update.
+
 ## v2.13.1
 ### Fixed
 - Migrator issues
