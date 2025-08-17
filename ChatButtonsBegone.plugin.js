@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.13.2
+ * @version 2.13.3
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -174,7 +174,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.13.2',
+        version: '2.13.3',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -414,9 +414,23 @@ const config = {
                 },
                 {
                     type: 'switch',
+                    id: 'shopButton',
+                    name: 'Remove Shop Button',
+                    note: 'Removes the Server Shop button from the channel list.',
+                    value: false,
+                },
+                {
+                    type: 'switch',
                     id: 'activitySection',
                     name: 'Remove Activities Section',
                     note: 'Removes the Activities Section from the server member list.',
+                    value: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'serverBanner',
+                    name: 'Remove Server Banner',
+                    note: 'Removes the Server Banner Image/Container from the channel list.',
                     value: false,
                 },
             ],
@@ -428,6 +442,13 @@ const config = {
             collapsible: true,
             shown: false,
             settings: [ // Voice settings
+                {
+                    type: 'switch',
+                    id: 'invitePlaceholder',
+                    name: 'Remove Solo Invite Panel',
+                    note: 'Removes the Invite/Activites Panel when only user in Voice.',
+                    value: false,
+                },
                 {
                     type: 'switch',
                     id: 'cameraPanelButton',
@@ -787,12 +808,12 @@ module.exports = class ChatButtonsBegone {
 
     addStyles() {
         /// Chat Buttons ///
-        if (this.settings.attachButton) this.addCssStyle('[class*="attachWrapper"]');
-        if (this.settings.giftButton) this.addCssStyle('[aria-label="Send a gift"]');
-        if (this.settings.gifButton) this.addCssStyle('[class*=buttonContainer]:has([aria-label="Open GIF picker"])');
-        if (this.settings.stickerButton) this.addCssStyle('[class*=buttonContainer]:has([aria-label="Open sticker picker"])');
-        if (this.settings.emojiButton) this.addCssStyle('[class*=buttonContainer]:has([aria-label="Select emoji"])');
-        if (this.settings.appLauncherButton) this.addCssStyle('[class*=channelAppLauncher]');
+        if (this.settings.attachButton) this.addCssStyle('[class^="attachWrapper"]');
+        if (this.settings.giftButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"]:nth-of-type(1)');
+        if (this.settings.gifButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"]:nth-of-type(2)');
+        if (this.settings.stickerButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"]:nth-of-type(3)');
+        if (this.settings.emojiButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"]:nth-of-type(4)');
+        if (this.settings.appLauncherButton) this.addCssStyle('[class^=channelAppLauncher]');
 
         /// Message Actions ///
         if (this.settings.messageActions.quickReactions) this.styler.add(this.getAriaLabelRuleLoose(this.messageActionButtonsSelector, 'Click to react with '));
@@ -811,7 +832,7 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.dms.discordBirthdayTab) this.addCssStyle(`${this.privateChannelsSelector} [href="/activities"]`);
         if (this.settings.dms.discordShopTab) {
             this.addCssStyle(`${this.privateChannelsSelector} [href="/shop"]`);
-            this.addCssStyle('[class*=profileButtons]>div:has(button[aria-label="Shop"])');
+            this.addCssStyle('[class^="profileButtons"]>div:has(button:not([aria-expanded]))');
         }
         
         if (this.settings.dms.DMHeader == 'hideButton') {
@@ -823,37 +844,45 @@ module.exports = class ChatButtonsBegone {
         }
         
         if (this.settings.dms.activeNow == 'simplify') {
-            this.addCssStyle('div[class*="inset"]:has(div[class*="twitchSection"])');
-            this.addCssStyle('div[class*="inset"]:has(div[class*="activitySection"])');
+            this.addCssStyle('div[class*="inset"]:has(div[class^="twitchSection"])');
+            this.addCssStyle('div[class*="inset"]:has(div[class^="activitySection"])');
         } else if (this.settings.dms.activeNow == 'remove') {
-            this.addCssStyle('[class*=nowPlayingColumn]');
+            this.addCssStyle('[class^="nowPlayingColumn"]');
         }
 
         /// Servers ///
-        if (this.settings.servers.boostBar) this.addCssStyle('ul[aria-label="Channels"] div:has(div[class*="progress"])');
-        if (this.settings.servers.serverGuide) this.addCssStyle('div[class*=containerDefault]:has(div[aria-label="Server Guide"] + div[class*=link])');
-        if (this.settings.servers.eventButton) this.addCssStyle('div[class*=containerDefault]:has(div[id*=upcoming-events] ~ div[class*=link])');
-        if (this.settings.servers.channelsAndRoles) this.addCssStyle('div[class*=containerDefault]:has(div[aria-label="Channels & Roles"] + div[class*=link])');
-        if (this.settings.servers.browseChannels) this.addCssStyle('div[class*=containerDefault]:has(div[aria-label="Browse Channels"] + div[class*=link])');
-        if (this.settings.servers.boostsButton) this.addCssStyle('div[class*=containerDefault]:has(div[aria-label="Server Boosts"] + div[class*=link])');
+        if (this.settings.servers.boostBar) this.addCssStyle('div[id="channels"] > ul[class^="content"] div:has(div[class^="progress"])');
+        if (this.settings.servers.serverGuide) this.addCssStyle('div[class^="containerDefault"]:has(div[id^="home-tab-"] + div[class^="link"])');
+        if (this.settings.servers.eventButton) this.addCssStyle('div[class^="containerDefault"]:has(div[id^="upcoming-events-"] + div[class^="link"])');
+        if (this.settings.servers.channelsAndRoles) this.addCssStyle('div[class^="containerDefault"]:has(div[aria-label="Channels & Roles"] + div[clas^="link"])');
+        if (this.settings.servers.browseChannels) this.addCssStyle('div[class^="containerDefault"]:has(div[aria-label="Browse Channels"] + div[class^="link"])');
+        if (this.settings.servers.boostsButton) this.addCssStyle('div[class*=containerDefault]:has(div[id^="skill-trees-"] + div[class^="link"])');
         if (this.settings.servers.inviteButton) this.addCssStyle('div[class*=iconItem][aria-label="Create Invite"]');
-        if (this.settings.servers.activitySection) this.addCssStyle('[class*="membersGroup"]:has([role=button]), [class*="member"] [class*="container"]:has([class*="badges"])');
+        if (this.settings.servers.shopButton) this.addCssStyle('div[class^="containerDefault"]:has(div[id^="shop-"] + div[class^="link"])');
+        if (this.settings.servers.activitySection) this.addCssStyle('[class^="membersGroup"]:has([role="button"]), [class^="member"] [class^="container"]:has([class^="badges"])');
+        if (this.settings.servers.serverBanner) {
+            this.addCssStyle('nav[class^="container"] > div[class*="bannerVisible"] > div[class^="animatedContainer"]');
+            this.addCssStyle('nav[class^="container"] > div[id="channels"] > ul > div[style="height: 84px;"]');
+            this.addCssStyle('nav[class^="container"] > div[id="channels"] > ul > div[style="height: 8px;"]');
+        }
 
         /// Voice ///
+        if (this.settings.voice.invitePlaceholder) this.addCssStyle('div[class="row_d6271c"]:has(div[class*="singleUserRoot"])');
+
         if (this.settings.voice.cameraPanelButton) {
-            this.addCssStyle('div[class*="actionButtons"] button[aria-label="Turn On Camera"]');
-            this.addCssStyle('div[class*="actionButtons"] button[aria-label="Turn Off Camera"]');
+            this.addCssStyle('div[class^="actionButtons"] button[aria-label="Turn On Camera"]');
+            this.addCssStyle('div[class^="actionButtons"] button[aria-label="Turn Off Camera"]');
         }
-        if (this.settings.voice.screensharePanelButton) this.addCssStyle('div[class*="actionButtons"] button[aria-label="Share Your Screen"]');
-        if (this.settings.voice.activityPanelButton) this.addCssStyle('div[class*="actionButtons"] button[aria-label="Start An Activity"]');
+        if (this.settings.voice.screensharePanelButton) this.addCssStyle('div[class^="actionButtons"] button[aria-label="Share Your Screen"]');
+        if (this.settings.voice.activityPanelButton) this.addCssStyle('div[class^="actionButtons"] button[aria-label="Start An Activity"]');
         // Why in the nine hells is the soundboard button in it's own special div? Did Discord do this just to piss me in particular off?
-        if (this.settings.voice.soundboardPanelButton) this.addCssStyle('div[class*="actionButtons"] div:has(> button[aria-label="Open Soundboard"])');
+        if (this.settings.voice.soundboardPanelButton) this.addCssStyle('div[class^="actionButtons"] div:has(> button[aria-label="Open Soundboard"])');
         if (this.settings.voice.krispButton) this.addCssStyle('button[aria-label="Noise Suppression powered by Krisp"]');
 
         /// Title Bar ///
-        if (this.settings.toolbar.locator) this.addCssStyle('[class*=base]>[class*=bar]>[class*=title]');
+        if (this.settings.toolbar.locator) this.addCssStyle('[class^="base"]>[class^="bar"]>[class^="title"]');
         if (this.settings.toolbar.helpButton) this.addCssStyle('a[href="https://support.discord.com"]');
-        if (this.settings.toolbar.inboxButton) this.addCssStyle('div[class*=recentsIcon]');
+        if (this.settings.toolbar.inboxButton) this.addCssStyle('div[class^="recentsIcon"]');
         
         /// Profile Customizations ///
         if (this.settings.profileCustomizations.namePlate) {
@@ -865,39 +894,39 @@ module.exports = class ChatButtonsBegone {
         }
 
         if (this.settings.profileCustomizations.clanTag == 'memberlist') {
-            this.addCssStyle('span[class*=clanTag]');
+            this.addCssStyle('span[class*="clanTag"]');
         } else if (this.settings.profileCustomizations.clanTag == 'profile') {
-            this.addCssStyle('span[class*=guildTagContainer]');
+            this.addCssStyle('span[class*="guildTagContainer"]');
         } else if (this.settings.profileCustomizations.clanTag == 'global') {
-            this.addCssStyle('span[class*=clanTag]');
-            this.addCssStyle('span[class*=guildTagContainer]');
+            this.addCssStyle('span[class*="clanTag"]');
+            this.addCssStyle('span[class*="guildTagContainer"]');
         }
 
         if (this.settings.profileCustomizations.avatarDecoration == 'memberlist') {
-            this.addCssStyle('div[class*="member"] div[class*=avatar] [class*=avatarDecoration]');
+            this.addCssStyle('div[class*="member"] div[class*="avatar"] [class*="avatarDecoration"]');
         } else if (this.settings.profileCustomizations.avatarDecoration == 'profile') {
-            this.addCssStyle('div[class*="user-profile-popout"] div[class*=avatar] [class*=avatarDecoration]');
-            this.addCssStyle('div[class*="profile"] div[class*=avatar] [class*=avatarDecoration]');
+            this.addCssStyle('div[class*="user-profile-popout"] div[class*="avatar"] [class*="avatarDecoration"]');
+            this.addCssStyle('div[class*="profile"] div[class*="avatar"] [class*="avatarDecoration"]');
         } else if (this.settings.profileCustomizations.avatarDecoration == 'global') {
-            this.addCssStyle('[class*=avatarDecoration]');
+            this.addCssStyle('[class*="avatarDecoration"]');
         }
 
         if (this.settings.profileCustomizations.hideBadges) this.addCssStyle('div[aria-label="User Badges"]');
 
         /// Miscellaneous ///
         if (this.settings.miscellaneous.nitroUpsell) {
-            this.addCssStyle('[class*=upsellContainer]');
-            this.addCssStyle('[class*=premiumFeature]');
-            this.addCssStyle('[id*=profile-customization-tab] div[class*=container]:has([class*=artContainer])');
+            this.addCssStyle('[class*="upsellContainer"]');
+            this.addCssStyle('[class*="premiumFeature"]');
+            this.addCssStyle('[id*="profile-customization-tab"] div[class*="container"]:has([class*="artContainer"])');
             // Upsell in Profiles > Per-Server Profiles (Only should hide if user does not have Nitro)
-            this.addCssStyle('div[class*=upsellOverlayContainer]:has(div > [class*=disabled])');
+            this.addCssStyle('div[class*="upsellOverlayContainer"]:has(div > [class*="disabled"])');
             // Offer badge
-            this.addCssStyle('div[class*=premiumTrialBadge]');
+            this.addCssStyle('div[class*="premiumTrialBadge"]');
         }
         if (this.settings.miscellaneous.addServerButton) this.addCssStyle('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="tutorialContainer"]:not(:first-child)');
         if (this.settings.miscellaneous.discoverButton) this.addCssStyle('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="listItem"]');
-        if (this.settings.miscellaneous.placeholderText) this.addCssStyle('[class*=placeholder][class*=slateTextArea]');
-        if (this.settings.miscellaneous.avatarPopover) this.addCssStyle('[class*=avatarPopover]');
+        if (this.settings.miscellaneous.placeholderText) this.addCssStyle('[class*="placeholder"][class*="slateTextArea"]');
+        if (this.settings.miscellaneous.avatarPopover) this.addCssStyle('[class*="avatarPopover"]');
         if (this.settings.miscellaneous.noQuests) {
             // TODO: Currently only supports the Quests in the Active Now section.
             this.addCssStyle('div[class*="inset"]:has(div[class*="promotedTag"])');
