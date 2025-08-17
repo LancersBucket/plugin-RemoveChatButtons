@@ -331,6 +331,19 @@ const config = {
                 },
                 {
                     type: 'dropdown',
+                    id: 'DMHeader',
+                    name: 'DM Header',
+                    note: 'Controls the visibility of the DM header. "Show" shows the header, "Hide Button" removes the \'Create DM\' button, "Hide Text" removes the header text, "Remove" removes the entire header.',
+                    value: 'show',
+                    options: [
+                        { label: "Show", value: 'show' },
+                        { label: "Hide Button", value: 'hideButton' },
+                        { label: "Hide Text", value: 'hideText' },
+                        { label: "Remove", value: 'remove' },
+                    ],
+                },
+                {
+                    type: 'dropdown',
                     id: 'activeNow',
                     name: 'Active Now Section',
                     note: 'Controls the visibility of the "Active Now" section in the Friends tab. "Remove" removes the section, "Simplify" removes Twitch and Rich Presence blocks.',
@@ -390,6 +403,13 @@ const config = {
                     id: 'boostsButton',
                     name: 'Remove Server Boosts Button',
                     note: 'Removes the Server Boosts button from the channel list.',
+                    value: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'inviteButton',
+                    name: 'Remove Invite Button',
+                    note: 'Removes the invite button when hovering over channel list entries.',
                     value: false,
                 },
                 {
@@ -789,10 +809,10 @@ module.exports = class ChatButtonsBegone {
     addStyles() {
         /// Chat Buttons ///
         if (this.settings.attachButton) this.addCssStyle('[class^="attachWrapper"]');
-        if (this.settings.giftButton) this.addCssStyle('[class="buttons__74017"]>[class="button__74017 button__24af7"]');
-        if (this.settings.gifButton) this.addCssStyle('[class="buttons__74017"]>[class*="buttonContainer"]:has([class^="button__74017 button__24af7"])');
-        if (this.settings.stickerButton) this.addCssStyle('[class="buttons__74017"]>[class*="buttonContainer"]:has([class^="button__74017 stickerButton__74017 button__24af7"])');
-        if (this.settings.emojiButton) this.addCssStyle('[class^="buttons__74017"]>[class*="buttonContainer"]:has([class*="emojiButtonNormal__04eed"])');
+        if (this.settings.giftButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"]:nth-of-type(1)');
+        if (this.settings.gifButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"]:nth-of-type(2)');
+        if (this.settings.stickerButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"]:nth-of-type(3)');
+        if (this.settings.emojiButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"]:nth-of-type(4)');
         if (this.settings.appLauncherButton) this.addCssStyle('[class^=channelAppLauncher]');
 
         /// Message Actions ///
@@ -815,6 +835,14 @@ module.exports = class ChatButtonsBegone {
             this.addCssStyle('[class^="profileButtons"]>div:has(button:not([aria-expanded]))');
         }
         
+        if (this.settings.dms.DMHeader == 'hideButton') {
+            this.addCssStyle('h2 > [aria-label="Create DM"]');
+        } else if (this.settings.dms.DMHeader == 'hideText') {
+            this.addCssStyle('[class*="privateChannelsHeaderContainer"] > [class*="headerText"]');
+        } else if (this.settings.dms.DMHeader == 'remove') {
+            this.addCssStyle('[class*="privateChannelsHeaderContainer"]');
+        }
+        
         if (this.settings.dms.activeNow == 'simplify') {
             this.addCssStyle('div[class*="inset"]:has(div[class^="twitchSection"])');
             this.addCssStyle('div[class*="inset"]:has(div[class^="activitySection"])');
@@ -823,18 +851,19 @@ module.exports = class ChatButtonsBegone {
         }
 
         /// Servers ///
-        if (this.settings.servers.boostBar) this.addCssStyle('div[id="channels"]>ul[class^="content"] div:has(div[class^="progress"])');
+        if (this.settings.servers.boostBar) this.addCssStyle('div[id="channels"] > ul[class^="content"] div:has(div[class^="progress"])');
         if (this.settings.servers.serverGuide) this.addCssStyle('div[class^="containerDefault"]:has(div[id^="home-tab-"] + div[class^="link"])');
         if (this.settings.servers.eventButton) this.addCssStyle('div[class^="containerDefault"]:has(div[id^="upcoming-events-"] + div[class^="link"])');
         if (this.settings.servers.channelsAndRoles) this.addCssStyle('div[class^="containerDefault"]:has(div[aria-label="Channels & Roles"] + div[clas^="link"])');
         if (this.settings.servers.browseChannels) this.addCssStyle('div[class^="containerDefault"]:has(div[aria-label="Browse Channels"] + div[class^="link"])');
         if (this.settings.servers.boostsButton) this.addCssStyle('div[class*=containerDefault]:has(div[id^="skill-trees-"] + div[class^="link"])');
+        if (this.settings.servers.inviteButton) this.addCssStyle('div[class*=iconItem][aria-label="Create Invite"]');
         if (this.settings.servers.shopButton) this.addCssStyle('div[class^="containerDefault"]:has(div[id^="shop-"] + div[class^="link"])');
         if (this.settings.servers.activitySection) this.addCssStyle('[class^="membersGroup"]:has([role="button"]), [class^="member"] [class^="container"]:has([class^="badges"])');
         if (this.settings.servers.serverBanner) {
-            this.addCssStyle('nav[class="container__2637a"]>div[class*="bannerVisible_"]>div[class^="animatedContainer_"]');
-            this.addCssStyle('nav[class="container__2637a"]>div[id="channels"]>ul>div[style="height: 84px;"]');
-            this.addCssStyle('nav[class="container__2637a"]>div[id="channels"]>ul>div[style="height: 8px;"]');
+            this.addCssStyle('nav[class^="container"] > div[class*="bannerVisible"] > div[class^="animatedContainer"]');
+            this.addCssStyle('nav[class^="container"] > div[id="channels"] > ul > div[style="height: 84px;"]');
+            this.addCssStyle('nav[class^="container"] > div[id="channels"] > ul > div[style="height: 8px;"]');
         }
 
         /// Voice ///
