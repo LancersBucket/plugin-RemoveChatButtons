@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.13.3
+ * @version 2.14.0
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -174,7 +174,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.13.3',
+        version: '2.14.0',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -857,7 +857,10 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.servers.channelsAndRoles) this.addCssStyle('div[class^="containerDefault"]:has(div[aria-label="Channels & Roles"] + div[clas^="link"])');
         if (this.settings.servers.browseChannels) this.addCssStyle('div[class^="containerDefault"]:has(div[aria-label="Browse Channels"] + div[class^="link"])');
         if (this.settings.servers.boostsButton) this.addCssStyle('div[class*=containerDefault]:has(div[id^="skill-trees-"] + div[class^="link"])');
-        if (this.settings.servers.inviteButton) this.addCssStyle('div[class*=iconItem][aria-label="Create Invite"]');
+        if (this.settings.servers.inviteButton) {
+            this.addCssStyle('div[class*=iconItem][aria-label="Create Invite"]');
+            this.addCssStyle('div[class*=iconItem][aria-label="Invite to Server"]');
+        }
         if (this.settings.servers.shopButton) this.addCssStyle('div[class^="containerDefault"]:has(div[id^="shop-"] + div[class^="link"])');
         if (this.settings.servers.activitySection) this.addCssStyle('[class^="membersGroup"]:has([role="button"]), [class^="member"] [class^="container"]:has([class^="badges"])');
         if (this.settings.servers.serverBanner) {

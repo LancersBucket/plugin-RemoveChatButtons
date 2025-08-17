@@ -1,4 +1,14 @@
 # Changelog
+## v2.14.0
+Special thanks to [@Zacam](https://github.com/Zacam) for their work on this update.
+### Added
+- Option to remove the server channel list shop button [Servers]
+- Option to remove the server banner [Servers]
+- Option to remove the panel that appears for Invite/Start Activity when user is the only one in a voice chat [Voice]
+
+### Fixed
+- Per channel server invite button not removing in all cases
+
 ## v2.13.2
 ### Added
 - Option to customize the DM list header [Direct Messages]
