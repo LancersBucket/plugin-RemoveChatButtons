@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.14.0
+ * @version 2.14.1
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -174,7 +174,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.14.0',
+        version: '2.14.1',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -365,6 +365,13 @@ const config = {
             settings: [ // Server settings
                 {
                     type: 'switch',
+                    id: 'serverBanner',
+                    name: 'Remove Server Banner',
+                    note: 'Removes the Server Banner Image/Container from the channel list.',
+                    value: false,
+                },
+                {
+                    type: 'switch',
                     id: 'boostBar',
                     name: 'Remove Boost Bar',
                     note: 'Removes the boost progress bar from the channel list.',
@@ -386,9 +393,16 @@ const config = {
                 },
                 {
                     type: 'switch',
+                    id: 'membersButton',
+                    name: 'Remove Members Button',
+                    note: 'Removes the Members button from the channel list.',
+                    value: false,
+                },
+                {
+                    type: 'switch',
                     id: 'channelsAndRoles',
-                    name: 'Remove Channels and Roles Button',
-                    note: 'Removes the Channels and Roles button from the channel list.',
+                    name: 'Remove Channels & Roles Button',
+                    note: 'Removes the Channels & Roles button from the channel list.',
                     value: false,
                 },
                 {
@@ -424,13 +438,6 @@ const config = {
                     id: 'activitySection',
                     name: 'Remove Activities Section',
                     note: 'Removes the Activities Section from the server member list.',
-                    value: false,
-                },
-                {
-                    type: 'switch',
-                    id: 'serverBanner',
-                    name: 'Remove Server Banner',
-                    note: 'Removes the Server Banner Image/Container from the channel list.',
                     value: false,
                 },
             ],
@@ -809,10 +816,10 @@ module.exports = class ChatButtonsBegone {
     addStyles() {
         /// Chat Buttons ///
         if (this.settings.attachButton) this.addCssStyle('[class^="attachWrapper"]');
-        if (this.settings.giftButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"]:nth-of-type(1)');
-        if (this.settings.gifButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"]:nth-of-type(2)');
-        if (this.settings.stickerButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"]:nth-of-type(3)');
-        if (this.settings.emojiButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"]:nth-of-type(4)');
+        if (this.settings.giftButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="button"]');
+        if (this.settings.gifButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="expression"]:nth-of-type(2)');
+        if (this.settings.stickerButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="expression"]:nth-of-type(3)');
+        if (this.settings.emojiButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="expression"]:nth-of-type(4)');
         if (this.settings.appLauncherButton) this.addCssStyle('[class^=channelAppLauncher]');
 
         /// Message Actions ///
@@ -854,9 +861,10 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.servers.boostBar) this.addCssStyle('div[id="channels"] > ul[class^="content"] div:has(div[class^="progress"])');
         if (this.settings.servers.serverGuide) this.addCssStyle('div[class^="containerDefault"]:has(div[id^="home-tab-"] + div[class^="link"])');
         if (this.settings.servers.eventButton) this.addCssStyle('div[class^="containerDefault"]:has(div[id^="upcoming-events-"] + div[class^="link"])');
-        if (this.settings.servers.channelsAndRoles) this.addCssStyle('div[class^="containerDefault"]:has(div[aria-label="Channels & Roles"] + div[clas^="link"])');
+        if (this.settings.servers.membersButton) this.addCssStyle('div[class^="containerDefault"]:has(div[id^="members-"])');
+        if (this.settings.servers.channelsAndRoles) this.addCssStyle('div[class^="containerDefault"]:has(div[aria-label="Channels & Roles"])');
         if (this.settings.servers.browseChannels) this.addCssStyle('div[class^="containerDefault"]:has(div[aria-label="Browse Channels"] + div[class^="link"])');
-        if (this.settings.servers.boostsButton) this.addCssStyle('div[class*=containerDefault]:has(div[id^="skill-trees-"] + div[class^="link"])');
+        if (this.settings.servers.boostsButton) this.addCssStyle('div[class^="containerDefault"]:has(div[id^="skill-trees-"])');
         if (this.settings.servers.inviteButton) {
             this.addCssStyle('div[class*=iconItem][aria-label="Create Invite"]');
             this.addCssStyle('div[class*=iconItem][aria-label="Invite to Server"]');
@@ -870,7 +878,7 @@ module.exports = class ChatButtonsBegone {
         }
 
         /// Voice ///
-        if (this.settings.voice.invitePlaceholder) this.addCssStyle('div[class="row_d6271c"]:has(div[class*="singleUserRoot"])');
+        if (this.settings.voice.invitePlaceholder) this.addCssStyle('div[class*="singleUserRoot"]');
 
         if (this.settings.voice.cameraPanelButton) {
             this.addCssStyle('div[class^="actionButtons"] button[aria-label="Turn On Camera"]');

@@ -1,4 +1,18 @@
 # Changelog
+## v2.14.1
+Special thanks to [@Zacam](https://github.com/Zacam) for their work on this update.
+### Added
+- Option to remove Members button from channel list [Servers]
+
+### Changed
+- Rearranged Server settings to be more consistant with how they appear in the client
+
+### Fixed
+- Main chat buttons not hiding properly
+- Server Boosts button not hiding properly
+- Channels & Roles button not hiding properly
+- Solo VC Invite not hiding properly
+
 ## v2.14.0
 Special thanks to [@Zacam](https://github.com/Zacam) for their work on this update.
 ### Added
