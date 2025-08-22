@@ -1,4 +1,8 @@
 # Changelog
+## v2.14.2
+### Fixed
+- Chatbar buttons not hiding properly
+
 ## v2.14.1
 Special thanks to [@Zacam](https://github.com/Zacam) for their work on this update.
 ### Added

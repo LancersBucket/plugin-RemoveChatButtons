@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.14.1
+ * @version 2.14.2
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -174,7 +174,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.14.1',
+        version: '2.14.2',
         description: 'Hide annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -817,9 +817,9 @@ module.exports = class ChatButtonsBegone {
         /// Chat Buttons ///
         if (this.settings.attachButton) this.addCssStyle('[class^="attachWrapper"]');
         if (this.settings.giftButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="button"]');
-        if (this.settings.gifButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="expression"]:nth-of-type(2)');
-        if (this.settings.stickerButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="expression"]:nth-of-type(3)');
-        if (this.settings.emojiButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="expression"]:nth-of-type(4)');
+        if (this.settings.gifButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > div[class^="expression"]:not(:has([class*="stickerButton"], [class*="emojiButton"]))');
+        if (this.settings.stickerButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="expression"]:has([class*="stickerButton"])');
+        if (this.settings.emojiButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="expression"]:has([class*="emojiButton"])');
         if (this.settings.appLauncherButton) this.addCssStyle('[class^=channelAppLauncher]');
 
         /// Message Actions ///
