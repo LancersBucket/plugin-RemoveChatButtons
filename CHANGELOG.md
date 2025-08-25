@@ -1,7 +1,13 @@
 # Changelog
+## v2.14.3 - August 25th, 2025
+### Changed
+- Nitro Upsell now removes more content across Discord [Miscellaneous] (thanks [@Zacam](https://github.com/Zacam)!)
+- Tweaked dropdown menu options to be more explicit in what they remove
+- Changed language to consistently use "remove" instead of "hide"
+
 ## v2.14.2 - August 22nd, 2025
 ### Fixed
-- Chatbar buttons not hiding properly
+- Chatbar buttons not removing properly
 
 ## v2.14.1 - August 20th, 2025
 Special thanks to [@Zacam](https://github.com/Zacam) for their work on this update.
@@ -12,10 +18,10 @@ Special thanks to [@Zacam](https://github.com/Zacam) for their work on this upda
 - Rearranged Server settings to be more consistant with how they appear in the client
 
 ### Fixed
-- Main chat buttons not hiding properly
-- Server Boosts button not hiding properly
-- Channels & Roles button not hiding properly
-- Solo VC Invite not hiding properly
+- Main chat buttons not removing properly
+- Server Boosts button not removing properly
+- Channels & Roles button not removing properly
+- Solo VC Invite not removing properly
 
 ## v2.14.0 - August 16th, 2025
 Special thanks to [@Zacam](https://github.com/Zacam) for their work on this update.
@@ -58,7 +64,7 @@ Special thanks to [@Zacam](https://github.com/Zacam) for their work on this upda
 ## v2.12.4 - July 29th, 2025
 ### Fixed
 - Updating from versions < v2.11.0 will now load properly
-- Title Bar not hiding 
+- Title Bar not removing 
 
 ## v2.12.3 - July 28th, 2025
 ### Fixed
@@ -132,7 +138,7 @@ Special thanks to [@Zacam](https://github.com/Zacam) for their work on this upda
 ### Added
 - Config migration system to allow for relocation of settings while preserving its state.
 - Option to Simplify the Active Now Section [Direct Messages]
-    - Hides all Active Now insets for Twitch (thanks [@Zacam](https://github.com/Zacam)!) and Rich Presence
+    - Removes all Active Now insets for Twitch (thanks [@Zacam](https://github.com/Zacam)!) and Rich Presence
 - Option to remove Discord Quest related things [Miscellaneous] (thanks [@Zacam](https://github.com/Zacam)!)
 
 ## v2.9.0 - June 3rd, 2025
@@ -151,7 +157,7 @@ Special thanks to [@Zacam](https://github.com/Zacam) for their work on this upda
 ## v2.8.2 - May 15th, 2025
 ### Fixed
 - Main chat bar toggles not saving toggle state on change
-- GIF, Emoji, Sticker, and App Launcher buttons not hiding
+- GIF, Emoji, Sticker, and App Launcher buttons not removing
 
 ## v2.8.1 - May 9th, 2025
 ### Fixed

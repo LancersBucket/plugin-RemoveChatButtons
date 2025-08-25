@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.14.2
+ * @version 2.14.3
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -174,8 +174,8 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.14.2',
-        description: 'Hide annoying stuff from your Discord client.',
+        version: '2.14.3',
+        description: 'Remove annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
     },
@@ -333,12 +333,12 @@ const config = {
                     type: 'dropdown',
                     id: 'DMHeader',
                     name: 'DM Header',
-                    note: 'Controls the visibility of the DM header. "Show" shows the header, "Hide Button" removes the \'Create DM\' button, "Hide Text" removes the header text, "Remove" removes the entire header.',
+                    note: 'Controls the visibility of the DM header. "Show" shows the header, "Remove Button" removes the \'Create DM\' button, "Remove Text" removes the header text, "Remove" removes the entire header.',
                     value: 'show',
                     options: [
                         { label: "Show", value: 'show' },
-                        { label: "Hide Button", value: 'hideButton' },
-                        { label: "Hide Text", value: 'hideText' },
+                        { label: "Remove Button", value: 'hideButton' },
+                        { label: "Remove Text", value: 'hideText' },
                         { label: "Remove", value: 'remove' },
                     ],
                 },
@@ -541,26 +541,26 @@ const config = {
                     type: 'dropdown',
                     id: 'clanTag',
                     name: 'Clan Tag',
-                    note: 'Controls the visibility of the Clan Tags. "Member List" removes it in member lists (Server/DM and messages), "Profile" removes it in profiles, "Global" removes it everywhere.',
+                    note: 'Controls the visibility of the Clan Tags. "Remove in Member List" removes it in member lists (Server/DM and messages), "Remove in Profile" removes it in profiles, "Remove" removes it everywhere.',
                     value: 'show',
                     options: [
                         { label: "Show", value: 'show' },
-                        { label: "Member List", value: 'memberlist' },
-                        { label: "Profile", value: 'profile' },
-                        { label: "Global", value: 'global' },
+                        { label: "Remove in Member List", value: 'memberlist' },
+                        { label: "Remove in Profile", value: 'profile' },
+                        { label: "Remove", value: 'global' },
                     ],
                 },
                 {
                     type: 'dropdown',
                     id: 'avatarDecoration',
                     name: 'Avatar Decoration',
-                    note: 'Controls the visibility of avatar decorations. "Member List" removes it in member lists (Server/DM and messages), "Profile" removes it in profiles, "Global" removes it everywhere.',
+                    note: 'Controls the visibility of avatar decorations. "Remove in Member List" removes it in member lists (Server/DM and messages), "Remove in Profile" removes it in profiles, "Remove" removes it everywhere.',
                     value: 'show',
                     options: [
                         { label: "Show", value: 'show' },
-                        { label: "Member List", value: 'memberlist' },
-                        { label: "Profile", value: 'profile' },
-                        { label: "Global", value: 'global' },
+                        { label: "Remove in Member List", value: 'memberlist' },
+                        { label: "Remove in Profile", value: 'profile' },
+                        { label: "Remove", value: 'global' },
                     ],
                 },
                 {
@@ -926,13 +926,16 @@ module.exports = class ChatButtonsBegone {
 
         /// Miscellaneous ///
         if (this.settings.miscellaneous.nitroUpsell) {
-            this.addCssStyle('[class*="upsellContainer"]');
-            this.addCssStyle('[class*="premiumFeature"]');
+            this.addCssStyle('[class*="upsellContainer"], [class*="premiumFeature"]');
             this.addCssStyle('[id*="profile-customization-tab"] div[class*="container"]:has([class*="artContainer"])');
-            // Upsell in Profiles > Per-Server Profiles (Only should hide if user does not have Nitro)
+            // Upsell in Profiles > Per-Server Profiles (Only should remove if user does not have Nitro)
             this.addCssStyle('div[class*="upsellOverlayContainer"]:has(div > [class*="disabled"])');
-            // Offer badge
+            // DM List > Nitro - Offer badge
             this.addCssStyle('div[class*="premiumTrialBadge"]');
+            // Billing Settings
+            this.addCssStyle('[class*="premiumTab"], [data-tab-id="Nitro Server Boost"], [data-tab-id="Library Inventory"]');
+            // Merch
+            this.addCssStyle('[data-tab-id="merchandise"]');
         }
         if (this.settings.miscellaneous.addServerButton) this.addCssStyle('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="tutorialContainer"]:not(:first-child)');
         if (this.settings.miscellaneous.discoverButton) this.addCssStyle('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="listItem"]');
