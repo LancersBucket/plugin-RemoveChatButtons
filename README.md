@@ -15,8 +15,8 @@ See [CHANGELOG.md](./CHANGELOG.md) for details on version history.
 
 ## Special Thanks
 Special thanks to the following people:
-- [@Zacam](https://github.com/Zacam) for their work in a variety of ways for this plugin
-- [@MisansProducts](https://github.com/MisansProducts) for the auto-updater logic
+- [Zacam](https://github.com/Zacam) for their work in a variety of ways for this plugin
+- [MisansProducts](https://github.com/MisansProducts) for the auto-updater logic
 
 ## Other Plugins
 Check out my other plugins too!

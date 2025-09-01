@@ -1,4 +1,11 @@
 # Changelog
+## v2.14.4 - September 1st, 2025
+### Added
+- Option to remove seperator bar from DM/Server channel list [Miscellaneous]
+
+### Changed
+- Rearranged Server settings to be more consistant with how they appear in the client
+
 ## v2.14.3 - August 25th, 2025
 ### Changed
 - Nitro Upsell now removes more content across Discord [Miscellaneous] (thanks [@Zacam](https://github.com/Zacam)!)

@@ -4,9 +4,8 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.14.3
+ * @version 2.14.4
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
- * @updateUrl https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -84,18 +83,16 @@ class EventHijacker {
     }
 
     startMutationObserver() {
-        // Disconnect previous observer if exists
         if (this.mutationObserver) this.mutationObserver.disconnect();
 
-        // Only fire when a button is added to the DOM
         this.mutationObserver = new MutationObserver((mutationsList) => {
             let buttonAdded = false;
             for (const mutation of mutationsList) {
                 for (const node of mutation.addedNodes) {
                     if (node.nodeType === 1) {
                         if (
-                            (node.matches && node.matches("[class*='attachButton'][role=button]")) ||
-                            (node.querySelector && node.querySelector("[class*='attachButton'][role=button]"))
+                            (node.matches && node.matches('[class*="attachButton"][role=button]')) ||
+                            (node.querySelector && node.querySelector('[class*="attachButton"][role=button]'))
                         ) {
                             buttonAdded = true;
                             break;
@@ -111,7 +108,6 @@ class EventHijacker {
         });
         this.mutationObserver.observe(document.body, { childList: true, subtree: true });
 
-        // Initial run
         this.removeEvents();
         this.addEvents();
     }
@@ -125,7 +121,7 @@ class EventHijacker {
     async addEvents() {
         // Attach Button (Event 0)
         if (this.settings.singleAttachButton) {
-            const attachButtonElement = document.querySelector("[class*='attachButton'][role=button]");
+            const attachButtonElement = document.querySelector('[class*="attachButton"][role=button]');
             const attachButtonHandler = (e) => {
                 var target = e.target;
                 if (target) {
@@ -134,7 +130,6 @@ class EventHijacker {
                     e.stopImmediatePropagation();
                     
                     var handleClick = async () => {
-                        // Redispach the click event to the original element
                         var doubleClickEvent = new MouseEvent('dblclick', {
                             bubbles: true,
                             cancelable: false,
@@ -174,7 +169,7 @@ const config = {
                 github_username: 'LancersBucket'
             },
         ],
-        version: '2.14.3',
+        version: '2.14.4',
         description: 'Remove annoying stuff from your Discord client.',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
@@ -421,16 +416,16 @@ const config = {
                 },
                 {
                     type: 'switch',
-                    id: 'inviteButton',
-                    name: 'Remove Invite Button',
-                    note: 'Removes the invite button when hovering over channel list entries.',
+                    id: 'shopButton',
+                    name: 'Remove Shop Button',
+                    note: 'Removes the Server Shop button from the channel list.',
                     value: false,
                 },
                 {
                     type: 'switch',
-                    id: 'shopButton',
-                    name: 'Remove Shop Button',
-                    note: 'Removes the Server Shop button from the channel list.',
+                    id: 'inviteButton',
+                    name: 'Remove Invite Button',
+                    note: 'Removes the invite button when hovering over channel list entries.',
                     value: false,
                 },
                 {
@@ -544,10 +539,10 @@ const config = {
                     note: 'Controls the visibility of the Clan Tags. "Remove in Member List" removes it in member lists (Server/DM and messages), "Remove in Profile" removes it in profiles, "Remove" removes it everywhere.',
                     value: 'show',
                     options: [
-                        { label: "Show", value: 'show' },
-                        { label: "Remove in Member List", value: 'memberlist' },
-                        { label: "Remove in Profile", value: 'profile' },
-                        { label: "Remove", value: 'global' },
+                        { label: 'Show', value: 'show' },
+                        { label: 'Remove in Member List', value: 'memberlist' },
+                        { label: 'Remove in Profile', value: 'profile' },
+                        { label: 'Remove', value: 'global' },
                     ],
                 },
                 {
@@ -557,10 +552,10 @@ const config = {
                     note: 'Controls the visibility of avatar decorations. "Remove in Member List" removes it in member lists (Server/DM and messages), "Remove in Profile" removes it in profiles, "Remove" removes it everywhere.',
                     value: 'show',
                     options: [
-                        { label: "Show", value: 'show' },
-                        { label: "Remove in Member List", value: 'memberlist' },
-                        { label: "Remove in Profile", value: 'profile' },
-                        { label: "Remove", value: 'global' },
+                        { label: 'Show', value: 'show' },
+                        { label: 'Remove in Member List', value: 'memberlist' },
+                        { label: 'Remove in Profile', value: 'profile' },
+                        { label: 'Remove', value: 'global' },
                     ],
                 },
                 {
@@ -628,6 +623,20 @@ const config = {
                     note: 'Changes the file select in the Attach Button to a single click instead of a double click. Note: This will remove the ability to create a poll.',
                     value: false,
                 },
+                {
+                    type: 'dropdown',
+                    id: 'listSeparator',
+                    name: 'Remove DM/Server Channel List Separator',
+                    note: 'Controls the visibility of the separator line between the DM and server channel lists. "Show" shows the separator, "Semi-Smart Remove" attempts to remove it depending on your chosen settings in DMs and Servers, "Remove" removes it entirely.',
+                    value: 'show',
+                    options: [
+                        { label: 'Show', value: 'show'},
+                        { label: 'Remove in DM list', value: 'dmlist' },
+                        { label: 'Remove in Server Channel list', value: 'serverlist' },
+                        { label: 'Semi-Smart Remove', value: 'smart' },
+                        { label: 'Remove', value: 'remove' },
+                    ],
+                },
             ],
         },
         {
@@ -668,7 +677,7 @@ const config = {
                     value: false,
                 },
             ],
-        }
+        },
     ],
 };
 
@@ -690,22 +699,33 @@ module.exports = class ChatButtonsBegone {
         // This should only occur when updating from version before v2.10.0.
         this.settingVersion = this.api.Data.load('settingVersion');
         if (!this.settingVersion) {
-            this.warn("Key settingVersion not found, creating...");
-            this.settingVersion = "0.0.0";
+            this.warn('Key settingVersion not found, creating...');
+            this.settingVersion = '0.0.0';
             this.api.Data.save('settingVersion', this.settingVersion);
         }
         this.migrateConfigIfNeeded();
 
-        // Ensure all keys exist in settings
         this.ensureDefaultSettings();
+    }
+
+    compareVersions(a,b) {
+        const aParts = a.split('.').map(Number);
+        const bParts = b.split('.').map(Number);
+        for (let i = 0; i < Math.min(aParts.length, bParts.length); i++) {
+            const aPart = aParts[i] || 0;
+            const bPart = bParts[i] || 0;
+            if (aPart > bPart) return 1;
+            if (aPart < bPart) return -1;
+        }
+        return 0;
     }
 
     migrateConfigIfNeeded() {
         // List of migrations in order
         const migrations = [
             {
-                from: "2.11.1",
-                to: "2.12.0",
+                from: '2.11.1',
+                to: '2.12.0',
                 migrate: (config) => {
                     // Combine activeNow and simplifyActiveNow into the dropdown activeNow
                     if (config.dms.activeNow == true) {
@@ -728,8 +748,8 @@ module.exports = class ChatButtonsBegone {
                 }
             },
             {
-                from: "2.12.5",
-                to: "2.13.0",
+                from: '2.12.5',
+                to: '2.13.0',
                 migrate: (config) => {
                     config.profileCustomizations = {};
                     if ('namePlate' in config.miscellaneous) {
@@ -751,31 +771,19 @@ module.exports = class ChatButtonsBegone {
 
                     return config;
                 }
-            }
+            },
         ];
-
-        const compareVersions = (a,b) => {
-            const aParts = a.split('.').map(Number);
-            const bParts = b.split('.').map(Number);
-            for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
-                const aPart = aParts[i] || 0;
-                const bPart = bParts[i] || 0;
-                if (aPart > bPart) return 1;
-                if (aPart < bPart) return -1;
-            }
-            return 0;
-        }
 
         let currentVersion = this.settingVersion;
         for (const { from, to, migrate } of migrations) {
-            if (compareVersions(currentVersion, to) < 0) {
+            if (this.compareVersions(currentVersion, to) < 0) {
                 this.settings = migrate(this.settings);
                 this.log(`Migrated config from v${from} to v${to}`);
                 currentVersion = to;
             }
         }
         
-        if (compareVersions(this.settingVersion, config.info.version) <= 0) {
+        if (this.compareVersions(this.settingVersion, config.info.version) <= 0) {
             this.settingVersion = config.info.version;
             this.api.Data.save('settingVersion', this.settingVersion);
         }
@@ -839,7 +847,7 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.dms.discordBirthdayTab) this.addCssStyle(`${this.privateChannelsSelector} [href="/activities"]`);
         if (this.settings.dms.discordShopTab) {
             this.addCssStyle(`${this.privateChannelsSelector} [href="/shop"]`);
-            this.addCssStyle('[class^="profileButtons"]>div:has(button:not([aria-expanded]))');
+            this.addCssStyle('[class^="profileButtons"] > div:has(button:not([aria-expanded]))');
         }
         
         if (this.settings.dms.DMHeader == 'hideButton') {
@@ -866,8 +874,8 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.servers.browseChannels) this.addCssStyle('div[class^="containerDefault"]:has(div[aria-label="Browse Channels"] + div[class^="link"])');
         if (this.settings.servers.boostsButton) this.addCssStyle('div[class^="containerDefault"]:has(div[id^="skill-trees-"])');
         if (this.settings.servers.inviteButton) {
-            this.addCssStyle('div[class*=iconItem][aria-label="Create Invite"]');
-            this.addCssStyle('div[class*=iconItem][aria-label="Invite to Server"]');
+            this.addCssStyle('div[class*="iconItem"][aria-label="Create Invite"]');
+            this.addCssStyle('div[class*="iconItem"][aria-label="Invite to Server"]');
         }
         if (this.settings.servers.shopButton) this.addCssStyle('div[class^="containerDefault"]:has(div[id^="shop-"] + div[class^="link"])');
         if (this.settings.servers.activitySection) this.addCssStyle('[class^="membersGroup"]:has([role="button"]), [class^="member"] [class^="container"]:has([class^="badges"])');
@@ -945,11 +953,41 @@ module.exports = class ChatButtonsBegone {
             // TODO: Currently only supports the Quests in the Active Now section.
             this.addCssStyle('div[class*="inset"]:has(div[class*="promotedTag"])');
         }
+
+        let listSeparatorDm = '[class^="privateChannels"] [class^="sectionDivider"]';
+        let listSeparatorServer = 'nav[class^="container"] [class^="sectionDivider"], nav[class^="container"] div[style="height: 0px;"] + div[style="height: 12px;"]';
+        if (this.settings.miscellaneous.listSeparator == 'dmlist') {
+            this.addCssStyle(listSeparatorDm);
+        } else if (this.settings.miscellaneous.listSeparator == 'serverlist') {
+            this.addCssStyle(listSeparatorServer);
+        } else if (this.settings.miscellaneous.listSeparator == 'smart') {
+            if (
+                this.settings.dms.friendsTab == true &&
+                this.settings.dms.premiumTab == true &&
+                this.settings.dms.discordShopTab == true
+            ) {
+                this.addCssStyle(listSeparatorDm);
+            }
+            if (
+                this.settings.servers.serverGuide == true &&
+                this.settings.servers.eventButton == true &&
+                this.settings.servers.membersButton == true &&
+                this.settings.servers.channelsAndRoles == true &&
+                this.settings.servers.browseChannels == true &&
+                this.settings.servers.boostsButton == true &&
+                this.settings.servers.shopButton == true
+            ) {
+                this.addCssStyle(listSeparatorServer);
+            }
+        } else if (this.settings.miscellaneous.listSeparator == 'remove') {
+            this.addCssStyle(listSeparatorDm);
+            this.addCssStyle(listSeparatorServer);
+        }
         
         /// Compatibility ///
         if (this.settings.compatibility.invisibleTypingButton) this.addCssStyle('div[class*="buttons"] div:has([class*="invisibleTypingButton"])');
 
-        this.log(this.styler.styles.size, 'styles loaded.');
+        this.log(`${this.styler.styles.size} styles loaded.`);
 
         /// Event Hijacker ///
         this.eventHijacker.setSetting('singleAttachButton', this.settings.miscellaneous.singleAttachButton);
@@ -973,18 +1011,7 @@ module.exports = class ChatButtonsBegone {
                     const remoteVersion = request.responseText.match(/version: ['"]([\d.]+)['"]/i)?.[1];
                     const localVersion = config.info.version;
 
-                    const compareVersions = (a, b) => {
-                        const aParts = a.split('.').map(Number);
-                        const bParts = b.split('.').map(Number);
-                        for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
-                            const aPart = aParts[i] || 0;
-                            const bPart = bParts[i] || 0;
-                            if (aPart > bPart) return 1;
-                            if (aPart < bPart) return -1;
-                        }
-                        return 0;
-                    };
-                    if (remoteVersion && compareVersions(remoteVersion, localVersion) > 0) {
+                    if (remoteVersion && this.compareVersions(remoteVersion, localVersion) > 0) {
                         this.log(`Update to v${remoteVersion} available.`);
                         BdApi.UI.showConfirmationModal('ChatButtonsBegone Update',
                             `A new version of ChatButtonsBegone (**v${remoteVersion}**) is available!\n\n` +
@@ -993,25 +1020,25 @@ module.exports = class ChatButtonsBegone {
                             {
                                 confirmText: 'Update',
                                 onConfirm: () => {
-                                    this.log("Updating plugin...");
+                                    this.log('Updating plugin...');
                                     require('fs').writeFileSync(
                                         require('path').join(BdApi.Plugins.folder, `${config.info.name}.plugin.js`),
                                         request.responseText
                                     );
-                                    this.log("Plugin updated! BetterDiscord will now reload the plugin.");
+                                    this.log('Plugin updated! BetterDiscord will now reload the plugin.');
                                 }
                             }
                         );
                     } else {
-                        this.log("No updates available.");
+                        this.log('No updates available.');
                     }
                 } else {
                     this.error(`Failed to check for updates. Status: ${request.status}`);
                 }
             };
             request.send();
-        } catch (e) {
-            this.error('Failed to check for updates:', e);
+        } catch (error) {
+            this.error(`Failed to check for updates: ${error}`);
         }
     }
 
@@ -1028,21 +1055,18 @@ module.exports = class ChatButtonsBegone {
             this.addStyles();
             this.eventHijacker.startMutationObserver();
         } catch (error) {
-            this.error(`Failed to apply styles. Please report the following error to ${config.info.github}/issues:\n\n`, error);
+            this.error(`Failed to apply styles. Please report the following error to ${config.info.github}/issues :\n\n${error}`);
             BdApi.UI.showToast('ChatButtonsBegone encountered an error! Check the console for more information.',
-                {
-                    type: 'error',
-                    timeout: '5000',
-                }
+                { type: 'error', timeout: '5000' }
             );
         }
     }
 
     stop() {
-        this.log("Stopping plugin...");
+        this.log('Stopping plugin...');
         this.styler.removeAll();
         this.eventHijacker.stopMutationObserver();
-        this.log("All styles purged.");
+        this.log('All styles purged.');
     }
 
     getSettingsPanel() {
@@ -1050,7 +1074,6 @@ module.exports = class ChatButtonsBegone {
         settings.forEach(setting => {
             if (setting.type === 'category') {
                 setting.settings.forEach(subSetting => {
-                    // Try to set the value, if it's missing, initialize to default value.
                     try {
                         subSetting.value = this.settings[setting.id][subSetting.id];    
                     } catch (error) {
@@ -1066,10 +1089,9 @@ module.exports = class ChatButtonsBegone {
             settings,
             onChange: (category, id, value) => {
                 if (category !== null) {
-                    // Try to modify the key, if the category is missing, create it.
                     try {
                         this.settings[category][id] = value;
-                    } catch (error) {
+                    } catch {
                         this.settings[category] = {};
                         this.settings[category][id] = value;
                     }
@@ -1102,14 +1124,6 @@ module.exports = class ChatButtonsBegone {
         return this.getCssRule(labels.map((label) => `${pre || ''}${this.getAriaLabelSelectorLoose(label)}`).join(', '));
     }
 
-    getDataListItemIdLoose(label) {
-        return `[data-list-item-id*="${label}"]`;
-    }
-
-    getDataListItemIdRuleLoose(pre, ...labels) {
-        return this.getCssRule(labels.map((label) => `${pre || ''}${this.getDataListItemIdLoose(label)}`).join(', '));
-    }
-
     get messageActionButtonsSelector() {
         const messageActionButtonsClass = this.api.findModuleByProps('buttons', 'cozyMessage')?.buttons;
         return this.toSelector(messageActionButtonsClass) + ' ';
@@ -1129,8 +1143,8 @@ module.exports = class ChatButtonsBegone {
             if (this.settings.core.debug) {
                 console.log(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
             }    
-        } catch (e) {
-            this.error("Debug key not found. Falling back to debug enabled.");
+        } catch {
+            this.error('Debug key not found. Falling back to debug enabled.');
             console.log(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
         }
     }
@@ -1139,8 +1153,8 @@ module.exports = class ChatButtonsBegone {
             if (this.settings.core.debug) {
                 console.warn(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
             }
-        } catch (e) {
-            this.error("Debug key not found. Falling back to debug enabled.");
+        } catch {
+            this.error('Debug key not found. Falling back to debug enabled.');
             console.warn(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
         }
     }
