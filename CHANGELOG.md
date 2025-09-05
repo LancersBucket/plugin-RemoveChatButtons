@@ -1,4 +1,14 @@
 # Changelog
+## v2.15.0 - September 9th, 2025
+### Changed
+- Moved Chat Bar options (Attach Button, Gift Button, etc.) into their own category [Chat Bar]
+- Nitro Upsell now removes Nitro advertisement in the Appearance settings [Miscellaneous]
+- Updated codebase to remove dependence on depreciated BD functions
+- Switched to BD's native logging class and reduced unneeded console output
+
+### Removed
+- Option to enable debugging
+
 ## v2.14.4 - September 1st, 2025
 ### Added
 - Option to remove seperator bar from DM/Server channel list [Miscellaneous]

@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.14.4
+ * @version 2.15.0
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  */
 /*@cc_on
@@ -15,53 +15,32 @@ shell.Popup('It looks like you\'ve mistakenly tried to run me directly. That\'s 
 
 @else@*/
 class Styler {
-    pluginName = '';
-    styles = new Set();
-    index = 0;
-
     constructor(pluginName) {
-        this.pluginName = pluginName;
-    }
+		this.pluginName = pluginName;
+		this.index = 1;
+		this.createParent();
+	}
 
-    /**
-     * Add a stylesheet to the document.
-     * @param name The name of the stylesheet, can be used to remove it later.
-     * @param style The css string to add as a stylesheet.
-     * @returns A function that removes the stylesheet from the document.
-     */
-    add(name, style) {
-        if (!style) {
-            style = name;
-            name = `${this.index++}`;
-        }
-        const key = `${this.pluginName}--Styler--${name}`;
-        BdApi.injectCSS(key, style);
-        this.styles.add(key);
-        return () => {
-            this.remove(name);
-        };
-    }
+	createParent() {
+		this.parent = document.createElement('style');
+		this.parent.id = `${this.pluginName}`;
+		document.querySelector('bd-styles').appendChild(this.parent);
+	}
 
-    /**
-     * Remove a stylesheet with the given name from the document.
-     * @param name The name of the stylesheet to remove.
-     */
-    remove(name) {
-        const key = `${this.pluginName}--Styler--${name}`;
-        BdApi.clearCSS(key);
-        this.styles.delete(key);
-    }
+	add(selector) {
+		if (!this.parent) this.createParent();
 
-    /**
-     * Remove all stylesheets that were added by this Styler instance from the document.
-     */
-    removeAll() {
-        for (const key of this.styles) {
-            BdApi.clearCSS(key);
-        }
-        this.styles.clear();
-        this.index = 0;
-    }
+		this.element = document.createElement('style');
+		this.element.id = `style-${this.index++}`;
+		this.element.textContent = `${selector} { display: none !important; }`;
+		this.parent.appendChild(this.element);
+	}
+
+	purge() {
+		this.parent.remove();
+		this.parent = null;
+		this.index = 0;
+	}
 }
 
 class EventHijacker {
@@ -162,60 +141,61 @@ class EventHijacker {
 const config = {
     info: {
         name: 'ChatButtonsBegone',
-        authors: [
-            {
-                name: 'Bucket',
-                discord_id: '355477882082033664',
-                github_username: 'LancersBucket'
-            },
-        ],
-        version: '2.14.4',
-        description: 'Remove annoying stuff from your Discord client.',
+        version: '2.15.0',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
     },
     defaultConfig: [
         {
-            type: 'switch',
-            id: 'attachButton',
-            name: 'Remove Attach Button',
-            note: 'Removes the Attach button from the chatbar.',
-            value: false,
-        },
-        {
-            type: 'switch',
-            id: 'giftButton',
-            name: 'Remove Gift/Boost Button',
-            note: 'Removes the Gift Nitro/Boost Server button from the chatbar.',
-            value: true,
-        },
-        {
-            type: 'switch',
-            id: 'gifButton',
-            name: 'Remove GIF Button',
-            note: 'Removes the GIF button from the chatbar.',
-            value: false,
-        },
-        {
-            type: 'switch',
-            id: 'stickerButton',
-            name: 'Remove Sticker Button',
-            note: 'Removes the Sticker button from the chatbar.',
-            value: false,
-        },
-        {
-            type: 'switch',
-            id: 'emojiButton',
-            name: 'Remove Emoji Button',
-            note: 'Removes the Emoji button from the chatbar.',
-            value: false,
-        },
-        {
-            type: 'switch',
-            id: 'appLauncherButton',
-            name: 'Remove App Launcher Button',
-            note: 'Removes the App Launcher button from the chatbar.',
-            value: false,
+            type: 'category',
+            name: 'Chat Bar',
+            id: 'chatbar',
+            collapsible: true,
+            shown: true,
+            settings: [ // Chat Bar settings
+                {
+                    type: 'switch',
+                    id: 'attachButton',
+                    name: 'Remove Attach Button',
+                    note: 'Removes the Attach button from the chatbar.',
+                    value: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'giftButton',
+                    name: 'Remove Gift/Boost Button',
+                    note: 'Removes the Gift Nitro/Boost Server button from the chatbar.',
+                    value: true,
+                },
+                {
+                    type: 'switch',
+                    id: 'gifButton',
+                    name: 'Remove GIF Button',
+                    note: 'Removes the GIF button from the chatbar.',
+                    value: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'stickerButton',
+                    name: 'Remove Sticker Button',
+                    note: 'Removes the Sticker button from the chatbar.',
+                    value: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'emojiButton',
+                    name: 'Remove Emoji Button',
+                    note: 'Removes the Emoji button from the chatbar.',
+                    value: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'appLauncherButton',
+                    name: 'Remove App Launcher Button',
+                    note: 'Removes the App Launcher button from the chatbar.',
+                    value: false,
+                },
+            ],
         },
         {
             type: 'category',
@@ -669,13 +649,6 @@ const config = {
                     note: 'Check for updates on startup.',
                     value: true,
                 },
-                {
-                    type: 'switch',
-                    id: 'debug',
-                    name: 'Enable Debugging',
-                    note: 'Enables debug output, which provides more verbose information.',
-                    value: false,
-                },
             ],
         },
     ],
@@ -683,29 +656,22 @@ const config = {
 
 module.exports = class ChatButtonsBegone {
     constructor(meta) {
-        this.meta = meta;
-        this.api = new BdApi(this.meta.name);
-        this.styler = new Styler(this.meta.name);
-        this.eventHijacker = new EventHijacker(this.meta.name);
+        this.api = new BdApi(meta.name);
+        this.styler = new Styler(meta.name);
+        this.eventHijacker = new EventHijacker(meta.name);
+        console.log(this.api.Data.load('settings'))
         this.settings = this.api.Data.load('settings') || this.defaultSettings();
 
-        if (!this.api.Plugins.isEnabled(this.meta.name)) {
+        if (!this.api.Plugins.isEnabled(meta.name)) {
             if (this.settings.core.checkForUpdates) {
                 this.checkForUpdates();
             }
         }
 
-        // Get settingsVersion key, and create it if it doesn't exist.
-        // This should only occur when updating from version before v2.10.0.
-        this.settingVersion = this.api.Data.load('settingVersion');
-        if (!this.settingVersion) {
-            this.warn('Key settingVersion not found, creating...');
-            this.settingVersion = '0.0.0';
-            this.api.Data.save('settingVersion', this.settingVersion);
-        }
-        this.migrateConfigIfNeeded();
+        this.settingVersion = this.api.Data.load('settingVersion') || '0.0.0';
 
         this.ensureDefaultSettings();
+        this.migrateConfig();
     }
 
     compareVersions(a,b) {
@@ -720,11 +686,10 @@ module.exports = class ChatButtonsBegone {
         return 0;
     }
 
-    migrateConfigIfNeeded() {
+    migrateConfig() {
         // List of migrations in order
         const migrations = [
             {
-                from: '2.11.1',
                 to: '2.12.0',
                 migrate: (config) => {
                     // Combine activeNow and simplifyActiveNow into the dropdown activeNow
@@ -748,7 +713,6 @@ module.exports = class ChatButtonsBegone {
                 }
             },
             {
-                from: '2.12.5',
                 to: '2.13.0',
                 migrate: (config) => {
                     config.profileCustomizations = {};
@@ -772,22 +736,48 @@ module.exports = class ChatButtonsBegone {
                     return config;
                 }
             },
+            {
+				to: "2.15.0",
+				migrate: (config) => {
+                    // Move charbar settings into their own category
+                    config.chatbar = {}
+
+					config.chatbar.attachButton = config.attachButton;
+                    delete config.attachButton;
+					
+					config.chatbar.giftButton = config.giftButton;
+					delete config.giftButton;
+					
+					config.chatbar.gifButton = config.gifButton;
+					delete config.gifButton;
+					
+					config.chatbar.stickerButton = config.stickerButton;
+					delete config.stickerButton;
+					
+					config.chatbar.emojiButton = config.emojiButton;
+					delete config.emojiButton;
+					
+					config.chatbar.appLauncherButton = config.appLauncherButton;
+					delete config.appLauncherButton;
+
+					return config;
+				}
+			},
         ];
 
         let currentVersion = this.settingVersion;
-        for (const { from, to, migrate } of migrations) {
-            if (this.compareVersions(currentVersion, to) < 0) {
-                this.settings = migrate(this.settings);
-                this.log(`Migrated config from v${from} to v${to}`);
-                currentVersion = to;
-            }
-        }
+        migrations.forEach(migration => {
+			if (this.compareVersions(currentVersion, migration.to) < 0) {
+                this.settings = migration.migrate(this.settings);
+				currentVersion = migration.to;
+			}
+		});
+        this.api.Data.save('settings', this.settings);
         
         if (this.compareVersions(this.settingVersion, config.info.version) <= 0) {
             this.settingVersion = config.info.version;
             this.api.Data.save('settingVersion', this.settingVersion);
         }
-        this.api.Data.save('settings', this.settings);
     }
 
     ensureDefaultSettings() {
@@ -818,35 +808,35 @@ module.exports = class ChatButtonsBegone {
 
     // Helper function for adding a CSS rule.
     addCssStyle(selector) {
-        this.styler.add(this.getCssRule(selector));
+        this.styler.add(selector);
     }
 
     addStyles() {
         /// Chat Buttons ///
-        if (this.settings.attachButton) this.addCssStyle('[class^="attachWrapper"]');
-        if (this.settings.giftButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="button"]');
-        if (this.settings.gifButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > div[class^="expression"]:not(:has([class*="stickerButton"], [class*="emojiButton"]))');
-        if (this.settings.stickerButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="expression"]:has([class*="stickerButton"])');
-        if (this.settings.emojiButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="expression"]:has([class*="emojiButton"])');
-        if (this.settings.appLauncherButton) this.addCssStyle('[class^=channelAppLauncher]');
+        if (this.settings.chatbar.attachButton) this.addCssStyle('[class^="attachWrapper"]');
+        if (this.settings.chatbar.giftButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="button"]');
+        if (this.settings.chatbar.gifButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > div[class^="expression"]:not(:has([class*="stickerButton"], [class*="emojiButton"]))');
+        if (this.settings.chatbar.stickerButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="expression"]:has([class*="stickerButton"])');
+        if (this.settings.chatbar.emojiButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="expression"]:has([class*="emojiButton"])');
+        if (this.settings.chatbar.appLauncherButton) this.addCssStyle('[class^=channelAppLauncher]');
 
         /// Message Actions ///
-        if (this.settings.messageActions.quickReactions) this.styler.add(this.getAriaLabelRuleLoose(this.messageActionButtonsSelector, 'Click to react with '));
-        if (this.settings.messageActions.superReactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector, 'Add Super Reaction'));
-        if (this.settings.messageActions.reactionButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector, 'Add Reaction'));
-        if (this.settings.messageActions.editButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector, 'Edit'));
-        if (this.settings.messageActions.replyButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector, 'Reply'));
-        if (this.settings.messageActions.forwardButton) this.styler.add(this.getAriaLabelRule(this.messageActionButtonsSelector, 'Forward'));
+        if (this.settings.messageActions.quickReactions) this.addCssStyle('[class*="popoverReactionHoverBar"] [aria-label*="Click to react with"]');
+        if (this.settings.messageActions.superReactionButton) this.addCssStyle('[class*="popoverReactionHoverBar"] [aria-label="Add Super Reaction"]');
+        if (this.settings.messageActions.reactionButton) this.addCssStyle('[class*="popoverReactionHoverBar"] [aria-label="Add Reaction"]');
+        if (this.settings.messageActions.editButton) this.addCssStyle('[class*="popoverReactionHoverBar"] [aria-label="Edit"]');
+        if (this.settings.messageActions.replyButton) this.addCssStyle('[class*="popoverReactionHoverBar"] [aria-label="Reply"]');
+        if (this.settings.messageActions.forwardButton) this.addCssStyle('[class*="popoverReactionHoverBar"] [aria-label="Forward"]');
         if (this.settings.messageActions.editImage) this.addCssStyle('[aria-label="Edit Image with Apps"]');
         
         /// DMs ///
-        if (this.settings.dms.quickSwitcher) this.addCssStyle(`${this.privateChannelsSelector} [class*="searchBar"]`);
-        if (this.settings.dms.friendsTab) this.addCssStyle(`${this.privateChannelsSelector} [href="/channels/@me"]`);
-        if (this.settings.dms.premiumTab) this.addCssStyle(`${this.privateChannelsSelector} [href="/store"]`);
-        if (this.settings.dms.snowsgivingTab) this.addCssStyle(`${this.privateChannelsSelector} [href="//discord.com/snowsgiving"]`);
-        if (this.settings.dms.discordBirthdayTab) this.addCssStyle(`${this.privateChannelsSelector} [href="/activities"]`);
+        if (this.settings.dms.quickSwitcher) this.addCssStyle('[class*="privateChannels"] [class*="searchBar"]');
+        if (this.settings.dms.friendsTab) this.addCssStyle('[href="/channels/@me"]');
+        if (this.settings.dms.premiumTab) this.addCssStyle('[href="/store"]');
+        if (this.settings.dms.snowsgivingTab) this.addCssStyle('[href="//discord.com/snowsgiving"]');
+        if (this.settings.dms.discordBirthdayTab) this.addCssStyle('[href="/activities"]');
         if (this.settings.dms.discordShopTab) {
-            this.addCssStyle(`${this.privateChannelsSelector} [href="/shop"]`);
+            this.addCssStyle('[href="/shop"]');
             this.addCssStyle('[class^="profileButtons"] > div:has(button:not([aria-expanded]))');
         }
         
@@ -944,6 +934,8 @@ module.exports = class ChatButtonsBegone {
             this.addCssStyle('[class*="premiumTab"], [data-tab-id="Nitro Server Boost"], [data-tab-id="Library Inventory"]');
             // Merch
             this.addCssStyle('[data-tab-id="merchandise"]');
+            // Appearance > Themes > Custom Themes with Nitro Advertisement
+            this.addCssStyle('div[id="appearance-tab"] div[class^="container"]:has(div[class^="iconContainer"] + div[class^="textContent"] + div[class^="buttonContainer"])');
         }
         if (this.settings.miscellaneous.addServerButton) this.addCssStyle('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="tutorialContainer"]:not(:first-child)');
         if (this.settings.miscellaneous.discoverButton) this.addCssStyle('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="listItem"]');
@@ -987,18 +979,10 @@ module.exports = class ChatButtonsBegone {
         /// Compatibility ///
         if (this.settings.compatibility.invisibleTypingButton) this.addCssStyle('div[class*="buttons"] div:has([class*="invisibleTypingButton"])');
 
-        this.log(`${this.styler.styles.size} styles loaded.`);
+        this.api.Logger.info(`${this.styler.index} styles loaded.`);
 
         /// Event Hijacker ///
         this.eventHijacker.setSetting('singleAttachButton', this.settings.miscellaneous.singleAttachButton);
-    }
-
-    refreshStyles() {
-        this.styler.removeAll();
-        this.addStyles();
-        this.api.Data.save('settings', this.settings);
-        this.api.UI.showToast('Styles refreshed.', { type: 'info' });
-        this.log('Styles refreshed.');
     }
 
     async checkForUpdates() {
@@ -1012,7 +996,6 @@ module.exports = class ChatButtonsBegone {
                     const localVersion = config.info.version;
 
                     if (remoteVersion && this.compareVersions(remoteVersion, localVersion) > 0) {
-                        this.log(`Update to v${remoteVersion} available.`);
                         BdApi.UI.showConfirmationModal('ChatButtonsBegone Update',
                             `A new version of ChatButtonsBegone (**v${remoteVersion}**) is available!\n\n` +
                             `You are on **v${localVersion}**. Please see the [changelog](${config.info.github}/blob/main/CHANGELOG.md) for a list of changes.\n\n` +
@@ -1020,31 +1003,29 @@ module.exports = class ChatButtonsBegone {
                             {
                                 confirmText: 'Update',
                                 onConfirm: () => {
-                                    this.log('Updating plugin...');
+                                    this.api.Logger.info('Updating plugin...');
                                     require('fs').writeFileSync(
                                         require('path').join(BdApi.Plugins.folder, `${config.info.name}.plugin.js`),
                                         request.responseText
                                     );
-                                    this.log('Plugin updated! BetterDiscord will now reload the plugin.');
+                                    this.api.Logger.info('Plugin updated! BetterDiscord will now reload the plugin.');
                                 }
                             }
                         );
                     } else {
-                        this.log('No updates available.');
+                        this.api.Logger.info('No updates available.');
                     }
                 } else {
-                    this.error(`Failed to check for updates. Status: ${request.status}`);
+                    this.api.Logger.error(`Failed to check for updates. Status: ${request.status}`);
                 }
             };
             request.send();
         } catch (error) {
-            this.error(`Failed to check for updates: ${error}`);
+            this.api.Logger.error(`Failed to check for updates: ${error}`);
         }
     }
 
-    // This doesn't make the error handling work the way I wanted, but it does reduce the unessesary output.
     async start() {
-        // Ensure all keys exist in settings
         this.ensureDefaultSettings();
 
         if (this.settings.core.checkForUpdates) {
@@ -1055,7 +1036,7 @@ module.exports = class ChatButtonsBegone {
             this.addStyles();
             this.eventHijacker.startMutationObserver();
         } catch (error) {
-            this.error(`Failed to apply styles. Please report the following error to ${config.info.github}/issues :\n\n${error}`);
+            this.api.Logger.error(`Failed to apply styles. Please report the following error to ${config.info.github}/issues :\n\n${error}`);
             BdApi.UI.showToast('ChatButtonsBegone encountered an error! Check the console for more information.',
                 { type: 'error', timeout: '5000' }
             );
@@ -1063,10 +1044,9 @@ module.exports = class ChatButtonsBegone {
     }
 
     stop() {
-        this.log('Stopping plugin...');
-        this.styler.removeAll();
+        this.styler.purge();
         this.eventHijacker.stopMutationObserver();
-        this.log('All styles purged.');
+        this.api.Logger.info('All styles purged.');
     }
 
     getSettingsPanel() {
@@ -1077,7 +1057,7 @@ module.exports = class ChatButtonsBegone {
                     try {
                         subSetting.value = this.settings[setting.id][subSetting.id];    
                     } catch (error) {
-                        this.error(error);
+                        this.api.Logger.error(error);
                     }
                 });
             } else {
@@ -1099,67 +1079,11 @@ module.exports = class ChatButtonsBegone {
                     this.settings[id] = value;
                 }
                 this.api.Data.save('settings', this.settings);
-                this.refreshStyles();
+                this.styler.purge();
+				this.addStyles();
+				this.api.UI.showToast('Styles refreshed.', { type: 'info' });
             },
         });
-    }
-
-    getCssRule(selector) {
-        return `${selector} { display: none !important; }`;
-    }
-
-    getAriaLabelSelector(label) {
-        return `[aria-label="${label}"]`;
-    }
-
-    getAriaLabelRule(pre, ...labels) {
-        return this.getCssRule(labels.map((label) => `${pre || ''}${this.getAriaLabelSelector(label)}`).join(', '));
-    }
-
-    getAriaLabelSelectorLoose(label) {
-        return `[aria-label*="${label}"]`;
-    }
-
-    getAriaLabelRuleLoose(pre, ...labels) {
-        return this.getCssRule(labels.map((label) => `${pre || ''}${this.getAriaLabelSelectorLoose(label)}`).join(', '));
-    }
-
-    get messageActionButtonsSelector() {
-        const messageActionButtonsClass = this.api.findModuleByProps('buttons', 'cozyMessage')?.buttons;
-        return this.toSelector(messageActionButtonsClass) + ' ';
-    }
-
-    get privateChannelsSelector() {
-        const privateChannelsClass = this.api.findModuleByProps('privateChannels')?.privateChannels;
-        return this.toSelector(privateChannelsClass);
-    }
-
-    toSelector(classString) {
-        return classString ? '.' + classString.replace(/ /g, '.') : '';
-    }
-
-    log(...args) {
-        try {
-            if (this.settings.core.debug) {
-                console.log(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
-            }    
-        } catch {
-            this.error('Debug key not found. Falling back to debug enabled.');
-            console.log(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
-        }
-    }
-    warn(...args) {
-        try {
-            if (this.settings.core.debug) {
-                console.warn(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
-            }
-        } catch {
-            this.error('Debug key not found. Falling back to debug enabled.');
-            console.warn(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
-        }
-    }
-    error(...args) {
-        console.error(`%c[ChatButtonsBegone v${config.info.version}]`, 'color:lightblue;', ...args);
     }
 };
 /*@end@*/
