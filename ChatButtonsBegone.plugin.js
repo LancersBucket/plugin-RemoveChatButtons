@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.15.0
+ * @version 2.15.1
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  */
 /*@cc_on
@@ -141,7 +141,7 @@ class EventHijacker {
 const config = {
     info: {
         name: 'ChatButtonsBegone',
-        version: '2.15.0',
+        version: '2.15.1',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
     },
@@ -477,6 +477,13 @@ const config = {
             settings: [ // Title Bar settings
                 {
                     type: 'switch',
+                    id: 'navButtons',
+                    name: 'Remove Navigation Buttons',
+                    note: 'Removes the forward/back navigation buttons from the top left of the title bar.',
+                    value: false,
+                },
+                {
+                    type: 'switch',
                     id: 'locator',
                     name: 'Remove Title Bar Text',
                     note: 'Removes the "locator" text in the title bar that shows the current server/DM.',
@@ -737,7 +744,7 @@ module.exports = class ChatButtonsBegone {
                 }
             },
             {
-				to: "2.15.0",
+				to: "2.15.1",
 				migrate: (config) => {
                     // Move charbar settings into their own category
                     config.chatbar = {}
@@ -821,12 +828,12 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.chatbar.appLauncherButton) this.addCssStyle('[class^=channelAppLauncher]');
 
         /// Message Actions ///
-        if (this.settings.messageActions.quickReactions) this.addCssStyle('[class*="popoverReactionHoverBar"] [aria-label*="Click to react with"]');
-        if (this.settings.messageActions.superReactionButton) this.addCssStyle('[class*="popoverReactionHoverBar"] [aria-label="Add Super Reaction"]');
-        if (this.settings.messageActions.reactionButton) this.addCssStyle('[class*="popoverReactionHoverBar"] [aria-label="Add Reaction"]');
-        if (this.settings.messageActions.editButton) this.addCssStyle('[class*="popoverReactionHoverBar"] [aria-label="Edit"]');
-        if (this.settings.messageActions.replyButton) this.addCssStyle('[class*="popoverReactionHoverBar"] [aria-label="Reply"]');
-        if (this.settings.messageActions.forwardButton) this.addCssStyle('[class*="popoverReactionHoverBar"] [aria-label="Forward"]');
+        if (this.settings.messageActions.quickReactions) this.addCssStyle('[class^="hoverBarButton"][aria-label*="Click to react with"]');
+        if (this.settings.messageActions.superReactionButton) this.addCssStyle('[class^="hoverBarButton"][aria-label="Add Super Reaction"]');
+        if (this.settings.messageActions.reactionButton) this.addCssStyle('[class^="hoverBarButton"][aria-label="Add Reaction"]');
+        if (this.settings.messageActions.editButton) this.addCssStyle('[class^="hoverBarButton"][aria-label="Edit"]');
+        if (this.settings.messageActions.replyButton) this.addCssStyle('[class^="hoverBarButton"][aria-label="Reply"]');
+        if (this.settings.messageActions.forwardButton) this.addCssStyle('[class^="hoverBarButton"][aria-label="Forward"]');
         if (this.settings.messageActions.editImage) this.addCssStyle('[aria-label="Edit Image with Apps"]');
         
         /// DMs ///
@@ -889,6 +896,7 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.voice.krispButton) this.addCssStyle('button[aria-label="Noise Suppression powered by Krisp"]');
 
         /// Title Bar ///
+        if (this.settings.toolbar.navButtons) this.addCssStyle('[class^="backForwardButtons"]');
         if (this.settings.toolbar.locator) this.addCssStyle('[class^="base"]>[class^="bar"]>[class^="title"]');
         if (this.settings.toolbar.helpButton) this.addCssStyle('a[href="https://support.discord.com"]');
         if (this.settings.toolbar.inboxButton) this.addCssStyle('div[class^="recentsIcon"]');

@@ -1,4 +1,10 @@
 # Changelog
+## v2.15.1
+### Added
+- Option to remove the naviagation (forward/back) buttons [Title Bar]
+### Fixed
+- Some message action buttons not removing properly 
+
 ## v2.15.0 - September 9th, 2025
 ### Changed
 - Moved Chat Bar options (Attach Button, Gift Button, etc.) into their own category [Chat Bar]
