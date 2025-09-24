@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.15.1
+ * @version 2.15.2
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  */
 /*@cc_on
@@ -141,7 +141,7 @@ class EventHijacker {
 const config = {
     info: {
         name: 'ChatButtonsBegone',
-        version: '2.15.1',
+        version: '2.15.2',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
     },
@@ -326,6 +326,8 @@ const config = {
                     options: [
                         { label: "Show", value: 'show' },
                         { label: "Simplify", value: 'simplify' },
+                        { label: "Remove When Empty", value: 'empty' },
+                        { label: "Simplify + Remove When Empty", value: 'simplifyempty' },
                         { label: "Remove", value: 'remove' },
                     ],
                 },
@@ -744,7 +746,7 @@ module.exports = class ChatButtonsBegone {
                 }
             },
             {
-				to: "2.15.1",
+				to: "2.15.2",
 				migrate: (config) => {
                     // Move charbar settings into their own category
                     config.chatbar = {}
@@ -836,7 +838,7 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.messageActions.forwardButton) this.addCssStyle('[class^="hoverBarButton"][aria-label="Forward"]');
         if (this.settings.messageActions.editImage) this.addCssStyle('[aria-label="Edit Image with Apps"]');
         
-        /// DMs ///
+        /// Direct Messages ///
         if (this.settings.dms.quickSwitcher) this.addCssStyle('[class*="privateChannels"] [class*="searchBar"]');
         if (this.settings.dms.friendsTab) this.addCssStyle('[href="/channels/@me"]');
         if (this.settings.dms.premiumTab) this.addCssStyle('[href="/store"]');
@@ -858,6 +860,12 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.dms.activeNow == 'simplify') {
             this.addCssStyle('div[class*="inset"]:has(div[class^="twitchSection"])');
             this.addCssStyle('div[class*="inset"]:has(div[class^="activitySection"])');
+        } else if (this.settings.dms.activeNow == 'empty') {
+            this.addCssStyle('[class^="nowPlayingColumn"]:has([class^="emptyCard"])');
+        } else if (this.settings.dms.activeNow == 'simplifyempty') {
+            this.addCssStyle('div[class*="inset"]:has(div[class^="twitchSection"])');
+            this.addCssStyle('div[class*="inset"]:has(div[class^="activitySection"])');
+            this.addCssStyle('[class^="nowPlayingColumn"]:has([class^="emptyCard"])');
         } else if (this.settings.dms.activeNow == 'remove') {
             this.addCssStyle('[class^="nowPlayingColumn"]');
         }

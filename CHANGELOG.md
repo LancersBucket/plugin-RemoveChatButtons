@@ -1,5 +1,10 @@
 # Changelog
-## v2.15.1
+## v2.15.2 - September 24th, 2025
+### Added
+- New dropdown option in Active Now to remove the section when it is empty [Direct Messages]
+    - Also added dropdown option to remove the section when empty, simplify otherwise 
+
+## v2.15.1 - September 10th, 2025
 ### Added
 - Option to remove the naviagation (forward/back) buttons [Title Bar]
 ### Fixed
