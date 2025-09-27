@@ -1,4 +1,10 @@
 # Changelog
+## v2.15.3 - September 27th, 2025
+### Added
+- Option to remove Status Change Nudge [Miscellaneous] (thanks [@Zacam](https://github.com/Zacam)!)
+### Fixed
+- Chatbar options resetting to false each update
+
 ## v2.15.2 - September 24th, 2025
 ### Added
 - New dropdown option in Active Now to remove the section when it is empty [Direct Messages]

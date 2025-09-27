@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.15.2
+ * @version 2.15.3
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  */
 /*@cc_on
@@ -141,7 +141,7 @@ class EventHijacker {
 const config = {
     info: {
         name: 'ChatButtonsBegone',
-        version: '2.15.2',
+        version: '2.15.3',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
     },
@@ -626,6 +626,13 @@ const config = {
                         { label: 'Remove', value: 'remove' },
                     ],
                 },
+                {
+                    type: 'switch',
+                    id: 'statusNudgePopup',
+                    name: 'Remove Status Change Nudge',
+                    note: 'Removes the status change popup if you are not set to available.',
+                    value: false,
+                },
             ],
         },
         {
@@ -746,7 +753,7 @@ module.exports = class ChatButtonsBegone {
                 }
             },
             {
-				to: "2.15.2",
+				to: '2.13.0',
 				migrate: (config) => {
                     // Move charbar settings into their own category
                     config.chatbar = {}
@@ -991,6 +998,8 @@ module.exports = class ChatButtonsBegone {
             this.addCssStyle(listSeparatorDm);
             this.addCssStyle(listSeparatorServer);
         }
+
+        if (this.settings.miscellaneous.statusNudgePopup) this.addCssStyle('div[id^="popout"]:has([nudge])');
         
         /// Compatibility ///
         if (this.settings.compatibility.invisibleTypingButton) this.addCssStyle('div[class*="buttons"] div:has([class*="invisibleTypingButton"])');
