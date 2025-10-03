@@ -1,4 +1,8 @@
 # Changelog
+## v2.15.4 - October 10th, 2025
+### Fixed
+- Gift button not removing properly
+
 ## v2.15.3 - September 27th, 2025
 ### Added
 - Option to remove Status Change Nudge [Miscellaneous] (thanks [@Zacam](https://github.com/Zacam)!)
