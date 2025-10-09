@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.15.5
+ * @version 2.15.6
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  */
 /*@cc_on
@@ -141,7 +141,7 @@ class EventHijacker {
 const config = {
     info: {
         name: 'ChatButtonsBegone',
-        version: '2.15.5',
+        version: '2.15.6',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
     },
@@ -830,7 +830,12 @@ module.exports = class ChatButtonsBegone {
     addStyles() {
         /// Chat Buttons ///
         if (this.settings.chatbar.attachButton) this.addCssStyle('[class^="attachWrapper"]');
-        if (this.settings.chatbar.giftButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="button"]');
+        if (this.settings.chatbar.giftButton) {
+            // New Implementation
+            this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="container"]:has(> [class^="button"] + span)');
+            // Old Implementation
+            this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="button"]');
+        }
         if (this.settings.chatbar.gifButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > div[class^="expression"]:not(:has([class*="stickerButton"], [class*="emojiButton"]))');
         if (this.settings.chatbar.stickerButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="expression"]:has([class*="stickerButton"])');
         if (this.settings.chatbar.emojiButton) this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="expression"]:has([class*="emojiButton"])');

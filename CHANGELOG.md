@@ -1,4 +1,8 @@
 # Changelog
+## v2.15.6 - October 9th, 2025
+### Fixed
+- Gift button not removing properly
+
 ## v2.15.5 - October 4th, 2025
 ### Fixed
 - Reverted change in v2.15.4 which erroneously removed the accessibility send button 
