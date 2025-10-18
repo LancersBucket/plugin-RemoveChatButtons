@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.15.6
+ * @version 2.15.7
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  */
 /*@cc_on
@@ -141,7 +141,7 @@ class EventHijacker {
 const config = {
     info: {
         name: 'ChatButtonsBegone',
-        version: '2.15.6',
+        version: '2.15.7',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
     },
@@ -466,6 +466,13 @@ const config = {
                     id: 'krispButton',
                     name: 'Remove Noise Suppression (Krisp) Button',
                     note: 'Removes the noise supression button from the user voice chat panel.',
+                    value: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'activityPanel',
+                    name: 'Remove Activity Panel',
+                    note: 'Removes the activity panel from the user voice chat panel.',
                     value: false,
                 },
             ],
@@ -914,6 +921,7 @@ module.exports = class ChatButtonsBegone {
         // Why in the nine hells is the soundboard button in it's own special div? Did Discord do this just to piss me in particular off?
         if (this.settings.voice.soundboardPanelButton) this.addCssStyle('div[class^="actionButtons"] div:has(> button[aria-label="Open Soundboard"])');
         if (this.settings.voice.krispButton) this.addCssStyle('button[aria-label="Noise Suppression powered by Krisp"]');
+        if (this.settings.voice.activityPanel) this.addCssStyle('div[class*="activityPanel"]');
 
         /// Title Bar ///
         if (this.settings.toolbar.navButtons) this.addCssStyle('[class^="backForwardButtons"]');
