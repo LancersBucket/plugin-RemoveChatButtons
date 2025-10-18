@@ -468,13 +468,6 @@ const config = {
                     note: 'Removes the noise supression button from the user voice chat panel.',
                     value: false,
                 },
-                {
-                    type: 'switch',
-                    id: 'activityPanel',
-                    name: 'Remove Activity Panel',
-                    note: 'Removes the activity panel from the user voice chat panel.',
-                    value: false,
-                },
             ],
         },
         {
@@ -638,6 +631,13 @@ const config = {
                     id: 'statusNudgePopup',
                     name: 'Remove Status Change Nudge',
                     note: 'Removes the status change popup if you are not set to available.',
+                    value: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'activityPanel',
+                    name: 'Remove Activity Panel',
+                    note: 'Removes the activity panel from the user voice chat panel.',
                     value: false,
                 },
             ],
