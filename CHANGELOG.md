@@ -1,4 +1,12 @@
 # Changelog
+## v2.16.0 - October 19th, 2025
+### Added
+- Option to remove the activity panel above the profile bar that shows what you are playing [Miscellaneous] (thanks [@MisansProducts](https://github.com/MisansProducts)!)
+- No Quests now also removes the quest tab in the DM List [Miscellaneous] (thanks [@Zacam](https://github.com/Zacam)!)
+
+### Fixed
+- Added another check for the gift button
+
 ## v2.15.6 - October 9th, 2025
 ### Fixed
 - Gift button not removing properly

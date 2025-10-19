@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.15.7
+ * @version 2.16.0
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  */
 /*@cc_on
@@ -141,7 +141,7 @@ class EventHijacker {
 const config = {
     info: {
         name: 'ChatButtonsBegone',
-        version: '2.15.7',
+        version: '2.16.0',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
     },
@@ -838,6 +838,8 @@ module.exports = class ChatButtonsBegone {
         /// Chat Buttons ///
         if (this.settings.chatbar.attachButton) this.addCssStyle('[class^="attachWrapper"]');
         if (this.settings.chatbar.giftButton) {
+            // New New Implementation
+            this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="container"]:has(> [class^="button"] > [class^="buttonWrapper"])');
             // New Implementation
             this.addCssStyle('[class^="channelTextArea"] [class^="buttons"] > [class^="container"]:has(> [class^="button"] + span)');
             // Old Implementation
@@ -921,7 +923,6 @@ module.exports = class ChatButtonsBegone {
         // Why in the nine hells is the soundboard button in it's own special div? Did Discord do this just to piss me in particular off?
         if (this.settings.voice.soundboardPanelButton) this.addCssStyle('div[class^="actionButtons"] div:has(> button[aria-label="Open Soundboard"])');
         if (this.settings.voice.krispButton) this.addCssStyle('button[aria-label="Noise Suppression powered by Krisp"]');
-        if (this.settings.voice.activityPanel) this.addCssStyle('div[class*="activityPanel"]');
 
         /// Title Bar ///
         if (this.settings.toolbar.navButtons) this.addCssStyle('[class^="backForwardButtons"]');
@@ -980,6 +981,7 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.miscellaneous.noQuests) {
             // TODO: Currently only supports the Quests in the Active Now section.
             this.addCssStyle('div[class*="inset"]:has(div[class*="promotedTag"])');
+            this.addCssStyle('[class*="channel"] a[href="/quest-home"]');
         }
 
         let listSeparatorDm = '[class^="privateChannels"] [class^="sectionDivider"]';
@@ -1013,6 +1015,7 @@ module.exports = class ChatButtonsBegone {
         }
 
         if (this.settings.miscellaneous.statusNudgePopup) this.addCssStyle('div[id^="popout"]:has([nudge])');
+        if (this.settings.miscellaneous.activityPanel) this.addCssStyle('div[class*="activityPanel"]');
         
         /// Compatibility ///
         if (this.settings.compatibility.invisibleTypingButton) this.addCssStyle('div[class*="buttons"] div:has([class*="invisibleTypingButton"])');
