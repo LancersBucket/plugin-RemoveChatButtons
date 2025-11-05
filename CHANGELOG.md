@@ -1,4 +1,15 @@
 # Changelog
+## v2.17.0 - ???
+### Added
+- Support for multiple update channels to prevent breakage for people with certain experiments [Core]
+    - Sub-channels will be updated less frequently, so please check the main branch often for the latest updates
+- Added update channel 'desktop-land-and-learn' for the experiment of separating DMs into its own button
+    - Updates on this channel will have /b at the end (i.e. v2.17.0/b)
+
+### Fixed
+- Discover button toggle removing DM/Server List Separator
+- Erroneous console output 
+
 ## v2.16.0 - October 19th, 2025
 ### Added
 - Option to remove the activity panel above the profile bar that shows what you are playing [Miscellaneous] (thanks [@MisansProducts](https://github.com/MisansProducts)!)
