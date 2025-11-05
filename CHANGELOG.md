@@ -1,5 +1,5 @@
 # Changelog
-## v2.17.0 - ???
+## v2.17.0 - Novemeber 5th, 2025
 ### Added
 - Support for multiple update channels to prevent breakage for people with certain experiments [Core]
     - Sub-channels will be updated less frequently, so please check the main branch often for the latest updates

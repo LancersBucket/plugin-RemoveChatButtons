@@ -677,7 +677,7 @@ const config = {
                     type: 'dropdown',
                     id: 'branch',
                     name: 'Update Channel',
-                    note: 'Change which update channel to use for updates.',
+                    note: 'Change which update channel to use for updates. Note: Please restart the plugin to update to the new channel.',
                     options: [
                         { label: 'main', value: 'main' },
                         { label: 'desktop-land-and-learn (/b)', value: 'desktop-land-and-learn' },
