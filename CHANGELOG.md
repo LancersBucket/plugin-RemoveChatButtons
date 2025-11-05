@@ -1,4 +1,15 @@
 # Changelog
+## v2.16.1/b
+### Changed
+- Renamed Direct Messages category to Home Tab
+
+### Removed
+- Option to remove the DM Header
+
+### Fixed
+- Discover toggle also removing the new Direct Messages button
+- Erroneous console output
+
 ## v2.16.0 - October 19th, 2025
 ### Added
 - Option to remove the activity panel above the profile bar that shows what you are playing [Miscellaneous] (thanks [@MisansProducts](https://github.com/MisansProducts)!)

@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.16.0
+ * @version 2.16.1/b
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  */
 /*@cc_on
@@ -257,11 +257,11 @@ const config = {
         },
         {
             type: 'category',
-            name: 'Direct Messages',
+            name: 'Home Tab',
             id: 'dms',
             collapsible: true,
             shown: false,
-            settings: [ // DM settings
+            settings: [ // Home settings
                 {
                     type: 'switch',
                     id: 'quickSwitcher',
@@ -303,19 +303,6 @@ const config = {
                     name: 'Remove Discord\'s Shop Tab',
                     note: 'Removes the Discord Shop tab from the DM list.',
                     value: true,
-                },
-                {
-                    type: 'dropdown',
-                    id: 'DMHeader',
-                    name: 'DM Header',
-                    note: 'Controls the visibility of the DM header. "Show" shows the header, "Remove Button" removes the \'Create DM\' button, "Remove Text" removes the header text, "Remove" removes the entire header.',
-                    value: 'show',
-                    options: [
-                        { label: "Show", value: 'show' },
-                        { label: "Remove Button", value: 'hideButton' },
-                        { label: "Remove Text", value: 'hideText' },
-                        { label: "Remove", value: 'remove' },
-                    ],
                 },
                 {
                     type: 'dropdown',
@@ -573,7 +560,7 @@ const config = {
                 {
                     type: 'switch',
                     id: 'discoverButton',
-                    name: 'Remove Discover Button',
+                    name: 'Remove "Discover" Button',
                     note: 'Removes the "Discover" button from the server list.',
                     value: false,
                 },
@@ -682,7 +669,6 @@ module.exports = class ChatButtonsBegone {
         this.api = new BdApi(meta.name);
         this.styler = new Styler(meta.name);
         this.eventHijacker = new EventHijacker(meta.name);
-        console.log(this.api.Data.load('settings'))
         this.settings = this.api.Data.load('settings') || this.defaultSettings();
 
         if (!this.api.Plugins.isEnabled(meta.name)) {
@@ -859,7 +845,7 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.messageActions.forwardButton) this.addCssStyle('[class^="hoverBarButton"][aria-label="Forward"]');
         if (this.settings.messageActions.editImage) this.addCssStyle('[aria-label="Edit Image with Apps"]');
         
-        /// Direct Messages ///
+        /// Home Tab ///
         if (this.settings.dms.quickSwitcher) this.addCssStyle('[class*="privateChannels"] [class*="searchBar"]');
         if (this.settings.dms.friendsTab) this.addCssStyle('[href="/channels/@me"]');
         if (this.settings.dms.premiumTab) this.addCssStyle('[href="/store"]');
@@ -868,14 +854,6 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.dms.discordShopTab) {
             this.addCssStyle('[href="/shop"]');
             this.addCssStyle('[class^="profileButtons"] > div:has(button:not([aria-expanded]))');
-        }
-        
-        if (this.settings.dms.DMHeader == 'hideButton') {
-            this.addCssStyle('h2 > [aria-label="Create DM"]');
-        } else if (this.settings.dms.DMHeader == 'hideText') {
-            this.addCssStyle('[class*="privateChannelsHeaderContainer"] > [class*="headerText"]');
-        } else if (this.settings.dms.DMHeader == 'remove') {
-            this.addCssStyle('[class*="privateChannelsHeaderContainer"]');
         }
         
         if (this.settings.dms.activeNow == 'simplify') {
@@ -975,7 +953,7 @@ module.exports = class ChatButtonsBegone {
             this.addCssStyle('div[id="appearance-tab"] div[class^="container"]:has(div[class^="iconContainer"] + div[class^="textContent"] + div[class^="buttonContainer"])');
         }
         if (this.settings.miscellaneous.addServerButton) this.addCssStyle('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="tutorialContainer"]:not(:first-child)');
-        if (this.settings.miscellaneous.discoverButton) this.addCssStyle('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="listItem"]');
+        if (this.settings.miscellaneous.discoverButton) this.addCssStyle('div[class*="itemsContainer"] > div[data-direction="vertical"] > div[class*="listItem"]:has(+ div[aria-hidden="true"])');
         if (this.settings.miscellaneous.placeholderText) this.addCssStyle('[class*="placeholder"][class*="slateTextArea"]');
         if (this.settings.miscellaneous.avatarPopover) this.addCssStyle('[class*="avatarPopover"]');
         if (this.settings.miscellaneous.noQuests) {
