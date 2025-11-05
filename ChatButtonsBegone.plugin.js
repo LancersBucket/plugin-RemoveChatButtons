@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.16.1/b
+ * @version 2.17.0/b
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  */
 /*@cc_on
@@ -141,9 +141,10 @@ class EventHijacker {
 const config = {
     info: {
         name: 'ChatButtonsBegone',
-        version: '2.16.1/b',
+        version: '2.17.0/b',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
-        github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/main/ChatButtonsBegone.plugin.js',
+        github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/',
+        branch: 'desktop-land-and-learn',
     },
     defaultConfig: [
         {
@@ -659,6 +660,16 @@ const config = {
                     note: 'Check for updates on startup.',
                     value: true,
                 },
+                {
+                    type: 'dropdown',
+                    id: 'branch',
+                    name: 'Update Channel',
+                    note: 'Change which update channel to use for updates. Note: Please restart the plugin to update to the new channel.',
+                    options: [
+                        { label: 'main', value: 'main' },
+                        { label: 'desktop-land-and-learn (/b)', value: 'desktop-land-and-learn' },
+                    ],
+                }
             ],
         },
     ],
@@ -684,6 +695,12 @@ module.exports = class ChatButtonsBegone {
     }
 
     compareVersions(a,b) {
+        if (a.includes('/')) {
+            a = a.split('/')[0];
+        }
+        if (b.includes('/')) {
+            b = b.split('/')[0];
+        }
         const aParts = a.split('.').map(Number);
         const bParts = b.split('.').map(Number);
         for (let i = 0; i < Math.min(aParts.length, bParts.length); i++) {
@@ -1008,16 +1025,36 @@ module.exports = class ChatButtonsBegone {
         try {
             // Check the latest version on remote
             const request = new XMLHttpRequest();
-            request.open('GET', config.info.github_raw);
+            let link = config.info.github_raw + this.settings.core.branch + '/ChatButtonsBegone.plugin.js';
+            request.open('GET', link);
             request.onload = () => {
                 if (request.status === 200) {
-                    const remoteVersion = request.responseText.match(/version: ['"]([\d.]+)['"]/i)?.[1];
+                    const remoteVersion = request.responseText.match(/version: ['"]([\d.\/\w]+)['"]/i)?.[1];
                     const localVersion = config.info.version;
 
-                    if (remoteVersion && this.compareVersions(remoteVersion, localVersion) > 0) {
+                    if (remoteVersion && config.info.branch !== this.settings.core.branch) {
+                        this.api.Logger.info(`Update channel changed to ${this.settings.core.branch}.`);
+                        BdApi.UI.showConfirmationModal('ChatButtonsBegone Branch Update',
+                            `A new version of ChatButtonsBegone (**v${remoteVersion}**) on branch '${this.settings.core.branch}' is available!\n\n` +
+                            `You are on **v${localVersion}** on branch '${config.info.branch}'. Please see the [changelog](${config.info.github}/blob/${this.settings.core.branch}/CHANGELOG.md) for a list of changes.\n\n` +
+                            `Would you like to update now?`,
+                            {
+                                confirmText: 'Update',
+                                onConfirm: () => {
+                                    this.api.Logger.info('Updating plugin...');
+                                    require('fs').writeFileSync(
+                                        require('path').join(BdApi.Plugins.folder, `${config.info.name}.plugin.js`),
+                                        request.responseText
+                                    );
+                                    this.api.Logger.info('Plugin updated! BetterDiscord will now reload the plugin.');
+                                }
+                            }
+                        );
+                    }
+                    else if (remoteVersion && this.compareVersions(remoteVersion, localVersion) > 0) {
                         BdApi.UI.showConfirmationModal('ChatButtonsBegone Update',
                             `A new version of ChatButtonsBegone (**v${remoteVersion}**) is available!\n\n` +
-                            `You are on **v${localVersion}**. Please see the [changelog](${config.info.github}/blob/main/CHANGELOG.md) for a list of changes.\n\n` +
+                            `You are on **v${localVersion}**. Please see the [changelog](${config.info.github}/blob/${this.settings.core.branch}/CHANGELOG.md) for a list of changes.\n\n` +
                             `Would you like to update now?`,
                             {
                                 confirmText: 'Update',
