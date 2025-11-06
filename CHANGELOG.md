@@ -1,4 +1,4 @@
-# Changelog
+# Changelog (desktop-land-and-learn)
 ## v2.17.0/b - November 5th, 2025
 ### Added
 - Support for multiple update channels to prevent breakage for people with certain experiments [Core]
