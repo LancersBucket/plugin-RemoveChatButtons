@@ -1,4 +1,12 @@
 # Changelog (desktop-land-and-learn)
+## v2.17.1/b - November 11th, 2025
+### Added
+- Option to remove Profile Effects (Animated Overlays) [Profile Customizations]
+
+### Fixed
+- Remove Nameplate not removing nameplates
+- Core toggles triggering a style refresh
+
 ## v2.17.0/b - November 5th, 2025
 ### Added
 - Support for multiple update channels to prevent breakage for people with certain experiments [Core]
