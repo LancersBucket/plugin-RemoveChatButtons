@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.17.0
+ * @version 2.17.1
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  */
 /*@cc_on
@@ -141,7 +141,7 @@ class EventHijacker {
 const config = {
     info: {
         name: 'ChatButtonsBegone',
-        version: '2.17.0',
+        version: '2.17.1',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/',
         branch: 'main',
@@ -555,6 +555,12 @@ const config = {
                     note: 'Removes the badges from user profiles.',
                     value: false,  
                 },
+                {
+                    type: 'switch',
+                    id: 'profileEffects',
+                    name: 'Remove Profile Effects',
+                    note: 'Removes profile effects (Animated Overlays) from user profiles.',
+                },
             ],
         },
         {
@@ -707,7 +713,7 @@ module.exports = class ChatButtonsBegone {
         this.migrateConfig();
     }
 
-    compareVersions(a,b) {
+    compareVersions(a, b) {
         if (a.includes('/')) {
             a = a.split('/')[0];
         }
@@ -949,7 +955,7 @@ module.exports = class ChatButtonsBegone {
         /// Profile Customizations ///
         if (this.settings.profileCustomizations.namePlate) {
             // Server list
-            this.addCssStyle('[class*=member] [class*=nameplated] [style*=linear-gradient]');
+            this.addCssStyle('[class*=member] [class*=nameplated] [style*=linear-gradient], [class*="container"]:has(> [class*="videoContainer"] video[src*="nameplate"])');
             // DM list
             this.addCssStyle('div[class*="interactive"]:hover>div[class*="container"]:has(img)');
             this.addCssStyle('div[class*="interactiveSelected"]>div[class*="container"]:has(img)');
@@ -974,6 +980,7 @@ module.exports = class ChatButtonsBegone {
         }
 
         if (this.settings.profileCustomizations.hideBadges) this.addCssStyle('div[aria-label="User Badges"]');
+        if (this.settings.profileCustomizations.profileEffects) this.addCssStyle('[class^="profileEffects"] img[class^="effect"]')
 
         /// Miscellaneous ///
         if (this.settings.miscellaneous.nitroUpsell) {
@@ -1055,7 +1062,7 @@ module.exports = class ChatButtonsBegone {
 
                     if (remoteVersion && config.info.branch !== this.settings.core.branch) {
                         this.api.Logger.info(`Update channel changed to ${this.settings.core.branch}.`);
-                        BdApi.UI.showConfirmationModal('ChatButtonsBegone Branch Update',
+                        BdApi.UI.showConfirmationModal('ChatButtonsBegone Update Channel Change',
                             `A new version of ChatButtonsBegone (**v${remoteVersion}**) on branch '${this.settings.core.branch}' is available!\n\n` +
                             `You are on **v${localVersion}** on branch '${config.info.branch}'. Please see the [changelog](${config.info.github}/blob/${this.settings.core.branch}/CHANGELOG.md) for a list of changes.\n\n` +
                             `Would you like to update now?`,
@@ -1156,6 +1163,10 @@ module.exports = class ChatButtonsBegone {
                     this.settings[id] = value;
                 }
                 this.api.Data.save('settings', this.settings);
+                
+                // Don't refresh styles on core settings change
+                if (category === 'core') return;
+                
                 this.styler.purge();
 				this.addStyles();
 				this.api.UI.showToast('Styles refreshed.', { type: 'info' });
