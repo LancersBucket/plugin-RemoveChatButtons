@@ -1,4 +1,8 @@
 # Changelog (desktop-land-and-learn)
+## v2.17.2/b - November 16th, 2025
+### Fixed
+- Inbox not removing properly
+
 ## v2.17.1/b - November 11th, 2025
 ### Added
 - Option to remove Profile Effects (Animated Overlays) [Profile Customizations]
