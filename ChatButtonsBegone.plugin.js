@@ -4,7 +4,7 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.17.1
+ * @version 2.17.2
  * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
  */
 /*@cc_on
@@ -141,7 +141,7 @@ class EventHijacker {
 const config = {
     info: {
         name: 'ChatButtonsBegone',
-        version: '2.17.1',
+        version: '2.17.2',
         github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
         github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/',
         branch: 'main',
@@ -950,7 +950,7 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.toolbar.navButtons) this.addCssStyle('[class^="backForwardButtons"]');
         if (this.settings.toolbar.locator) this.addCssStyle('[class^="base"]>[class^="bar"]>[class^="title"]');
         if (this.settings.toolbar.helpButton) this.addCssStyle('a[href="https://support.discord.com"]');
-        if (this.settings.toolbar.inboxButton) this.addCssStyle('div[class^="recentsIcon"]');
+        if (this.settings.toolbar.inboxButton) this.addCssStyle('div[class^="recentsIcon"], [class*="bar"] [class^="trailing"] > div[class^="clickable"]');
         
         /// Profile Customizations ///
         if (this.settings.profileCustomizations.namePlate) {

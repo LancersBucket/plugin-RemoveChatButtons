@@ -1,4 +1,8 @@
 # Changelog
+## v2.17.2
+### Fixed
+- Inbox not removing properly
+
 ## v2.17.1 - November 11th, 2025
 ### Added
 - Option to remove Profile Effects (Animated Overlays) [Profile Customizations]
