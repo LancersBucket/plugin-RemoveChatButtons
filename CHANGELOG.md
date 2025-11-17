@@ -1,5 +1,10 @@
 # Changelog
-## v2.17.2
+## v2.17.3 - November 17th, 2025
+### Changed
+- Added flow to migrate to the new repo
+    - The new repo is now located at https://github.com/LancersBucket/ChatButtonsBegone. Please direct all new Issues and PRs there.
+
+## v2.17.2 - November 16th, 2025
 ### Fixed
 - Inbox not removing properly
 

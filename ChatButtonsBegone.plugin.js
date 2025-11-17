@@ -4,8 +4,8 @@
  * @description Remove annoying stuff from your Discord clients.
  * @author LancersBucket
  * @authorId 355477882082033664
- * @version 2.17.2
- * @source https://github.com/LancersBucket/plugin-RemoveChatButtons
+ * @version 2.17.3
+ * @source https://github.com/LancersBucket/ChatButtonsBegone
  */
 /*@cc_on
 @if (@_jscript)
@@ -141,9 +141,9 @@ class EventHijacker {
 const config = {
     info: {
         name: 'ChatButtonsBegone',
-        version: '2.17.2',
-        github: 'https://github.com/LancersBucket/plugin-RemoveChatButtons',
-        github_raw: 'https://raw.githubusercontent.com/LancersBucket/plugin-RemoveChatButtons/refs/heads/',
+        version: '2.17.3',
+        github: 'https://github.com/LancersBucket/ChatButtonsBegone',
+        github_raw: 'https://raw.githubusercontent.com/LancersBucket/ChatButtonsBegone/refs/heads/',
         branch: 'main',
     },
     defaultConfig: [
@@ -1059,6 +1059,29 @@ module.exports = class ChatButtonsBegone {
                 if (request.status === 200) {
                     const remoteVersion = request.responseText.match(/version: ['"]([\d.\/\w]+)['"]/i)?.[1];
                     const localVersion = config.info.version;
+
+                    if (!config.info.github_raw.includes('plugin-RemoveChatButtons') && this.compareVersions(localVersion, '3.0.0') < 0) {
+                        this.api.Logger.info("Migration to LancersBucket/ChatButtonsBegone required.")
+                        BdApi.UI.showConfirmationModal('ChatButtonsBegone Repo Update',
+                            `ChatButtonsBegone has moved to a new repository at [LancersBucket/ChatButtonsBegone](${config.info.github}).\n\n` +
+                            `Please update any bookmarks or stars you may have on the old repository to the new one. Direct all new Issues and PRs to the new repo.\n\n` +
+                            `Thank you for using ChatButtonsBegone!\n\n` +
+                            `Press "Update" to automatically migrate to the new repository.`,
+                            {
+                                confirmText: 'Update',
+                                onConfirm: () => {
+                                    this.api.Logger.info('Updating plugin...');
+                                    require('fs').writeFileSync(
+                                        require('path').join(BdApi.Plugins.folder, `${config.info.name}.plugin.js`),
+                                        request.responseText
+                                    );
+                                    this.api.Logger.info('Plugin updated! BetterDiscord will now reload the plugin.');
+                                }
+                            }
+                        );
+
+                        return;
+                    }
 
                     if (remoteVersion && config.info.branch !== this.settings.core.branch) {
                         this.api.Logger.info(`Update channel changed to ${this.settings.core.branch}.`);
